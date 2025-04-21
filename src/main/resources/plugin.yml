@@ -1,0 +1,4 @@
+name: FancySheepWars
+version: '1.0'
+main: net.nxtresources.Main
+api-version: '1.21'
