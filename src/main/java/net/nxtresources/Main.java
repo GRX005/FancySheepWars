@@ -1,6 +1,6 @@
 package net.nxtresources;
 
-import net.nxtresources.commands.SheepWarsCommandHandler;
+import net.nxtresources.commands.CMDHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -27,7 +27,7 @@ public final class Main extends JavaPlugin {
 
     }
     private void registerCommands() {
-        Objects.requireNonNull(getCommand("sheepwars")).setExecutor(new SheepWarsCommandHandler());
+        Objects.requireNonNull(getCommand("sheepwars")).setExecutor(new CMDHandler());
 
     }
     private void registerListeners() {
