@@ -27,8 +27,12 @@ public class SheepWarsCommandHandler implements CommandExecutor {
             sender.sendMessage("/sheepwars leave ");
             return false;
         }
-        switch (cmd.getName().toLowerCase()){
+        switch (args[0].toLowerCase()) {
             case "arena" -> {
+                if(args.length <2){
+                    sender.sendMessage("Használat: /sheepwars arena <create, delete, list>");
+                    return false;
+                }
                 switch (args[1].toLowerCase()) {
                     case "create" ->{
                         if(args.length< 3){
@@ -69,6 +73,7 @@ public class SheepWarsCommandHandler implements CommandExecutor {
                 return true;
 
             }
+            default -> sender.sendMessage("Érvénytelen argumentum!");
 
         }
 
