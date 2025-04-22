@@ -4,6 +4,7 @@ import net.nxtresources.commands.CMDHandler;
 import net.nxtresources.listeners.InteractEvent;
 import net.nxtresources.listeners.ItemDropEvent;
 import net.nxtresources.listeners.JoinEvent;
+import net.nxtresources.managers.ArenaMgr;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +20,7 @@ public final class Main extends JavaPlugin {
         initialize();
         registerCommands();
         registerListeners();
+        ArenaMgr.mkCache();
         // Plugin startup logic
 
     }

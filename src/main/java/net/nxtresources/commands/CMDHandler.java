@@ -24,9 +24,9 @@ public class CMDHandler implements CommandExecutor {
 //        }
         if(args.length == 0){
             sender.sendMessage("fancy sheepwars help: ");
-            sender.sendMessage("/sheepwars arena create <name> ");
-            sender.sendMessage("/sheepwars arena delete <name> ");
-            sender.sendMessage("/sheepwars arena list");
+            sender.sendMessage("/sheepwars create <name> ");
+            sender.sendMessage("/sheepwars delete <name> ");
+            sender.sendMessage("/sheepwars list");
             sender.sendMessage("/sheepwars join <name> ");
             sender.sendMessage("/sheepwars leave ");
             return false;
@@ -70,8 +70,16 @@ public class CMDHandler implements CommandExecutor {
                     return false;
                 }
                 String name =args[1];
-                sender.sendMessage("aréna törölve a következő néven: " + name);
-                return true;
+                switch (ArenaMgr.del(name)) {
+                    case 0-> {
+                        sender.sendMessage("aréna törölve a következő néven: " + name);
+                        return true;
+                    }
+                    case 1->sender.sendMessage("Nincs ilyen arena");
+                    case 2-> sender.sendMessage("Vannak az arenaban, nem torolheted.");
+                }
+                return false;
+
 
             }
             case "l","list" -> {
@@ -94,6 +102,7 @@ public class CMDHandler implements CommandExecutor {
                     case 1-> sender.sendMessage("Nem findoltam az arénát.");
                     case 2-> sender.sendMessage("Mar arenaban vagy.");
                     case 3-> sender.sendMessage("Az arena tele.");
+                    case 4-> sender.sendMessage("Az arena mar elindult.");
                 }
                 return false;
 
