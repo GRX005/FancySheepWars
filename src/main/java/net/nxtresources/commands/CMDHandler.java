@@ -18,10 +18,10 @@ public class CMDHandler implements CommandExecutor {
             sender.sendMessage("Ingame only!");
             return false;
         }
-        if(!(sender.hasPermission("fancysheepwars.use"))) {
-            sender.sendMessage("§cNincs jogosultságod a parancs használatához!");
-            return false;
-        }
+//        if(!(sender.hasPermission("fancysheepwars.use"))) {
+//            sender.sendMessage("§cNincs jogosultságod a parancs használatához!");
+//            return false;
+//        }
         if(args.length == 0){
             sender.sendMessage("fancy sheepwars help: ");
             sender.sendMessage("/sheepwars arena create <name> ");
@@ -47,6 +47,10 @@ public class CMDHandler implements CommandExecutor {
                 }
                 if(size%2!=0) {
                     sender.sendMessage("Csak paros lehet");
+                    return false;
+                }
+                if(size<1) {
+                    sender.sendMessage("Nem lehet minus");
                     return false;
                 }
                 for(Arena a : ArenaMgr.arenas) {
@@ -81,16 +85,17 @@ public class CMDHandler implements CommandExecutor {
                     return false;
                 }
                 String name = args[1];
-                if(ArenaMgr.isInArena(player)) {
-                    sender.sendMessage("Mar arenaban vagy.");
-                    return false;
+
+                switch (ArenaMgr.join(name,player)) {
+                    case 0-> {
+                        sender.sendMessage("Csatlakoztál a következő arénához: " + name + "!");
+                        return true;
+                    }
+                    case 1-> sender.sendMessage("Nem findoltam az arénát.");
+                    case 2-> sender.sendMessage("Mar arenaban vagy.");
+                    case 3-> sender.sendMessage("Az arena tele.");
                 }
-                if(!ArenaMgr.join(name,player)) {//Kibannolas a parancs folytatasabol, amikor invalid az arena
-                    sender.sendMessage("Nem findoltam az arénát.");
-                    return false;
-                }
-                sender.sendMessage("Csatlakoztál a következő arénához: " + name + "!");
-                return true;
+                return false;
 
             }
             case "leave","le" -> {
