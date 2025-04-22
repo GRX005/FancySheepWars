@@ -1,5 +1,6 @@
 package net.nxtresources.commands;
 
+import net.nxtresources.Main;
 import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
 import org.bukkit.command.Command;
@@ -117,11 +118,45 @@ public class CMDHandler implements CommandExecutor {
                 return true;
 
             }
+
+            case "setlobby" -> {
+                Main.getInstance().getSetupManager().setMainLobby(player);
+                sender.sendMessage("MainLobby sikeresen beállítva!");
+                return true;
+            }
+            case "lobby" -> {
+                Main.getInstance().getSetupManager().getMainLobby(player);
+                sender.sendMessage("MainLobbyra teleportáltál!");
+                return true;
+            }
+            case "setup" -> {
+
+                if(args.length < 2) {
+                    sender.sendMessage("Használat: /sheepwars setup <név>");
+                    return false;
+                }
+                String name = args[1];
+                sender.sendMessage("Éppen beállítod A(z) " + name + " arénát!");
+                return true;
+
+            }
+            case "reload" -> {
+                if (!sender.hasPermission("sheepwars.*") && !sender.hasPermission("sheepwars.reload")) {
+                    sender.sendMessage("Nincs jogod ehhez!");
+                    return false;
+                }
+                if(args.length < 2) {
+                    sender.sendMessage("Plugin újratöltése folyamatban...");
+                    long started = System.currentTimeMillis();
+                    Main.getInstance().reload();
+                    long endTime = System.currentTimeMillis();
+                    long completed = endTime - started;
+                    sender.sendMessage("§aPlugin sikeresen újratöltve! §2(§a" + completed + " ms§2)");
+                    return true;
+                }
+            }
             default -> sender.sendMessage("Érvénytelen argumentum!");
         }
-
-
-
         return false;
     }
 }
