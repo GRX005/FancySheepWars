@@ -1,6 +1,8 @@
 package net.nxtresources;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -27,7 +29,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setDisplayName(String str) {
-        im.displayName(Component.text(str));
+        im.displayName(LegacyComponentSerializer.legacySection().deserialize(str));
         return this;
     }
 

@@ -1,6 +1,11 @@
 package net.nxtresources;
 
 import net.nxtresources.commands.CMDHandler;
+import net.nxtresources.listeners.InteractEvent;
+import net.nxtresources.listeners.ItemDropEvent;
+import net.nxtresources.listeners.JoinEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -31,6 +36,10 @@ public final class Main extends JavaPlugin {
 
     }
     private void registerListeners() {
+        PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new JoinEvent(), this);
+        pm.registerEvents(new ItemDropEvent(), this);
+        pm.registerEvents(new InteractEvent(), this);
 
     }
 

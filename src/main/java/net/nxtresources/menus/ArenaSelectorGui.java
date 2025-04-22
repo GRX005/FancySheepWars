@@ -8,7 +8,7 @@ import org.bukkit.inventory.Inventory;
 public class ArenaSelectorGui {
 
     public static void open(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 48, Component.text("Válassz arénát!"));
+        Inventory inv = Bukkit.createInventory(null, 54, Component.text("Válassz arénát!"));
         player.openInventory(inv);
 
     }
