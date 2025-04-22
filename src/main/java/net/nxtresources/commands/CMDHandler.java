@@ -1,16 +1,20 @@
 package net.nxtresources.commands;
 
+import net.nxtresources.managers.Arena;
+import net.nxtresources.managers.ArenaMgr;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class CMDHandler implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String @NotNull [] args) {
-        if(!(sender instanceof Player)) {
+        if(!(sender instanceof Player player)) {
             sender.sendMessage("Ingame only!");
             return false;
         }
@@ -28,54 +32,80 @@ public class CMDHandler implements CommandExecutor {
             return false;
         }
         switch (args[0].toLowerCase()) {
-            case "arena" -> {
-                if(args.length <2){
-                    sender.sendMessage("Használat: /sheepwars arena <create, delete, list>");
+            case "c","create" ->{
+                if(args.length< 3){
+                    sender.sendMessage("Használat: /sheepwars create <név> <meret(csak paros)>");
                     return false;
                 }
-                switch (args[1].toLowerCase()) {
-                    case "create" ->{
-                        if(args.length< 3){
-                            sender.sendMessage("Használat: /sheepwars arena create <név>");
-                            return false;
-                        }
-                        String name =args[2];
-                        sender.sendMessage("aréna létrehozva a következő néven: " + name);
-                        return true;
-                    }
-                    case "delete" ->{
-                        if(args.length< 3){
-                            sender.sendMessage("Használat: /sheepwars arena delete <név>");
-                            return false;
-                        }
-                        String name =args[2];
-                        sender.sendMessage("aréna törölve a következő néven: " + name);
-                        return true;
-
-                    }
-                    case "list" -> sender.sendMessage("Elérhető arénák: ");
-                    default -> sender.sendMessage("Ismeretlen argument!");
+                String name =args[1];
+                int size;
+                try {
+                    size = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage("Szamot adj meg.");
+                    return false;
                 }
+                if(size%2!=0) {
+                    sender.sendMessage("Csak paros lehet");
+                    return false;
+                }
+                for(Arena a : ArenaMgr.arenas) {
+                    if(Objects.equals(a.name, name)) {
+                        sender.sendMessage("Mar van arena mely az adott nevre hallgat.");
+                        return false;
+                    }
+                }
+                ArenaMgr.make(name, size);
+
+                sender.sendMessage("aréna létrehozva a következő néven: " + name + " es merettel: " + size);
+                return true;
+            }
+            case "d","delete" ->{
+                if(args.length< 2){
+                    sender.sendMessage("Használat: /sheepwars delete <név>");
+                    return false;
+                }
+                String name =args[1];
+                sender.sendMessage("aréna törölve a következő néven: " + name);
+                return true;
 
             }
-            case "join" -> {
+            case "l","list" -> {
+                sender.sendMessage("Elérhető arénák: ");
+                ArenaMgr.arenas.forEach(a->sender.sendMessage("Arena neve: "+a.name+", merete: "+ a.size+", playerek: "+a.players));
+                return true;
+            }
+            case "join","j" -> {
                 if(args.length <2){
                     sender.sendMessage("Használat: /sheepwars join <név>");
                     return false;
                 }
                 String name = args[1];
+                if(ArenaMgr.isInArena(player)) {
+                    sender.sendMessage("Mar arenaban vagy.");
+                    return false;
+                }
+                if(!ArenaMgr.join(name,player)) {//Kibannolas a parancs folytatasabol, amikor invalid az arena
+                    sender.sendMessage("Nem findoltam az arénát.");
+                    return false;
+                }
                 sender.sendMessage("Csatlakoztál a következő arénához: " + name + "!");
                 return true;
 
             }
-            case "leave" -> {
+            case "leave","le" -> {
+                if(!ArenaMgr.isInArena(player)) {
+                    sender.sendMessage("Nem vagy arenaban.");
+                    return false;
+                }
+                ArenaMgr.leave(player);
                 sender.sendMessage("Kiléptél az arénából!");
                 return true;
 
             }
             default -> sender.sendMessage("Érvénytelen argumentum!");
-
         }
+
 
 
         return false;
