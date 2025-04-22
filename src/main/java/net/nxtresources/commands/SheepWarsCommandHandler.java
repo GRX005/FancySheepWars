@@ -14,7 +14,7 @@ public class SheepWarsCommandHandler implements CommandExecutor {
             sender.sendMessage("Ingame only!");
             return false;
         }
-        if(sender.hasPermission("fancysheepwars.use")) {
+        if(!(sender.hasPermission("fancysheepwars.use"))) {
             sender.sendMessage("§cNincs jogosultságod a parancs használatához!");
             return false;
         }
@@ -27,6 +27,7 @@ public class SheepWarsCommandHandler implements CommandExecutor {
             sender.sendMessage("/sheepwars leave ");
             return false;
         }
+
 
         return false;
     }
