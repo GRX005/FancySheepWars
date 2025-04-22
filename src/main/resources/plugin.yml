@@ -2,3 +2,8 @@ name: FancySheepWars
 version: '1.0'
 main: net.nxtresources.Main
 api-version: '1.21'
+authors: [Levi, _1ms]
+commands:
+  sheepwars:
+    aliases: [fencysheepwars, fsw, sw]
+    description: main command
