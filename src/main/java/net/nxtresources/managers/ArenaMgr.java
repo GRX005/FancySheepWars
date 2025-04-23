@@ -61,18 +61,31 @@ public static int join(String arena, Player player) {
     return 0;
 }
 
-
     public static void leave(Player p) {
         for(Arena a : arenas) { //Beepitett if check az alabb definialt func-ban
             a.lobbyPlayers.remove(p);
+            for(Arena.Team t : a.teams) {
+                t.tPlayers.forEach(pl->{
+                    if(p==pl) {
+                        t.tPlayers.remove(pl);
+                        SetupManager.getMainLobby(pl);
+                    }
+                });
+            }
         }
     }
 
     public static boolean isInArena(Player p) {
-        for(Arena a : arenas) {
+        for(Arena a : arenas) {//Check InWaitingLobby
             for(Player pla : a.lobbyPlayers) {
                 if(p==pla)
                     return true;
+            }
+            for(Arena.Team t : a.teams) {//Check IngameArena.
+                for(Player pl : t.tPlayers) {
+                    if(pl==p)
+                        return true;
+                }
             }
         }
         return false;
@@ -81,12 +94,13 @@ public static int join(String arena, Player player) {
     public static int del(String ar) {
         if(arCache.containsKey(ar)) {
             Arena a = arCache.get(ar);
-            if(!a.lobbyPlayers.isEmpty())
+            if(!a.lobbyPlayers.isEmpty() || !a.teams.isEmpty())
                 return 2;
             arenas.remove(a);
             return 0;
         }
         return 1;
+        //TODO CONFIG
     }
 
     private static final Gson gson = new Gson();

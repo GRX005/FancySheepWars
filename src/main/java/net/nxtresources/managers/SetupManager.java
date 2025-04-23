@@ -52,14 +52,14 @@ public class SetupManager {
     //
      //LOBBY
     //
-    public void setMainLobby(Player player) {
+    public static void setMainLobby(Player player) {
         Location location = player.getLocation();
         Main.locationManager.setLocation(Main.lobbyConfig,"MainLobby", location);
         Main.saveLobbyConfig();
 
     }
 
-    public void getMainLobby(Player player) {
+    public static void getMainLobby(Player player) {
         FileConfiguration config = Main.lobbyConfig;
         if (config != null && config.getConfigurationSection("MainLobby") != null) {
             Location loc = Main.locationManager.getLocation(Main.lobbyConfig,"MainLobby");

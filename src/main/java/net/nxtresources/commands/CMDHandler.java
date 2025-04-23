@@ -86,12 +86,12 @@ public class CMDHandler implements CommandExecutor {
 
             }
             case "l","list" -> {
-                sender.sendMessage("Elérhető arénák: ");
+                sender.sendMessage("§aElérhető arénák: ");
                 ArenaMgr.arenas.forEach(a->{
-                    sender.sendMessage("Arena neve: "+a.name+", merete: "+ a.size+", LobbyPlayerek: "+a.lobbyPlayers + " Teamek: ");
+                    sender.sendMessage("§6Arena neve: §e"+a.name+"§6, merete: §e"+ a.size+"§6, LobbyPlayerek: §e"+a.lobbyPlayers +"§6, status: §e"+ a.stat +"§6 Teamek: ");
                     a.teams.forEach(t->{
-                        sender.sendMessage(t.type+": ");
-                        t.tPlayers.forEach(p->sender.sendMessage(p.toString()));
+                        sender.sendMessage("§a"+t.type+": ");
+                        t.tPlayers.forEach(p->sender.sendMessage("§9"+p.toString()));
                     });
                 });
                 return true;
@@ -129,12 +129,12 @@ public class CMDHandler implements CommandExecutor {
             }
 
             case "setlobby" -> {
-                Main.setupManager.setMainLobby(player);
+                SetupManager.setMainLobby(player);
                 sender.sendMessage("MainLobby sikeresen beállítva!");
                 return true;
             }
             case "lobby" -> {
-                Main.setupManager.getMainLobby(player);
+                SetupManager.getMainLobby(player);
                 sender.sendMessage("MainLobbyra teleportáltál!");
                 return true;
             }
@@ -150,7 +150,7 @@ public class CMDHandler implements CommandExecutor {
 
             }
             //TESZT DOLGOK AMIKET MAJD TÖRÖLNI FOGOK
-            case "setwaitinglobby" ->{
+            case "swl","setwaitinglobby" ->{
                 if(args.length <2){
                     sender.sendMessage("Használat: /sheepwars setwaitinglobby <név>");
                     return false;
@@ -161,7 +161,7 @@ public class CMDHandler implements CommandExecutor {
 
             }
 
-            case "reload" -> {
+            case "rl","reload" -> {
                 if (!sender.hasPermission("sheepwars.*") && !sender.hasPermission("sheepwars.reload")) {
                     sender.sendMessage("Nincs jogod ehhez!");
                     return false;
