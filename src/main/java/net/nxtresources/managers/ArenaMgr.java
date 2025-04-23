@@ -29,45 +29,48 @@ public class ArenaMgr {
     public static Arena make(String name, int size) {
         Arena arena = new Arena(name,size);
         arenas.add(arena);
+        arCache.put(name, arena);
         return arena;
     }
 //Itt hozzaadjuk az adott jatekost az adott arenahoz: (JoinOrLeave) 0=succ,1=noAr,2=alrInAr,3=arFull, 4=started
-    public static int join(String arena, Player player) {
-        if(ArenaMgr.isInArena(player))
-            return 2;
-        Arena a = arCache.get(arena);
-        if(a==null)
-            return 1;
-        if(a.size<a.players.size())
-            return 3;
-        if(a.stat == ArenaStatus.STARTED)
-            return 4;
+public static int join(String arena, Player player) {
+    if(ArenaMgr.isInArena(player))
+        return 2;
+    Arena a = arCache.get(arena);
+    if(a==null)
+        return 1;
+    if(a.size<a.lobbyPlayers.size())
+        return 3;
+    if(a.stat == ArenaStatus.STARTED)
+        return 4;
 
-        a.players.add(player);
-        SetupManager.getWaitingLobby(player, arena);
-        if(a.size==a.players.size()) {
-            AtomicInteger aInt = new AtomicInteger(10);
-            a.countdown(()->{
-                int toPr = aInt.getAndDecrement();
-                a.players.forEach((p->p.sendMessage("Az arena indul ennyi mulva: "+toPr)));
-                if(aInt.get()==0) {
-                    a.stat = ArenaStatus.STARTED;
-                    a.cancelCount();
-                }
-            });
-        }
-        return 0;
+    a.lobbyPlayers.add(player);
+    SetupManager.getWaitingLobby(player, arena);
+    if(a.size==a.lobbyPlayers.size()) {
+        AtomicInteger aInt = new AtomicInteger(10);
+        a.countdown(()->{
+            int toPr = aInt.getAndDecrement();
+            a.lobbyPlayers.forEach((p->p.sendMessage("Az arena indul ennyi mulva: "+toPr)));
+            if(aInt.get()==0) {//Itt indul az arena.
+                a.stat = ArenaStatus.STARTED;
+                a.start();
+                a.cancelCount();
+            }
+        });
     }
+    return 0;
+}
+
 
     public static void leave(Player p) {
         for(Arena a : arenas) { //Beepitett if check az alabb definialt func-ban
-            a.players.remove(p);
+            a.lobbyPlayers.remove(p);
         }
     }
 
     public static boolean isInArena(Player p) {
         for(Arena a : arenas) {
-            for(Player pla : a.players) {
+            for(Player pla : a.lobbyPlayers) {
                 if(p==pla)
                     return true;
             }
@@ -78,7 +81,7 @@ public class ArenaMgr {
     public static int del(String ar) {
         if(arCache.containsKey(ar)) {
             Arena a = arCache.get(ar);
-            if(!a.players.isEmpty())
+            if(!a.lobbyPlayers.isEmpty())
                 return 2;
             arenas.remove(a);
             return 0;
@@ -103,7 +106,8 @@ public class ArenaMgr {
             for (String key : Objects.requireNonNull(config.getConfigurationSection("arenas")).getKeys(false)) {
                 String json = config.getString("arenas." + key);
                 Arena arena = gson.fromJson(json, Arena.class);
-                arena.players = new HashSet<>();
+                arena.lobbyPlayers = new HashSet<>();
+                arena.teams = new HashSet<>();
                 arenas.add(arena);
                 arCache.put(arena.name, arena);
                 Main.getInstance().getLogger().log(Level.INFO,arena.name + " loaded!");

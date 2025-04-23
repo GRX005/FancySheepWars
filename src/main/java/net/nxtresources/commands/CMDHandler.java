@@ -87,9 +87,16 @@ public class CMDHandler implements CommandExecutor {
             }
             case "l","list" -> {
                 sender.sendMessage("Elérhető arénák: ");
-                ArenaMgr.arenas.forEach(a->sender.sendMessage("Arena neve: "+a.name+", merete: "+ a.size+", playerek: "+a.players));
+                ArenaMgr.arenas.forEach(a->{
+                    sender.sendMessage("Arena neve: "+a.name+", merete: "+ a.size+", LobbyPlayerek: "+a.lobbyPlayers + " Teamek: ");
+                    a.teams.forEach(t->{
+                        sender.sendMessage(t.type+": ");
+                        t.tPlayers.forEach(p->sender.sendMessage(p.toString()));
+                    });
+                });
                 return true;
             }
+
             case "join","j" -> {
                 if(args.length <2){
                     sender.sendMessage("Használat: /sheepwars join <név>");
