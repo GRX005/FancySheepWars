@@ -44,6 +44,7 @@ public class ArenaMgr {
             return 4;
 
         a.players.add(player);
+        SetupManager.getWaitingLobby(player, arena);
         if(a.size==a.players.size()) {
             AtomicInteger aInt = new AtomicInteger(10);
             a.countdown(()->{

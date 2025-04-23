@@ -3,6 +3,7 @@ package net.nxtresources.commands;
 import net.nxtresources.Main;
 import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
+import net.nxtresources.managers.SetupManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -62,7 +63,7 @@ public class CMDHandler implements CommandExecutor {
                 }
                 Arena arena =ArenaMgr.make(name, size);
                 ArenaMgr.saveArena(arena);
-                Main.getInstance().saveArenaConfig();
+                Main.saveArenaConfig();
                 sender.sendMessage("aréna létrehozva a következő néven: " + name + " es merettel: " + size);
                 return true;
             }
@@ -131,16 +132,28 @@ public class CMDHandler implements CommandExecutor {
                 return true;
             }
             case "setup" -> {
-
                 if(args.length < 2) {
                     sender.sendMessage("Használat: /sheepwars setup <név>");
                     return false;
                 }
+
                 String name = args[1];
                 sender.sendMessage("Éppen beállítod A(z) " + name + " arénát!");
                 return true;
 
             }
+            //TESZT DOLGOK AMIKET MAJD TÖRÖLNI FOGOK
+            case "setwaitinglobby" ->{
+                if(args.length <2){
+                    sender.sendMessage("Használat: /sheepwars setwaitinglobby <név>");
+                    return false;
+                }
+                String name = args[1];
+                SetupManager.setWaitingLobby(player, name);
+                return true;
+
+            }
+
             case "reload" -> {
                 if (!sender.hasPermission("sheepwars.*") && !sender.hasPermission("sheepwars.reload")) {
                     sender.sendMessage("Nincs jogod ehhez!");

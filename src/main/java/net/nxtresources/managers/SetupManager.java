@@ -21,8 +21,31 @@ public class SetupManager {
 
     }
 
-    public void setWaitingLobby(Player player) {
+    public static void setWaitingLobby(Player player, String name) {
+        Arena asd =null;
+        for (Arena a : ArenaMgr.arenas) {
+            if (a.name.equalsIgnoreCase(name)) {
+                asd = a; break;
+            }
+        }
         Location location = player.getLocation();
+        assert asd != null;
+        asd.setWaitingLobby(location);
+        ArenaMgr.saveArena(asd);
+        Main.saveArenaConfig();
+
+    }
+
+    public static void getWaitingLobby(Player player, String name){
+        Arena asd =null;
+        for (Arena a : ArenaMgr.arenas) {
+            if (a.name.equalsIgnoreCase(name)) {
+                asd = a; break;
+            }
+        }
+        assert asd != null;
+        Location location = asd.getWaitingLobby();
+        player.teleportAsync(location).thenAccept(success -> {});
 
     }
 

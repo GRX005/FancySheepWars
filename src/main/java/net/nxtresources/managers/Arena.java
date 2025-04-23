@@ -3,6 +3,7 @@ package net.nxtresources.managers;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -17,6 +18,7 @@ public class Arena {
     public int size;
     public ArenaStatus stat;
     private BukkitTask task;
+    public String waitingLobbyLocation;
 
     public Arena(String name, int size) {
         if(size %2!=0)
@@ -32,6 +34,13 @@ public class Arena {
 
     public void cancelCount() {
         this.task.cancel();
+    }
+
+    public void setWaitingLobby(Location loc) {
+        this.waitingLobbyLocation = LocationManager.locToString(loc);
+    }
+    public Location getWaitingLobby() {
+        return LocationManager.stringToLoc(waitingLobbyLocation);
     }
 
 }
