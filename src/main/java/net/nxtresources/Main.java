@@ -3,8 +3,9 @@ package net.nxtresources;
 import net.nxtresources.commands.CMDHandler;
 import net.nxtresources.listeners.InteractEvent;
 import net.nxtresources.listeners.ItemDropEvent;
-import net.nxtresources.listeners.JoinEvent;
+import net.nxtresources.listeners.JoinAndQuitEvent;
 import net.nxtresources.managers.ArenaMgr;
+import net.nxtresources.managers.DataManager;
 import net.nxtresources.managers.LocationManager;
 import net.nxtresources.managers.SetupManager;
 import org.bukkit.Bukkit;
@@ -34,6 +35,9 @@ public final class Main extends JavaPlugin {
     public static FileConfiguration lobbyConfig;
     public static File lobbyFile;
 
+    public static FileConfiguration dataConfig;
+    public static File dataFile;
+
     @Override
     public void onEnable() {
         plugin =this;
@@ -43,6 +47,7 @@ public final class Main extends JavaPlugin {
         registerListeners();
         ArenaMgr.mkCache();
         ArenaMgr.loadAllArenas();
+        DataManager.load();
         // Plugin startup logic
 
     }
@@ -62,6 +67,7 @@ public final class Main extends JavaPlugin {
         loadConfig("arenas.yml", config -> arenaConfig = config);
         loadConfig("messages.yml", config -> messagesConfig = config);
         loadConfig("lobby.yml", config -> lobbyConfig = config);
+        loadConfig("data.yml", config -> dataConfig = config);
     }
 
     private void loadConfig(String fileName, Consumer<YamlConfiguration> configSetter) {
@@ -76,6 +82,7 @@ public final class Main extends JavaPlugin {
             case "lobby.yml" -> lobbyFile = file;
             case "arenas.yml" -> arenaFile = file;
             case "messages.yml" -> messagesFile = file;
+            case "data.yml" -> dataFile = file;
         }
         getLogger().log(Level.INFO, fileName + " loaded!");
     }
@@ -91,7 +98,7 @@ public final class Main extends JavaPlugin {
         try {
             arenaConfig.save(arenaFile);
         } catch (IOException e) {
-            Bukkit.getLogger().log(Level.INFO, String.valueOf(e));
+            throw new RuntimeException(e);
         }
     }
 
@@ -99,7 +106,7 @@ public final class Main extends JavaPlugin {
         try {
             messagesConfig.save(messagesFile);
         } catch (IOException e) {
-            Bukkit.getLogger().log(Level.INFO, String.valueOf(e));
+            throw new RuntimeException(e);
         }
     }
 
@@ -107,7 +114,14 @@ public final class Main extends JavaPlugin {
         try{
             lobbyConfig.save(lobbyFile);
         } catch (IOException e) {
-            Bukkit.getLogger().log(Level.INFO, String.valueOf(e));
+            throw new RuntimeException(e);
+        }
+    }
+    public static void saveDataConfig(){
+        try{
+            dataConfig.save(dataFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -117,7 +131,7 @@ public final class Main extends JavaPlugin {
     }
     private void registerListeners() {
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new JoinEvent(), this);
+        pm.registerEvents(new JoinAndQuitEvent(), this);
         pm.registerEvents(new ItemDropEvent(), this);
         pm.registerEvents(new InteractEvent(), this);
 
