@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 public class SetupManager {
 
-    LocationManager lm = Main.getInstance().getLocationManager();
 
     //
     //ARENA
@@ -32,15 +31,15 @@ public class SetupManager {
     //
     public void setMainLobby(Player player) {
         Location location = player.getLocation();
-        lm.setLocation(Main.getInstance().lobbyConfig,"MainLobby", location);
-        Main.getInstance().saveLobbyConfig();
+        Main.locationManager.setLocation(Main.lobbyConfig,"MainLobby", location);
+        Main.saveLobbyConfig();
 
     }
 
     public void getMainLobby(Player player) {
-        FileConfiguration config = Main.getInstance().getLobbyConfig();
+        FileConfiguration config = Main.lobbyConfig;
         if (config != null && config.getConfigurationSection("MainLobby") != null) {
-            Location loc = lm.getLocation(Main.getInstance().lobbyConfig,"MainLobby");
+            Location loc = Main.locationManager.getLocation(Main.lobbyConfig,"MainLobby");
             player.teleport(loc);
         }
     }

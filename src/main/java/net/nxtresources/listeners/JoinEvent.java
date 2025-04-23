@@ -1,6 +1,5 @@
 package net.nxtresources.listeners;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.nxtresources.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

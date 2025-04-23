@@ -1,6 +1,5 @@
 package net.nxtresources.managers;
 
-import net.nxtresources.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

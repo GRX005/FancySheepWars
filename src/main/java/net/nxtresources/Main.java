@@ -22,17 +22,17 @@ import java.util.logging.Level;
 public final class Main extends JavaPlugin {
 
     private static Main plugin;
-    private LocationManager locationManager;
-    private SetupManager setupManager;
+    public static LocationManager locationManager;
+    public static SetupManager setupManager;
 
-    public FileConfiguration arenaConfig;
-    public File arenaFile;
+    public static FileConfiguration arenaConfig;
+    public static File arenaFile;
 
-    public FileConfiguration messagesConfig;
-    public File messagesFile;
+    public static FileConfiguration messagesConfig;
+    public static File messagesFile;
 
-    public FileConfiguration lobbyConfig;
-    public File lobbyFile;
+    public static FileConfiguration lobbyConfig;
+    public static File lobbyFile;
 
     @Override
     public void onEnable() {
@@ -87,27 +87,27 @@ public final class Main extends JavaPlugin {
 
     }
 
-    public void saveArenaConfig() {
+    public static void saveArenaConfig() {
         try {
             arenaConfig.save(arenaFile);
         } catch (IOException e) {
-            getLogger().log(Level.INFO, String.valueOf(e));
+            Bukkit.getLogger().log(Level.INFO, String.valueOf(e));
         }
     }
 
-    public void saveMessagesConfig() {
+    public static void saveMessagesConfig() {
         try {
             messagesConfig.save(messagesFile);
         } catch (IOException e) {
-            getLogger().log(Level.INFO, String.valueOf(e));
+            Bukkit.getLogger().log(Level.INFO, String.valueOf(e));
         }
     }
 
-    public void saveLobbyConfig() {
+    public static void saveLobbyConfig() {
         try{
             lobbyConfig.save(lobbyFile);
         } catch (IOException e) {
-            getLogger().log(Level.INFO, String.valueOf(e));
+            Bukkit.getLogger().log(Level.INFO, String.valueOf(e));
         }
     }
 
@@ -125,25 +125,5 @@ public final class Main extends JavaPlugin {
 
     public static Main getInstance() {
         return plugin;
-    }
-
-    public FileConfiguration getArenaConfig() {
-        return arenaConfig;
-    }
-
-    public FileConfiguration getMessagesConfig() {
-        return messagesConfig;
-    }
-
-    public FileConfiguration getLobbyConfig() {
-        return lobbyConfig;
-    }
-
-    public LocationManager getLocationManager() {
-        return locationManager;
-    }
-
-    public SetupManager getSetupManager() {
-        return setupManager;
     }
 }

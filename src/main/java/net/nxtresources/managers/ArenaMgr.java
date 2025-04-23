@@ -1,10 +1,8 @@
 package net.nxtresources.managers;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -87,26 +85,26 @@ public class ArenaMgr {
         return 1;
     }
 
-    private static final Gson gson = new GsonBuilder()
-            .excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT)
-            .setPrettyPrinting()
-            .create();
+    private static final Gson gson = new Gson();
 
     public static void saveArena(Arena arena) {
         String json = gson.toJson(arena);
-        Main.getInstance().getArenaConfig().set("arenas." + arena.name, json);
-        Main.getInstance().saveArenaConfig();
+        Main.arenaConfig.set("arenas." + arena.name, json);
+        Main.saveArenaConfig();
     }
 
     public static void loadAllArenas() {
-        FileConfiguration config = Main.getInstance().getArenaConfig();
+        FileConfiguration config = Main.arenaConfig;
 
         if (config.contains("arenas")) {
+            arenas.clear();
+            arCache.clear();
             for (String key : Objects.requireNonNull(config.getConfigurationSection("arenas")).getKeys(false)) {
                 String json = config.getString("arenas." + key);
                 Arena arena = gson.fromJson(json, Arena.class);
                 arena.players = new HashSet<>();
                 arenas.add(arena);
+                arCache.put(arena.name, arena);
                 Main.getInstance().getLogger().log(Level.INFO,arena.name + " loaded!");
             }
         }

@@ -121,12 +121,12 @@ public class CMDHandler implements CommandExecutor {
             }
 
             case "setlobby" -> {
-                Main.getInstance().getSetupManager().setMainLobby(player);
+                Main.setupManager.setMainLobby(player);
                 sender.sendMessage("MainLobby sikeresen beállítva!");
                 return true;
             }
             case "lobby" -> {
-                Main.getInstance().getSetupManager().getMainLobby(player);
+                Main.setupManager.getMainLobby(player);
                 sender.sendMessage("MainLobbyra teleportáltál!");
                 return true;
             }
