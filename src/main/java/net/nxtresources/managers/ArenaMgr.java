@@ -1,12 +1,19 @@
 package net.nxtresources.managers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 public class ArenaMgr {
 
@@ -21,8 +28,10 @@ public class ArenaMgr {
         }
     }
 
-    public static void make(String name, int size) {
-        arenas.add(new Arena(name,size));
+    public static Arena make(String name, int size) {
+        Arena arena = new Arena(name,size);
+        arenas.add(arena);
+        return arena;
     }
 //Itt hozzaadjuk az adott jatekost az adott arenahoz: (JoinOrLeave) 0=succ,1=noAr,2=alrInAr,3=arFull, 4=started
     public static int join(String arena, Player player) {
@@ -76,6 +85,31 @@ public class ArenaMgr {
             return 0;
         }
         return 1;
+    }
+
+    private static final Gson gson = new GsonBuilder()
+            .excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT)
+            .setPrettyPrinting()
+            .create();
+
+    public static void saveArena(Arena arena) {
+        String json = gson.toJson(arena);
+        Main.getInstance().getArenaConfig().set("arenas." + arena.name, json);
+        Main.getInstance().saveArenaConfig();
+    }
+
+    public static void loadAllArenas() {
+        FileConfiguration config = Main.getInstance().getArenaConfig();
+
+        if (config.contains("arenas")) {
+            for (String key : Objects.requireNonNull(config.getConfigurationSection("arenas")).getKeys(false)) {
+                String json = config.getString("arenas." + key);
+                Arena arena = gson.fromJson(json, Arena.class);
+                arena.players = new HashSet<>();
+                arenas.add(arena);
+                Main.getInstance().getLogger().log(Level.INFO,arena.name + " loaded!");
+            }
+        }
     }
 
 }

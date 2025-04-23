@@ -60,8 +60,9 @@ public class CMDHandler implements CommandExecutor {
                         return false;
                     }
                 }
-                ArenaMgr.make(name, size);
-
+                Arena arena =ArenaMgr.make(name, size);
+                ArenaMgr.saveArena(arena);
+                Main.getInstance().saveArenaConfig();
                 sender.sendMessage("aréna létrehozva a következő néven: " + name + " es merettel: " + size);
                 return true;
             }

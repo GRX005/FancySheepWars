@@ -22,6 +22,11 @@ public class SetupManager {
 
     }
 
+    public void setWaitingLobby(Player player) {
+        Location location = player.getLocation();
+
+    }
+
     //
      //LOBBY
     //
