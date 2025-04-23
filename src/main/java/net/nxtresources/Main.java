@@ -1,6 +1,7 @@
 package net.nxtresources;
 
 import net.nxtresources.commands.CMDHandler;
+import net.nxtresources.listeners.DeathEvent;
 import net.nxtresources.listeners.InteractEvent;
 import net.nxtresources.listeners.ItemDropEvent;
 import net.nxtresources.listeners.JoinAndQuitEvent;
@@ -134,6 +135,7 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(new JoinAndQuitEvent(), this);
         pm.registerEvents(new ItemDropEvent(), this);
         pm.registerEvents(new InteractEvent(), this);
+        pm.registerEvents(new DeathEvent(), this);
 
     }
 
