@@ -3,6 +3,7 @@ package net.nxtresources.commands;
 import net.nxtresources.Main;
 import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
+import net.nxtresources.managers.Setup;
 import net.nxtresources.managers.SetupManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -129,12 +130,12 @@ public class CMDHandler implements CommandExecutor {
             }
 
             case "setlobby" -> {
-                SetupManager.setMainLobby(player);
+                Setup.setMainLobby(player);
                 sender.sendMessage("MainLobby sikeresen beállítva!");
                 return true;
             }
             case "lobby" -> {
-                SetupManager.getMainLobby(player);
+                Setup.getMainLobby(player);
                 sender.sendMessage("MainLobbyra teleportáltál!");
                 return true;
             }
@@ -143,11 +144,13 @@ public class CMDHandler implements CommandExecutor {
                     sender.sendMessage("Használat: /sheepwars setup <név>");
                     return false;
                 }
-
                 String name = args[1];
-                sender.sendMessage("Éppen beállítod A(z) " + name + " arénát!");
-                return true;
-
+                switch (SetupManager.startSetup(player, name)) {
+                    case 0 -> sender.sendMessage("§aÉppen beállítod A(z) " + name + " arénát!");
+                    case 1 -> sender.sendMessage("§cNem létezik ilyen aréna!");
+                    case 2 -> sender.sendMessage("§cMár setupolod ezt az arénát!");
+                }
+                return false;
             }
             //TESZT DOLGOK AMIKET MAJD TÖRÖLNI FOGOK
             case "swl","setwaitinglobby" ->{
@@ -156,7 +159,7 @@ public class CMDHandler implements CommandExecutor {
                     return false;
                 }
                 String name = args[1];
-                SetupManager.setWaitingLobby(player, name);
+                Setup.setWaitingLobby(player, name);
                 return true;
 
             }

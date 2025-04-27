@@ -73,10 +73,10 @@ public class Arena {
     }
 
     public void setWaitingLobby(Location loc) {
-        this.waitingLobbyLocation = LocationManager.locToString(loc);
+        this.waitingLobbyLocation = LocationManager.set(loc);
     }
     public Location getWaitingLobby() {
-        return LocationManager.stringToLoc(waitingLobbyLocation);
+        return LocationManager.get(waitingLobbyLocation);
     }
 
 }

@@ -17,7 +17,7 @@ public class ArenaMgr {
 
     public static Set<Arena> arenas = new HashSet<>();
 
-    private static final HashMap<String,Arena> arCache = new HashMap<>();
+    public static final HashMap<String,Arena> arCache = new HashMap<>();
 
     public static void mkCache() {
         //RT-CACHE, majd configbol valszeg.
@@ -45,7 +45,7 @@ public static int join(String arena, Player player) {
         return 4;
 
     a.lobbyPlayers.add(player);
-    SetupManager.getWaitingLobby(player, arena);
+    Setup.getWaitingLobby(player, arena);
     if(a.size==a.lobbyPlayers.size()) {
         AtomicInteger aInt = new AtomicInteger(10);
         a.countdown(()->{
@@ -68,7 +68,7 @@ public static int join(String arena, Player player) {
                 t.tPlayers.forEach(pl->{
                     if(p==pl) {
                         t.tPlayers.remove(pl);
-                        SetupManager.getMainLobby(pl);
+                        Setup.getMainLobby(pl);
                     }
                 });
             }
@@ -97,10 +97,12 @@ public static int join(String arena, Player player) {
             if(!a.lobbyPlayers.isEmpty() || !a.teams.isEmpty())
                 return 2;
             arenas.remove(a);
+            arCache.remove(ar);
+            Main.arenaConfig.set("arenas." + ar, null);
+            Main.saveArenaConfig();
             return 0;
         }
         return 1;
-        //TODO CONFIG
     }
 
     private static final Gson gson = new Gson();

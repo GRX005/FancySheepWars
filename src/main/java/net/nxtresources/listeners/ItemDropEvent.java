@@ -11,7 +11,9 @@ import java.util.Objects;
 public class ItemDropEvent implements Listener {
 
     String[] nodrop = {
-            "§eAréna választó",
+            "§eAréna választó", //this
+            "§aVárakozó lobby beállítása", //setup
+            "§cSetup mód elhagyása" //setup
     };
 
     @EventHandler
@@ -21,9 +23,8 @@ public class ItemDropEvent implements Listener {
         if (droppeditem.hasItemMeta() && droppeditem.getItemMeta().hasDisplayName()) {
 
             for (String noallowed : nodrop) {
-                if (LegacyComponentSerializer.legacySection().serialize(Objects.requireNonNull(droppeditem.getItemMeta().displayName())).equals(noallowed)) {
+                if (LegacyComponentSerializer.legacySection().serialize(Objects.requireNonNull(droppeditem.getItemMeta().displayName())).equals(noallowed))
                     event.setCancelled(true);
-                }
             }
         }
     }

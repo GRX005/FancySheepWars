@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class LocationManager {
 
-    public void setLocation(FileConfiguration config, String path, Location loc) {
+    /*public void setLocation(FileConfiguration config, String path, Location loc) {
         config.set(path + ".world", loc.getWorld().getName());
         config.set(path + ".x", loc.getX());
         config.set(path + ".y", loc.getY());
@@ -26,17 +26,17 @@ public class LocationManager {
                 config.getDouble(path + ".z"),
                 (float) config.getDouble(path + ".yaw"),
                 (float) config.getDouble(path + ".pitch"));
-    }
+    }*/
 
-    public static String locToString(Location loc) {
+    public static String set(Location loc) {
         if (loc == null || loc.getWorld() == null) return "";
         return loc.getWorld().getName()
-                + ";" + loc.getBlockX() + ";" + loc.getBlockY()
-                + ";" + loc.getBlockZ() + ";" + loc.getYaw()
+                + ";" + loc.getX() + ";" + loc.getY()
+                + ";" + loc.getZ() + ";" + loc.getYaw()
                 + ";" + loc.getPitch();
     }
 
-    public static Location stringToLoc(String s) {
+    public static Location get(String s) {
         if (s == null || s.isEmpty()) return null;
         String[] parts = s.split(";");
         if (parts.length < 6) return null;

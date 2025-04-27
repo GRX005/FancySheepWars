@@ -1,6 +1,9 @@
 package net.nxtresources.listeners;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.nxtresources.managers.Setup;
+import net.nxtresources.managers.SetupManager;
 import net.nxtresources.menus.ArenaSelectorGui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -9,24 +12,44 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Objects;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class InteractEvent implements Listener {
 
     @EventHandler
     public void openStatusMenu(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && !(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null))
+            return;
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType() == Material.AIR)
+            return;
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null || !meta.hasDisplayName() || meta.displayName() == null)
+            return;
+        Component displayName = meta.displayName();
 
-        if (event.getAction() == Action.RIGHT_CLICK_AIR || (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null)) {
-            ItemStack statsItem = player.getInventory().getItemInMainHand();
-            if (statsItem.getType() == Material.BOOK&& statsItem.hasItemMeta() && statsItem.getItemMeta().hasDisplayName()) {
-                if ( LegacyComponentSerializer.legacySection().serialize(Objects.requireNonNull(statsItem.getItemMeta().displayName())).equals("§eAréna választó")) {
-                    ArenaSelectorGui.open(player);
-                }
+        if (item.getType() == Material.BOOK) {
+            assert displayName != null;
+            if ("§eAréna választó".equals(LegacyComponentSerializer.legacySection().serialize(displayName)))
+                ArenaSelectorGui.open(player);
+        }
+
+        if (item.getType() == Material.DARK_OAK_DOOR) {
+            assert displayName != null;
+            if ("§aVárakozó lobby beállítása".equals(LegacyComponentSerializer.legacySection().serialize(displayName))) {
+                String name = SetupManager.getSetupArena(player);
+                Setup.setWaitingLobby(player, name);
+                player.sendMessage("§aVárakozó lobby beállítva! (§2" + name + "§a)");
+            }
+        }
+        if(item.getType()==Material.BARRIER){
+            assert displayName != null;
+            if("§cSetup mód elhagyása".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
+                SetupManager.playerSetupArena.remove(player.getUniqueId());
+                player.getInventory().clear();
+                player.sendMessage("§cKiléptél a setup módból!");
             }
         }
     }
 }
-
-

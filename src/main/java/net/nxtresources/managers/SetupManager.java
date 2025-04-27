@@ -1,69 +1,44 @@
 package net.nxtresources.managers;
 
-import net.nxtresources.Main;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.nxtresources.ItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class SetupManager {
+    public static final Map<UUID, String> playerSetupArena = new HashMap<>();
 
+    public static int startSetup(Player player, String name) {
+        Arena a = ArenaMgr.arCache.get(name);
+        if(a==null)
+            return 1;
+        if(isInSetup(player))
+            return 2;
+        playerSetupArena.put(player.getUniqueId(), name);
 
-    //
-    //ARENA
-    //
-    public void setSpawn(Player player) {
+        //WAITINGLOBBY
+        Component line1 = LegacyComponentSerializer.legacySection().deserialize("§eVálassz ki egy várakozó lobbynak megfelelő helyet,");
+        Component line2 = LegacyComponentSerializer.legacySection().deserialize("§eállj oda majd kattints ezzel az itemmel!");
 
+        ItemStack setwaitinglobby = new ItemBuilder(Material.DARK_OAK_DOOR).setDisplayName("§aVárakozó lobby beállítása").setLore(line1, line2).build();
+        ItemStack leave =new ItemBuilder(Material.BARRIER).setDisplayName("§cSetup mód elhagyása").build();
 
-
+        player.getInventory().clear();
+        player.getInventory().setItem(0, setwaitinglobby);
+        player.getInventory().setItem(8, leave);
+        return 0;
     }
 
-    public void setSheep(Player player) {
-
+    public static String getSetupArena(Player player) {
+        return playerSetupArena.get(player.getUniqueId());
     }
-
-    public static void setWaitingLobby(Player player, String name) {
-        Arena asd =null;
-        for (Arena a : ArenaMgr.arenas) {
-            if (a.name.equalsIgnoreCase(name)) {
-                asd = a; break;
-            }
-        }
-        Location location = player.getLocation();
-        assert asd != null;
-        asd.setWaitingLobby(location);
-        ArenaMgr.saveArena(asd);
-        Main.saveArenaConfig();
-
-    }
-
-    public static void getWaitingLobby(Player player, String name){
-        Arena asd =null;
-        for (Arena a : ArenaMgr.arenas) {
-            if (a.name.equalsIgnoreCase(name)) {
-                asd = a; break;
-            }
-        }
-        assert asd != null;
-        Location location = asd.getWaitingLobby();
-        player.teleportAsync(location).thenAccept(success -> {});
-
-    }
-
-    //
-     //LOBBY
-    //
-    public static void setMainLobby(Player player) {
-        Location location = player.getLocation();
-        Main.locationManager.setLocation(Main.lobbyConfig,"MainLobby", location);
-        Main.saveLobbyConfig();
-
-    }
-
-    public static void getMainLobby(Player player) {
-        FileConfiguration config = Main.lobbyConfig;
-        if (config != null && config.getConfigurationSection("MainLobby") != null) {
-            Location loc = Main.locationManager.getLocation(Main.lobbyConfig,"MainLobby");
-            player.teleport(loc);
-        }
+    public static boolean isInSetup(Player player) {
+        return playerSetupArena.containsKey(player.getUniqueId());
     }
 }
