@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
+import static net.nxtresources.Main.gson;
+
 public class ArenaMgr {
 
     public static Set<Arena> arenas = new HashSet<>();
@@ -33,33 +35,33 @@ public class ArenaMgr {
         return arena;
     }
 //Itt hozzaadjuk az adott jatekost az adott arenahoz: (JoinOrLeave) 0=succ,1=noAr,2=alrInAr,3=arFull, 4=started
-public static int join(String arena, Player player) {
-    if(ArenaMgr.isInArena(player))
-        return 2;
-    Arena a = arCache.get(arena);
-    if(a==null)
-        return 1;
-    if(a.size<a.lobbyPlayers.size())
-        return 3;
-    if(a.stat == ArenaStatus.STARTED)
-        return 4;
+    public static int join(String arena, Player player) {
+        if(ArenaMgr.isInArena(player))
+            return 2;
+        Arena a = arCache.get(arena);
+        if(a==null)
+            return 1;
+        if(a.size<a.lobbyPlayers.size())
+            return 3;
+        if(a.stat == ArenaStatus.STARTED)
+            return 4;
 
-    a.lobbyPlayers.add(player);
-    Setup.getWaitingLobby(player, arena);
-    if(a.size==a.lobbyPlayers.size()) {
-        AtomicInteger aInt = new AtomicInteger(10);
-        a.countdown(()->{
-            int toPr = aInt.getAndDecrement();
-            a.lobbyPlayers.forEach((p->p.sendMessage("Az arena indul ennyi mulva: "+toPr)));
-            if(aInt.get()==0) {//Itt indul az arena.
-                a.stat = ArenaStatus.STARTED;
-                a.start();
-                a.cancelCount();
-            }
-        });
+        a.lobbyPlayers.add(player);
+        Setup.getWaitingLobby(player, arena);
+        if(a.size==a.lobbyPlayers.size()) {
+            AtomicInteger aInt = new AtomicInteger(10);
+            a.countdown(()->{
+                int toPr = aInt.getAndDecrement();
+                a.lobbyPlayers.forEach((p->p.sendMessage("Az arena indul ennyi mulva: "+toPr)));
+                if(aInt.get()==0) {//Itt indul az arena.
+                    a.stat = ArenaStatus.STARTED;
+                    a.start();
+                    a.cancelCount();
+                }
+            });
+        }
+        return 0;
     }
-    return 0;
-}
 
     public static void leave(Player p) {
         for(Arena a : arenas) { //Beepitett if check az alabb definialt func-ban
@@ -105,7 +107,6 @@ public static int join(String arena, Player player) {
         return 1;
     }
 
-    private static final Gson gson = new Gson();
 
     public static void saveArena(Arena arena) {
         String json = gson.toJson(arena);

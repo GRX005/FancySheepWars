@@ -12,9 +12,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import static net.nxtresources.Main.gson;
+
 public class DataManager {
 
-    public static final Gson gson =new Gson();
     public static final Map<UUID, Map<String, Integer>> stats = new HashMap<>();
 
     public static Map<String, Integer> get(Player player) {

@@ -1,5 +1,6 @@
 package net.nxtresources;
 
+import com.google.gson.Gson;
 import net.nxtresources.commands.CMDHandler;
 import net.nxtresources.listeners.DeathEvent;
 import net.nxtresources.listeners.InteractEvent;
@@ -37,6 +38,8 @@ public final class Main extends JavaPlugin {
 
     public static FileConfiguration dataConfig;
     public static File dataFile;
+
+    public static final Gson gson =new Gson();
 
     @Override
     public void onEnable() {

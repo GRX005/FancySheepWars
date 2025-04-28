@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 public class Setup {
 
     private static String lobby;
-    private static final Gson gson = new Gson();
 
 
     //
@@ -48,7 +47,7 @@ public class Setup {
         Location location = asd.getWaitingLobby();
         if(location == null)
             return;
-        player.teleportAsync(location).thenAccept(success -> {});
+        player.teleportAsync(location);
 
     }
 
@@ -71,7 +70,7 @@ public class Setup {
         Location location = getLobby();
         if(location==null)
             return;
-        player.teleportAsync(location).thenAccept(success -> {});
+        player.teleportAsync(location);
     }
 
     public static void setLobby(Location loc) {
