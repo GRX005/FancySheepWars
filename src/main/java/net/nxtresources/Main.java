@@ -8,7 +8,6 @@ import net.nxtresources.listeners.ItemDropEvent;
 import net.nxtresources.listeners.JoinAndQuitEvent;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.DataManager;
-import net.nxtresources.managers.LocationManager;
 import net.nxtresources.managers.Setup;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;

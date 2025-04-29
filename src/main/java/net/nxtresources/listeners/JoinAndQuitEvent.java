@@ -28,7 +28,7 @@ public class JoinAndQuitEvent implements Listener {
         DataManager.save();
     }
 
-    public void addLobbyItems(Player player) {
+    public static void addLobbyItems(Player player) {
 
         ItemStack arenaselector = new ItemBuilder(Material.BOOK).setDisplayName("§eAréna választó").setAmount(1).build();
         player.getInventory().setItem(4, arenaselector);

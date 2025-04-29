@@ -62,11 +62,18 @@ public class CMDHandler implements CommandExecutor {
                         return false;
                     }
                 }
-                Arena arena =ArenaMgr.make(name, size);
-                ArenaMgr.saveArena(arena);
-                Main.saveArenaConfig();
-                sender.sendMessage("aréna létrehozva a következő néven: " + name + " es merettel: " + size);
-                return true;
+                for (Arena a : SetupManager.temporaryArenas) {
+                    if (a.name.equalsIgnoreCase(name)) {
+                        sender.sendMessage("Valaki már setupolja ezt az aréna nevet!");
+                        return false;
+                    }
+                }
+                switch (SetupManager.startSetup(player, name, size, true)) {
+                    case 0 -> sender.sendMessage("§aÉppen beállítod A(z) " + name + " arénát!");
+                    case 1 -> sender.sendMessage("§cNem létezik ilyen aréna!");
+                    case 2 -> sender.sendMessage("§cMár setupolod ezt az arénát!");
+                }
+                return false;
             }
             case "d","delete" ->{
                 if(args.length< 2){
@@ -114,6 +121,7 @@ public class CMDHandler implements CommandExecutor {
                     case 2-> sender.sendMessage("Mar arenaban vagy.");
                     case 3-> sender.sendMessage("Az arena tele.");
                     case 4-> sender.sendMessage("Az arena mar elindult.");
+                    case 5-> sender.sendMessage("Waitinglobby=null");
                 }
                 return false;
 
@@ -139,19 +147,6 @@ public class CMDHandler implements CommandExecutor {
                 sender.sendMessage("MainLobbyra teleportáltál!");
                 return true;
             }
-            case "setup" -> {
-                if(args.length < 2) {
-                    sender.sendMessage("Használat: /sheepwars setup <név>");
-                    return false;
-                }
-                String name = args[1];
-                switch (SetupManager.startSetup(player, name)) {
-                    case 0 -> sender.sendMessage("§aÉppen beállítod A(z) " + name + " arénát!");
-                    case 1 -> sender.sendMessage("§cNem létezik ilyen aréna!");
-                    case 2 -> sender.sendMessage("§cMár setupolod ezt az arénát!");
-                }
-                return false;
-            }
             //TESZT DOLGOK AMIKET MAJD TÖRÖLNI FOGOK
             case "swl","setwaitinglobby" ->{
                 if(args.length <2){
@@ -159,7 +154,7 @@ public class CMDHandler implements CommandExecutor {
                     return false;
                 }
                 String name = args[1];
-                Setup.setWaitingLobby(player, name);
+                Setup.setWaitingLobby(player);
                 return true;
 
             }

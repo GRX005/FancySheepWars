@@ -39,16 +39,26 @@ public class InteractEvent implements Listener {
             assert displayName != null;
             if ("§aVárakozó lobby beállítása".equals(LegacyComponentSerializer.legacySection().serialize(displayName))) {
                 String name = SetupManager.getSetupArena(player);
-                Setup.setWaitingLobby(player, name);
+                Setup.setWaitingLobby(player);
                 player.sendMessage("§aVárakozó lobby beállítva! (§2" + name + "§a)");
+                event.setCancelled(true);
             }
         }
         if(item.getType()==Material.BARRIER){
             assert displayName != null;
             if("§cSetup mód elhagyása".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
-                SetupManager.playerSetupArena.remove(player.getUniqueId());
+                SetupManager.finishSetup(player, false);
                 player.getInventory().clear();
                 player.sendMessage("§cKiléptél a setup módból!");
+                event.setCancelled(true);
+            }
+        }
+        if(item.getType()==Material.EMERALD_BLOCK){
+            assert displayName!=null;
+            if("§aMentés és kilépés a setup módból".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
+                SetupManager.finishSetup(player, true);
+                player.sendMessage("§aAréna sikeresen létrehozva és mentve!");
+                event.setCancelled(true);
             }
         }
     }

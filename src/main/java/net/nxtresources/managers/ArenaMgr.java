@@ -3,6 +3,7 @@ package net.nxtresources.managers;
 import com.google.gson.Gson;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -45,6 +46,9 @@ public class ArenaMgr {
             return 3;
         if(a.stat == ArenaStatus.STARTED)
             return 4;
+        Location lobbyLoc = a.getWaitingLobby();
+        if(lobbyLoc==null || lobbyLoc.getWorld() ==null)
+            return 5;
 
         a.lobbyPlayers.add(player);
         Setup.getWaitingLobby(player, arena);

@@ -23,30 +23,26 @@ public class Setup {
 
     }
 
-    public static void setWaitingLobby(Player player, String name) {
-        Arena asd =null;
-        for (Arena a : ArenaMgr.arenas) {
-            if (a.name.equalsIgnoreCase(name))
-                asd = a; break;
-        }
-        Location location = player.getLocation();
-        assert asd != null;
-        asd.setWaitingLobby(location);
-        ArenaMgr.saveArena(asd);
-        Main.saveArenaConfig();
-
+    public static void setWaitingLobby(Player player) {
+        Location loc = player.getLocation();
+        if(!SetupManager.isInSetup(player))
+            return;
+        TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
+        if(tempData!=null)
+            tempData.waitingLobby = loc;
     }
 
     public static void getWaitingLobby(Player player, String name){
-        Arena asd =null;
+        Arena arena =null;
         for (Arena a : ArenaMgr.arenas) {
-            if (a.name.equalsIgnoreCase(name))
-                asd = a; break;
+            if (a.name.equalsIgnoreCase(name)) {
+                arena = a;
+                break;
+            }
         }
-        assert asd != null;
-        Location location = asd.getWaitingLobby();
-        if(location == null)
+        if(arena == null)
             return;
+        Location location = arena.getWaitingLobby();
         player.teleportAsync(location);
 
     }

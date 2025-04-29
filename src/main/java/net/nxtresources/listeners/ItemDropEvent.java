@@ -13,7 +13,8 @@ public class ItemDropEvent implements Listener {
     String[] nodrop = {
             "§eAréna választó", //this
             "§aVárakozó lobby beállítása", //setup
-            "§cSetup mód elhagyása" //setup
+            "§cSetup mód elhagyása", //setup
+            "§aMentés és kilépés a setup módból" //setup
     };
 
     @EventHandler
