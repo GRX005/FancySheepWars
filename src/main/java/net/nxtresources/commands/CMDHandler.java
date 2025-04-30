@@ -3,7 +3,6 @@ package net.nxtresources.commands;
 import net.nxtresources.Main;
 import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
-import net.nxtresources.managers.Setup;
 import net.nxtresources.managers.SetupManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -138,25 +137,14 @@ public class CMDHandler implements CommandExecutor {
             }
 
             case "setlobby" -> {
-                Setup.setMainLobby(player);
+                SetupManager.setMainLobby(player);
                 sender.sendMessage("MainLobby sikeresen beállítva!");
                 return true;
             }
             case "lobby" -> {
-                Setup.getMainLobby(player);
+                SetupManager.getMainLobby(player);
                 sender.sendMessage("MainLobbyra teleportáltál!");
                 return true;
-            }
-            //TESZT DOLGOK AMIKET MAJD TÖRÖLNI FOGOK
-            case "swl","setwaitinglobby" ->{
-                if(args.length <2){
-                    sender.sendMessage("Használat: /sheepwars setwaitinglobby <név>");
-                    return false;
-                }
-                String name = args[1];
-                Setup.setWaitingLobby(player);
-                return true;
-
             }
 
             case "rl","reload" -> {

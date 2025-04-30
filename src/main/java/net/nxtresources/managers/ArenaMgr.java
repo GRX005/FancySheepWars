@@ -3,14 +3,12 @@ package net.nxtresources.managers;
 import com.google.gson.Gson;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
@@ -51,7 +49,7 @@ public class ArenaMgr {
             return 5;
 
         a.lobbyPlayers.add(player);
-        Setup.getWaitingLobby(player, arena);
+        SetupManager.getWaitingLobby(player, arena);
         if(a.size==a.lobbyPlayers.size()) {
             AtomicInteger aInt = new AtomicInteger(10);
             a.countdown(()->{
@@ -74,7 +72,7 @@ public class ArenaMgr {
                 t.tPlayers.forEach(pl->{
                     if(p==pl) {
                         t.tPlayers.remove(pl);
-                        Setup.getMainLobby(pl);
+                        SetupManager.getMainLobby(pl);
                     }
                 });
             }
@@ -124,6 +122,7 @@ public class ArenaMgr {
         if (config.contains("arenas")) {
             arenas.clear();
             arCache.clear();
+            List<String> loadedArenas = new ArrayList<>();
             for (String key : Objects.requireNonNull(config.getConfigurationSection("arenas")).getKeys(false)) {
                 String json = config.getString("arenas." + key);
                 Arena arena = gson.fromJson(json, Arena.class);
@@ -131,8 +130,13 @@ public class ArenaMgr {
                 arena.teams = new HashSet<>();
                 arenas.add(arena);
                 arCache.put(arena.name, arena);
-                Main.getInstance().getLogger().log(Level.INFO,arena.name + " loaded!");
+                loadedArenas.add(arena.name);
             }
+            if(!loadedArenas.isEmpty())
+                Main.getInstance().getLogger().log(Level.INFO, "Loaded arenas: "+ String.join(", ", loadedArenas));
+            else
+                Main.getInstance().getLogger().log(Level.INFO, "No arenas found!");
+
         }
     }
 

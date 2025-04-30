@@ -2,8 +2,8 @@ package net.nxtresources.listeners;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.nxtresources.managers.Setup;
 import net.nxtresources.managers.SetupManager;
+import net.nxtresources.managers.TemporaryArena;
 import net.nxtresources.menus.ArenaSelectorGui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ public class InteractEvent implements Listener {
             assert displayName != null;
             if ("§aVárakozó lobby beállítása".equals(LegacyComponentSerializer.legacySection().serialize(displayName))) {
                 String name = SetupManager.getSetupArena(player);
-                Setup.setWaitingLobby(player);
+                SetupManager.setWaitingLobby(player);
                 player.sendMessage("§aVárakozó lobby beállítva! (§2" + name + "§a)");
                 event.setCancelled(true);
             }
@@ -58,6 +58,27 @@ public class InteractEvent implements Listener {
             if("§aMentés és kilépés a setup módból".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
                 SetupManager.finishSetup(player, true);
                 player.sendMessage("§aAréna sikeresen létrehozva és mentve!");
+                event.setCancelled(true);
+            }
+        }
+        //TEAMS
+        if(item.getType()==Material.BLUE_WOOL){
+            assert displayName!=null;
+            if("§9§lKÉK §fcsapat".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
+                TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
+                if(tempData !=null)
+                    tempData.teamSpawns.put("BLUE", player.getLocation());
+                player.sendMessage("§9Kék §fcsapat beállítva!");
+                event.setCancelled(true);
+            }
+        }
+        if(item.getType()==Material.RED_WOOL){
+            assert displayName!=null;
+            if("§c§lPIROS §fcsapat".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
+                TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
+                if(tempData !=null)
+                    tempData.teamSpawns.put("RED", player.getLocation());
+                player.sendMessage("§cPiros §fcsapat beállítva!");
                 event.setCancelled(true);
             }
         }

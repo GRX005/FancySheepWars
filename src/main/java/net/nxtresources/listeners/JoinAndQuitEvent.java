@@ -2,7 +2,7 @@ package net.nxtresources.listeners;
 
 import net.nxtresources.ItemBuilder;
 import net.nxtresources.managers.DataManager;
-import net.nxtresources.managers.Setup;
+import net.nxtresources.managers.SetupManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +19,7 @@ public class JoinAndQuitEvent implements Listener {
         DataManager.get(event.getPlayer());
         player.getInventory().clear();
         addLobbyItems(player);
-        Setup.getMainLobby(player);
+        SetupManager.getMainLobby(player);
 
     }
 

@@ -8,15 +8,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Arena {
 
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
+    private final Map<String, String> teamSpawns = new HashMap<>();
 
 
     public String name;
@@ -56,9 +54,16 @@ public class Arena {
         List<Player> copy = new ArrayList<>(lobbyPlayers); // to safely split
         int midpoint = copy.size() / 2;
 
-        teams.add(new Team(new ArrayList<>(copy.subList(0, midpoint)), TeamType.BLUE));
-        teams.add(new Team(new ArrayList<>(copy.subList(midpoint, copy.size())), TeamType.RED));
-
+        List<Player> bluePlayers =new ArrayList<>(copy.subList(0, midpoint));
+        List<Player> redPlayers = new ArrayList<>(copy.subList(midpoint, copy.size()));
+        Team blueTeam = new Team(bluePlayers, TeamType.BLUE);
+        Team redTeam = new Team(redPlayers, TeamType.RED);
+        teams.add(blueTeam);
+        teams.add(redTeam);
+        for(Player player : bluePlayers)
+            player.teleportAsync(getTeamSpawn(TeamType.BLUE));
+        for(Player player : redPlayers)
+            player.teleportAsync(getTeamSpawn(TeamType.RED));
         lobbyPlayers.clear();
     }
 
@@ -77,6 +82,12 @@ public class Arena {
     }
     public Location getWaitingLobby() {
         return LocationManager.get(waitingLobbyLocation);
+    }
+    public void setTeamSpawn(TeamType type, Location loc) {
+        teamSpawns.put(type.name(), LocationManager.set(loc));
+    }
+    public Location getTeamSpawn(TeamType type) {
+        return teamSpawns.get(type.name()) == null ? null : LocationManager.get(teamSpawns.get(type.name()));
     }
 
 }

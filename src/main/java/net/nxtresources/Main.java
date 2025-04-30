@@ -8,7 +8,8 @@ import net.nxtresources.listeners.ItemDropEvent;
 import net.nxtresources.listeners.JoinAndQuitEvent;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.DataManager;
-import net.nxtresources.managers.Setup;
+import net.nxtresources.managers.SetupManager;
+import net.nxtresources.menus.ArenaSelectorGui;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,7 +25,7 @@ import java.util.logging.Level;
 public final class Main extends JavaPlugin {
 
     private static Main plugin;
-    public static Setup setupManager;
+    public static SetupManager setupManager;
 
     public static FileConfiguration arenaConfig;
     public static File arenaFile;
@@ -50,7 +51,7 @@ public final class Main extends JavaPlugin {
         ArenaMgr.mkCache();
         ArenaMgr.loadAllArenas();
         DataManager.load();
-        Setup.loadMainLobby();
+        SetupManager.loadMainLobby();
         // Plugin startup logic
 
     }
@@ -61,7 +62,7 @@ public final class Main extends JavaPlugin {
     }
 
     private void initialize() {
-        setupManager = new Setup();
+        setupManager = new SetupManager();
 
     }
 
