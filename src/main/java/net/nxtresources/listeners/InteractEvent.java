@@ -2,6 +2,7 @@ package net.nxtresources.listeners;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.SetupManager;
 import net.nxtresources.managers.TemporaryArena;
 import net.nxtresources.menus.ArenaSelectorGui;
@@ -46,12 +47,26 @@ public class InteractEvent implements Listener {
         }
         if(item.getType()==Material.BARRIER){
             assert displayName != null;
-            if("§cSetup mód elhagyása".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
-                SetupManager.finishSetup(player, false);
-                player.getInventory().clear();
-                player.sendMessage("§cKiléptél a setup módból!");
-                event.setCancelled(true);
+            switch (LegacyComponentSerializer.legacySection().serialize(displayName)) {
+                case "§eAréna elhagyása" -> {
+                    if(!ArenaMgr.isInArena(player)){
+                        player.sendMessage("Nem vagy arenaban.");
+                        return;
+                    }
+                    player.sendMessage("§cKiléptél az arénából.");
+                    player.getInventory().clear();
+                    JoinAndQuitEvent.addLobbyItems(player);
+                    ArenaMgr.leave(player);
+                }
+                case "§cSetup mód elhagyása" -> {
+                    SetupManager.finishSetup(player, false);
+                    player.getInventory().clear();
+                    player.sendMessage("§cKiléptél a setup módból!");
+                }
+                default -> {
+                }
             }
+            event.setCancelled(true);
         }
         if(item.getType()==Material.EMERALD_BLOCK){
             assert displayName!=null;

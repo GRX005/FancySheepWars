@@ -138,6 +138,7 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(new ItemDropEvent(), this);
         pm.registerEvents(new InteractEvent(), this);
         pm.registerEvents(new DeathEvent(), this);
+        pm.registerEvents(new ArenaSelectorGui(), this);
 
     }
 
