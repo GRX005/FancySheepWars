@@ -11,6 +11,7 @@ import net.nxtresources.managers.DataManager;
 import net.nxtresources.managers.SetupManager;
 import net.nxtresources.menus.ArenaSelectorGui;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -40,10 +41,12 @@ public final class Main extends JavaPlugin {
     public static File dataFile;
 
     public static final Gson gson =new Gson();
+    public static NamespacedKey shKey;
 
     @Override
     public void onEnable() {
         plugin =this;
+        shKey = new NamespacedKey(plugin, "SheepData");
         initialize();
         loadFiles();
         registerCommands();

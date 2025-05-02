@@ -2,6 +2,7 @@ package net.nxtresources.listeners;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.nxtresources.Main;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.SetupManager;
 import net.nxtresources.managers.TemporaryArena;
@@ -14,6 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 public class InteractEvent implements Listener {
 
@@ -26,7 +28,7 @@ public class InteractEvent implements Listener {
         if (item.getType() == Material.AIR)
             return;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null || !meta.hasDisplayName() || meta.displayName() == null)
+        if (meta == null || !meta.hasDisplayName() || meta.displayName() == null)//TODO Retartalt if check, switch, assert remove
             return;
         Component displayName = meta.displayName();
 
