@@ -1,6 +1,5 @@
 package net.nxtresources.listeners;
 
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
 import net.nxtresources.managers.ArenaMgr;
@@ -16,6 +15,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Objects;
 
 public class InteractEvent implements Listener {
 
@@ -89,6 +90,14 @@ public class InteractEvent implements Listener {
                         tempData.teamSpawns.put("RED", player.getLocation());
                     player.sendMessage("§cPiros §fcsapat beállítva!");
                     event.setCancelled(true);
+                }
+            }
+            case PLAYER_HEAD -> {
+                switch (item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING)) {
+                    case "expl" -> {
+                        System.out.println("Expl clicked");
+                    }
+                    case null, default -> {}
                 }
             }
             default -> {
