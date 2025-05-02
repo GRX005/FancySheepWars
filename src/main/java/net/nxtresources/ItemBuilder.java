@@ -3,11 +3,9 @@ package net.nxtresources;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.data.type.Skull;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -16,13 +14,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.io.BufferedInputStream;
 import java.util.Arrays;
 
 public class ItemBuilder {
 
     private final ItemStack is;
     private final ItemMeta im;
+    private SkullMeta sm;
 
     public ItemBuilder(Material m) {
         this.is = new ItemStack(m);
@@ -64,24 +62,26 @@ public class ItemBuilder {
     }*/
 
     public ItemStack build() {
-        is.setItemMeta(this.im);
+        if(sm != null) {
+            is.setItemMeta(sm);
+        } else
+            is.setItemMeta(im);
         return is;
     }
-
+//Lastcall (Ezt utoljara kell callolni a builderben.)
     public ItemBuilder setSkin(String skinData, String skinSig) {
+        sm = (SkullMeta) im;
         if(is.getType() != Material.PLAYER_HEAD)
             throw new RuntimeException("INVALID CALL, YOU CAN ONLY SET SKIN FOR PLAYER HEADS.");
 
-        SkullMeta skMeta = (SkullMeta) im;
         PlayerProfile prof = Bukkit.createProfile("SheepHead");
         prof.setProperty(new ProfileProperty("textures", skinData, skinSig));
-        skMeta.setPlayerProfile(prof);
-        is.setItemMeta(skMeta);
+        sm.setPlayerProfile(prof);
         return this;
     }
 
     public ItemBuilder setPD(String data) {
-        is.editMeta(meta ->meta.getPersistentDataContainer().set(Main.shKey, PersistentDataType.STRING, data));
+        im.getPersistentDataContainer().set(Main.shKey, PersistentDataType.STRING, data);
         return this;
     }
 }

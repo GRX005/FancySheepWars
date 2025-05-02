@@ -28,7 +28,7 @@ public class InteractEvent implements Listener {
         if (item.getType() == Material.AIR)
             return;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null || !meta.hasDisplayName() || meta.displayName() == null)//TODO Retartalt if check, switch, assert remove
+        if (meta == null || !meta.hasDisplayName() || meta.displayName() == null)//TODO Retartalt if check
             return;
         Component displayName = meta.displayName();
 
@@ -97,6 +97,16 @@ public class InteractEvent implements Listener {
                     tempData.teamSpawns.put("RED", player.getLocation());
                 player.sendMessage("§cPiros §fcsapat beállítva!");
                 event.setCancelled(true);
+            }
+        }
+        if(item.getType()==Material.PLAYER_HEAD) {
+            System.out.println("Asd1");
+            System.out.println(item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING));
+            switch (item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING)) {
+                case "expl" -> {
+                    System.out.println("Expl clicked");
+                }
+                case null, default -> {}
             }
         }
     }
