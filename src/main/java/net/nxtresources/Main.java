@@ -1,6 +1,8 @@
 package net.nxtresources;
 
 import com.google.gson.Gson;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.commands.CMDHandler;
 import net.nxtresources.listeners.DeathEvent;
 import net.nxtresources.listeners.InteractEvent;
@@ -96,6 +98,7 @@ public final class Main extends JavaPlugin {
     public void reload() {
         saveConfig();
         reloadConfig();
+        saveMessagesConfig();
         loadFiles();
 
     }
@@ -147,5 +150,9 @@ public final class Main extends JavaPlugin {
 
     public static Main getInstance() {
         return plugin;
+    }
+
+    public static Component translateColorCodes(String str) {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(str);
     }
 }

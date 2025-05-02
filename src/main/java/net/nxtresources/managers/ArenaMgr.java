@@ -1,9 +1,7 @@
 package net.nxtresources.managers;
 
-import com.google.gson.Gson;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;

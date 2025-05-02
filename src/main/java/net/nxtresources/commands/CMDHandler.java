@@ -14,29 +14,42 @@ import java.util.Objects;
 
 public class CMDHandler implements CommandExecutor {
 
+    String prefix = Main.messagesConfig.getString("Prefix");
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String @NotNull [] args) {
         if(!(sender instanceof Player player)) {
             sender.sendMessage("Ingame only!");
             return false;
         }
-//        if(!(sender.hasPermission("fancysheepwars.use"))) {
-//            sender.sendMessage("§cNincs jogosultságod a parancs használatához!");
-//            return false;
-//        }
+        if(!(sender.hasPermission("fancysheepwars.use"))) {
+            sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("No-Permission")).replace("%prefix%", prefix)));
+            return false;
+        }
         if(args.length == 0){
+            if(!(player.hasPermission("fancysheepwars.use"))){
+                sender.sendMessage("Player help: ");
+                sender.sendMessage("/sheepwars join");
+                sender.sendMessage("/sheepwars leave");
+
+            } else {
             sender.sendMessage("fancy sheepwars help: ");
             sender.sendMessage("/sheepwars create <name> ");
             sender.sendMessage("/sheepwars delete <name> ");
             sender.sendMessage("/sheepwars list");
             sender.sendMessage("/sheepwars join <name> ");
             sender.sendMessage("/sheepwars leave ");
+            }
             return false;
         }
         switch (args[0].toLowerCase()) {
             case "c","create" ->{
                 if(args.length< 3){
-                    sender.sendMessage("Használat: /sheepwars create <név> <meret(csak paros)>");
+                    sender.sendMessage(Main.translateColorCodes(
+                            Objects.requireNonNull(Main.messagesConfig.getString("Usage"))
+                                    .replace("%prefix%", prefix)
+                                    .replace("%usage%", "/sheepwars create <name> <size(Pairs only)>")
+                    ));
                     return false;
                 }
                 String name =args[1];
@@ -44,58 +57,62 @@ public class CMDHandler implements CommandExecutor {
                 try {
                     size = Integer.parseInt(args[2]);
                 } catch (NumberFormatException e) {
-                    sender.sendMessage("Szamot adj meg.");
+                    sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.NumberOnly")).replace("%prefix%", prefix)));
                     return false;
                 }
                 if(size%2!=0) {
-                    sender.sendMessage("Csak paros lehet");
+                    sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.ParisOnly")).replace("%prefix%", prefix)));
                     return false;
                 }
                 if(size<1) {
-                    sender.sendMessage("Nem lehet minus");
+                    sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.CanPositive")).replace("%prefix%", prefix)));
                     return false;
                 }
                 for(Arena a : ArenaMgr.arenas) {
                     if(Objects.equals(a.name, name)) {
-                        sender.sendMessage("Mar van arena mely az adott nevre hallgat.");
+                        sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.ItAlreadyExists")).replace("%prefix%", prefix)));
                         return false;
                     }
                 }
                 for (Arena a : SetupManager.temporaryArenas) {
                     if (a.name.equalsIgnoreCase(name)) {
-                        sender.sendMessage("Valaki már setupolja ezt az aréna nevet!");
+                        sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.Setup.AlreadyInProgress")).replace("%prefix%", prefix)));
                         return false;
                     }
                 }
                 switch (SetupManager.startSetup(player, name, size, true)) {
-                    case 0 -> sender.sendMessage("§aÉppen beállítod A(z) " + name + " arénát!");
-                    case 1 -> sender.sendMessage("§cNem létezik ilyen aréna!");
-                    case 2 -> sender.sendMessage("§cMár setupolod ezt az arénát!");
+                    case 0 -> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.Setup.Reloaded")).replace("%arena_name%", name).replace("%prefix%", prefix)));
+                    case 1 -> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.NoSuchArena")).replace("%prefix%", prefix)));
+                    case 2 -> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.Setup.AlreadySettingUp")).replace("%prefix%", prefix)));
                 }
                 return false;
             }
             case "d","delete" ->{
                 if(args.length< 2){
-                    sender.sendMessage("Használat: /sheepwars delete <név>");
+                    sender.sendMessage(Main.translateColorCodes(
+                            Objects.requireNonNull(Main.messagesConfig.getString("Usage"))
+                                    .replace("%prefix%", prefix)
+                                    .replace("%usage%", "/sheepwars delete <name>")
+                    ));
                     return false;
                 }
                 String name =args[1];
                 switch (ArenaMgr.del(name)) {
                     case 0-> {
-                        sender.sendMessage("aréna törölve a következő néven: " + name);
+                        sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.Delete")).replace("%arena_name%", name).replace("%prefix%", prefix)));
                         return true;
                     }
-                    case 1->sender.sendMessage("Nincs ilyen arena");
-                    case 2-> sender.sendMessage("Vannak az arenaban, nem torolheted.");
+                    case 1->sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.NoSuchArena")).replace("%prefix%", prefix)));
+                    case 2-> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.PlayersInside")).replace("%prefix%", prefix)));
                 }
                 return false;
 
 
             }
             case "l","list" -> {
-                sender.sendMessage("§aElérhető arénák: ");
+                sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.Arenas")).replace("%prefix%", prefix)));
                 ArenaMgr.arenas.forEach(a->{
-                    sender.sendMessage("§6Arena neve: §e"+a.name+"§6, merete: §e"+ a.size+"§6, LobbyPlayerek: §e"+a.lobbyPlayers +"§6, status: §e"+ a.stat +"§6 Teamek: ");
+                    sender.sendMessage("§6Arena name: §e"+a.name+"§6, Size: §e"+ a.size+"§6, LobbyPlayers: §e"+a.lobbyPlayers +"§6, Status: §e"+ a.stat +"§6 Teams: ");
                     a.teams.forEach(t->{
                         sender.sendMessage("§a"+t.type+": ");
                         t.tPlayers.forEach(p->sender.sendMessage("§9"+p.toString()));
@@ -106,20 +123,24 @@ public class CMDHandler implements CommandExecutor {
 
             case "join","j" -> {
                 if(args.length <2){
-                    sender.sendMessage("Használat: /sheepwars join <név>");
+                    sender.sendMessage(Main.translateColorCodes(
+                            Objects.requireNonNull(Main.messagesConfig.getString("Usage"))
+                                    .replace("%prefix%", prefix)
+                                    .replace("%usage%", "/sheepwars join <name>")
+                    ));
                     return false;
                 }
                 String name = args[1];
 
                 switch (ArenaMgr.join(name,player)) {
                     case 0-> {
-                        sender.sendMessage("Csatlakoztál a következő arénához: " + name + "!");
+                        sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.Join")).replace("%arena_name%", name).replace("%prefix%", prefix)));
                         return true;
                     }
-                    case 1-> sender.sendMessage("Nem findoltam az arénát.");
-                    case 2-> sender.sendMessage("Mar arenaban vagy.");
-                    case 3-> sender.sendMessage("Az arena tele.");
-                    case 4-> sender.sendMessage("Az arena mar elindult.");
+                    case 1-> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.NoSuchArena")).replace("%prefix%", prefix)));
+                    case 2-> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.AlreadyInArena")).replace("%prefix%", prefix)));
+                    case 3-> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.ArenaIsFull")).replace("%prefix%", prefix)));
+                    case 4-> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.ArenaStarted")).replace("%prefix%", prefix)));
                     case 5-> sender.sendMessage("Waitinglobby=null");
                 }
                 return false;
@@ -127,42 +148,42 @@ public class CMDHandler implements CommandExecutor {
             }
             case "leave","le" -> {
                 if(!ArenaMgr.isInArena(player)) {
-                    sender.sendMessage("Nem vagy arenaban.");
+                    sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.NotInAnArena")).replace("%prefix%", prefix)));
                     return false;
                 }
                 ArenaMgr.leave(player);
-                sender.sendMessage("Kiléptél az arénából!");
+                sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Arena.Leave")).replace("%prefix%", prefix)));
                 return true;
 
             }
 
             case "setlobby" -> {
                 SetupManager.setMainLobby(player);
-                sender.sendMessage("MainLobby sikeresen beállítva!");
+                sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("SetMainLobby")).replace("%prefix%", prefix)));
                 return true;
             }
             case "lobby" -> {
                 SetupManager.getMainLobby(player);
-                sender.sendMessage("MainLobbyra teleportáltál!");
+                sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("GetMainLobby")).replace("%prefix%", prefix)));
                 return true;
             }
 
             case "rl","reload" -> {
                 if (!sender.hasPermission("sheepwars.*") && !sender.hasPermission("sheepwars.reload")) {
-                    sender.sendMessage("Nincs jogod ehhez!");
+                    sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("No-Permission")).replace("%prefix%", prefix)));
                     return false;
                 }
                 if(args.length < 2) {
-                    sender.sendMessage("Plugin újratöltése folyamatban...");
+                    sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Reloading")).replace("%prefix%", prefix)));
                     long started = System.currentTimeMillis();
                     Main.getInstance().reload();
                     long endTime = System.currentTimeMillis();
                     long completed = endTime - started;
-                    sender.sendMessage("§aPlugin sikeresen újratöltve! §2(§a" + completed + " ms§2)");
+                    sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Reloaded")).replace("%ms%", completed + "").replace("%prefix%", prefix)));
                     return true;
                 }
             }
-            default -> sender.sendMessage("Érvénytelen argumentum!");
+            default -> sender.sendMessage(Main.translateColorCodes(Objects.requireNonNull(Main.messagesConfig.getString("Invalid-argument")).replace("%prefix%", prefix)));
         }
         return false;
     }
