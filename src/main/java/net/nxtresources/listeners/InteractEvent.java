@@ -22,91 +22,76 @@ public class InteractEvent implements Listener {
     @EventHandler
     public void openStatusMenu(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && !(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null))
-            return;
+        Action action = event.getAction();
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType() == Material.AIR)
-            return;
         ItemMeta meta = item.getItemMeta();
-        if (meta == null || !meta.hasDisplayName() || meta.displayName() == null)//TODO Retartalt if check
-            return;
-        Component displayName = meta.displayName();
 
-        if (item.getType() == Material.BOOK) {
-            assert displayName != null;
-            if ("§eAréna választó".equals(LegacyComponentSerializer.legacySection().serialize(displayName)))
-                ArenaSelectorGui.open(player);
-        }
+        if(!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
+        if (item.getType() == Material.AIR) return;
+        if(meta ==null || !meta.hasDisplayName()) return;
 
-        if (item.getType() == Material.DARK_OAK_DOOR) {
-            assert displayName != null;
-            if ("§aVárakozó lobby beállítása".equals(LegacyComponentSerializer.legacySection().serialize(displayName))) {
-                String name = SetupManager.getSetupArena(player);
-                SetupManager.setWaitingLobby(player);
-                player.sendMessage("§aVárakozó lobby beállítva! (§2" + name + "§a)");
-                event.setCancelled(true);
+        String displayName = LegacyComponentSerializer.legacySection().serialize(Objects.requireNonNull(meta.displayName()));
+
+        switch (item.getType()) {
+            case BOOK -> {
+                if (displayName.equals("§eAréna választó")) {
+                    ArenaSelectorGui.open(player);
+                }
             }
-        }
-        if(item.getType()==Material.BARRIER){
-            assert displayName != null;
-            switch (LegacyComponentSerializer.legacySection().serialize(displayName)) {
-                case "§eAréna elhagyása" -> {
-                    if(!ArenaMgr.isInArena(player)){
-                        player.sendMessage("Nem vagy arenaban.");
-                        return;
+            case DARK_OAK_DOOR -> {
+                if (displayName.equals("§aVárakozó lobby beállítása")) {
+                    String name = SetupManager.getSetupArena(player);
+                    SetupManager.setWaitingLobby(player);
+                    player.sendMessage("§aVárakozó lobby beállítva! (§2" + name + "§a)");
+                    event.setCancelled(true);
+                }
+            }
+            case BARRIER -> {
+                switch (displayName) {
+                    case "§eAréna elhagyása" -> {
+                        if (!ArenaMgr.isInArena(player)) {
+                            player.sendMessage("Nem vagy arenaban.");
+                            return;
+                        }
+                        player.sendMessage("§cKiléptél az arénából.");
+                        player.getInventory().clear();
+                        JoinAndQuitEvent.addLobbyItems(player);
+                        ArenaMgr.leave(player);
                     }
-                    player.sendMessage("§cKiléptél az arénából.");
-                    player.getInventory().clear();
-                    JoinAndQuitEvent.addLobbyItems(player);
-                    ArenaMgr.leave(player);
+                    case "§cSetup mód elhagyása" -> {
+                        SetupManager.finishSetup(player, false);
+                        player.getInventory().clear();
+                        player.sendMessage("§cKiléptél a setup módból!");
+                    }
                 }
-                case "§cSetup mód elhagyása" -> {
-                    SetupManager.finishSetup(player, false);
-                    player.getInventory().clear();
-                    player.sendMessage("§cKiléptél a setup módból!");
-                }
-                default -> {
-                }
-            }
-            event.setCancelled(true);
-        }
-        if(item.getType()==Material.EMERALD_BLOCK){
-            assert displayName!=null;
-            if("§aMentés és kilépés a setup módból".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
-                SetupManager.finishSetup(player, true);
-                player.sendMessage("§aAréna sikeresen létrehozva és mentve!");
                 event.setCancelled(true);
             }
-        }
-        //TEAMS
-        if(item.getType()==Material.BLUE_WOOL){
-            assert displayName!=null;
-            if("§9§lKÉK §fcsapat".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
-                TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
-                if(tempData !=null)
-                    tempData.teamSpawns.put("BLUE", player.getLocation());
-                player.sendMessage("§9Kék §fcsapat beállítva!");
-                event.setCancelled(true);
-            }
-        }
-        if(item.getType()==Material.RED_WOOL){
-            assert displayName!=null;
-            if("§c§lPIROS §fcsapat".equals(LegacyComponentSerializer.legacySection().serialize(displayName))){
-                TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
-                if(tempData !=null)
-                    tempData.teamSpawns.put("RED", player.getLocation());
-                player.sendMessage("§cPiros §fcsapat beállítva!");
-                event.setCancelled(true);
-            }
-        }
-        if(item.getType()==Material.PLAYER_HEAD) {
-            System.out.println("Asd1");
-            System.out.println(item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING));
-            switch (item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING)) {
-                case "expl" -> {
-                    System.out.println("Expl clicked");
+            case EMERALD_BLOCK -> {
+                if (displayName.equals("§aMentés és kilépés a setup módból")) {
+                    SetupManager.finishSetup(player, true);
+                    player.sendMessage("§aAréna sikeresen létrehozva és mentve!");
+                    event.setCancelled(true);
                 }
-                case null, default -> {}
+            }
+            case BLUE_WOOL -> {
+                if (displayName.equals("§9§lKÉK §fcsapat")) {
+                    TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
+                    if (tempData != null)
+                        tempData.teamSpawns.put("BLUE", player.getLocation());
+                    player.sendMessage("§9Kék §fcsapat beállítva!");
+                    event.setCancelled(true);
+                }
+            }
+            case RED_WOOL -> {
+                if (displayName.equals("§c§lPIROS §fcsapat")) {
+                    TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
+                    if (tempData != null)
+                        tempData.teamSpawns.put("RED", player.getLocation());
+                    player.sendMessage("§cPiros §fcsapat beállítva!");
+                    event.setCancelled(true);
+                }
+            }
+            default -> {
             }
         }
     }
