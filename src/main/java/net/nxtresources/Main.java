@@ -7,6 +7,7 @@ import net.nxtresources.commands.CMDHandler;
 import net.nxtresources.listeners.*;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.DataManager;
+import net.nxtresources.managers.MsgCache;
 import net.nxtresources.managers.SetupManager;
 import net.nxtresources.menus.ArenaSelectorGui;
 import org.bukkit.Bukkit;
@@ -54,6 +55,7 @@ public final class Main extends JavaPlugin {
         ArenaMgr.loadAllArenas();
         DataManager.load();
         SetupManager.loadMainLobby();
+        MsgCache.load();
         // Plugin startup logic
 
     }
@@ -97,6 +99,8 @@ public final class Main extends JavaPlugin {
         reloadConfig();
         saveMessagesConfig();
         loadFiles();
+        MsgCache.load();
+
 
     }
 
