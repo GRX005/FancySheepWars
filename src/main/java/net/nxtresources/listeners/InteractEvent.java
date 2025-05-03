@@ -4,6 +4,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.SetupManager;
+import net.nxtresources.managers.SheepMgr;
 import net.nxtresources.managers.TemporaryArena;
 import net.nxtresources.menus.ArenaSelectorGui;
 import org.bukkit.Material;
@@ -95,7 +96,7 @@ public class InteractEvent implements Listener {
             case PLAYER_HEAD -> {
                 switch (item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING)) {
                     case "expl" -> {
-                        System.out.println("Expl clicked");
+                        SheepMgr.shootSheep(player.getLocation(), player);
                     }
                     case null, default -> {}
                 }

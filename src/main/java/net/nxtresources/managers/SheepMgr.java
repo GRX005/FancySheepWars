@@ -1,9 +1,17 @@
 package net.nxtresources.managers;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.nxtresources.ItemBuilder;
-import org.bukkit.Material;
+import net.nxtresources.Main;
+import org.bukkit.*;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Collection;
 
 public class SheepMgr {
 
@@ -15,6 +23,32 @@ public class SheepMgr {
                 .build();
         p.getInventory().addItem(sheep);
 
+    }
+
+    public static void shootSheep(Location loc, Player p) {
+        loc.getWorld().spawn(loc.add(loc.getDirection().normalize().multiply(1.5)), Sheep.class, sh -> {
+            sh.setColor(DyeColor.RED);
+            sh.customName(Component.text("Explosive Sheep", NamedTextColor.RED));
+            sh.setCustomNameVisible(true); //Name visible all the time, not just when entity in aim
+            Bukkit.getMobGoals().removeAllGoals(sh); //Instead of setAI false, so it can still move but it won't
+            sh.setGravity(false);
+            var dir = loc.getDirection().normalize();
+            final var sp = 1.0;
+            final var nmsSh = ((CraftEntity) sh).getHandle(); //We check block collisions via NMS
+            Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
+                if(sh.isDead() || !sh.isValid()) {
+                    task.cancel();
+                }
+                Collection<Entity> hits = loc.getWorld().getNearbyEntities(sh.getBoundingBox()); //Get entity collisions
+                if(nmsSh.horizontalCollision || nmsSh.verticalCollision || hits.size() != 1 && !hits.contains(p)) {
+                    sh.remove();
+                    sh.getLocation().createExplosion(1.5F);
+                    //loc.getWorld().spawnParticle(Particle.EXPLOSION, sh.getLocation(), 1);
+                    task.cancel();
+                }
+                sh.setVelocity(dir.multiply(sp));
+            },0L, 1L);
+        });
     }
 
 }
