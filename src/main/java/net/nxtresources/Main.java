@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.commands.CMDHandler;
-import net.nxtresources.listeners.DeathEvent;
-import net.nxtresources.listeners.InteractEvent;
-import net.nxtresources.listeners.ItemDropEvent;
-import net.nxtresources.listeners.JoinAndQuitEvent;
+import net.nxtresources.listeners.*;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.DataManager;
 import net.nxtresources.managers.SetupManager;
@@ -145,6 +142,7 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(new InteractEvent(), this);
         pm.registerEvents(new DeathEvent(), this);
         pm.registerEvents(new ArenaSelectorGui(), this);
+        pm.registerEvents(new ExplodeEvent(), this);
 
     }
 

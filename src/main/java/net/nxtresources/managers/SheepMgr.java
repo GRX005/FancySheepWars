@@ -26,7 +26,8 @@ public class SheepMgr {
     }
 
     public static void shootSheep(Location loc, Player p) {
-        loc.getWorld().spawn(loc.add(loc.getDirection().normalize().multiply(1.5)), Sheep.class, sh -> {
+        final World world = loc.getWorld();
+        world.spawn(loc.add(loc.getDirection().normalize().multiply(1.5)), Sheep.class, sh -> {
             sh.setColor(DyeColor.RED);
             sh.customName(Component.text("Explosive Sheep", NamedTextColor.RED));
             sh.setCustomNameVisible(true); //Name visible all the time, not just when entity in aim
@@ -36,14 +37,21 @@ public class SheepMgr {
             final var sp = 1.0;
             final var nmsSh = ((CraftEntity) sh).getHandle(); //We check block collisions via NMS
             Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
-                if(sh.isDead() || !sh.isValid()) {
+                if(sh.isDead() || !sh.isValid())
                     task.cancel();
-                }
-                Collection<Entity> hits = loc.getWorld().getNearbyEntities(sh.getBoundingBox()); //Get entity collisions
+                Collection<Entity> hits = world.getNearbyEntities(sh.getBoundingBox()); //Get entity collisions
                 if(nmsSh.horizontalCollision || nmsSh.verticalCollision || hits.size() != 1 && !hits.contains(p)) {
                     sh.remove();
-                    sh.getLocation().createExplosion(1.5F);
-                    //loc.getWorld().spawnParticle(Particle.EXPLOSION, sh.getLocation(), 1);
+//                    int blockRadius = 3;
+//                    // Manually break blocks in a sphere without visual effects
+//                    for (int x = -blockRadius; x <= blockRadius; x++)
+//                        for (int y = -blockRadius; y <= blockRadius; y++)
+//                            for (int z = -blockRadius; z <= blockRadius; z++)
+//                                if (x*x + y*y + z*z <= blockRadius * blockRadius)
+//                                    world.getBlockAt(sh.getLocation().clone().add(x, y, z)).breakNaturally(false);
+                    sh.getLocation().createExplosion(sh,3F, false);
+                    world.spawnParticle(Particle.EXPLOSION, sh.getLocation(), 1);
+                    world.playSound(sh.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 4F,0.7F); //In MC pitch is random betw: 0.56-0.84
                     task.cancel();
                 }
                 sh.setVelocity(dir.multiply(sp));
