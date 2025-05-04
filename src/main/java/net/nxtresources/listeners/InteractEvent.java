@@ -7,6 +7,7 @@ import net.nxtresources.managers.SetupManager;
 import net.nxtresources.managers.SheepMgr;
 import net.nxtresources.managers.TemporaryArena;
 import net.nxtresources.menus.ArenaSelectorGui;
+import net.nxtresources.sheeps.ExplSheep;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -95,9 +96,7 @@ public class InteractEvent implements Listener {
             }
             case PLAYER_HEAD -> {
                 switch (item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING)) {
-                    case "expl" -> {
-                        SheepMgr.shootSheep(player.getLocation(), player);
-                    }
+                    case "expl" -> SheepMgr.shootSheep(new ExplSheep(),player);
                     case null, default -> {}
                 }
             }
