@@ -24,7 +24,7 @@ public class CMDHandler implements CommandExecutor {
             return false;
         }
         if(!(sender.hasPermission("fancysheepwars.use"))) {
-            sender.sendMessage(Main.translateColorCodes(
+            sender.sendMessage(Main.color(
                     MsgCache.get("No-Permission").replace("%prefix%", prefix)
             ));
             return false;
@@ -48,7 +48,7 @@ public class CMDHandler implements CommandExecutor {
         switch (args[0].toLowerCase()) {
             case "c","create" ->{
                 if(args.length< 3){
-                    sender.sendMessage(MsgCache.getMsg("Usage", null, "/sheepwars create <name> <size(Pairs only)>", null));
+                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%", "/sheepwars create <name> <size(Pairs only)>")));
                     return false;
                 }
                 String name =args[1];
@@ -56,56 +56,54 @@ public class CMDHandler implements CommandExecutor {
                 try {
                     size = Integer.parseInt(args[2]);
                 } catch (NumberFormatException e) {
-                    sender.sendMessage(MsgCache.getMsg("Arena.NumberOnly"));
+                    sender.sendMessage(Main.color(MsgCache.get("Arena.NumberOnly")));
                     return false;
                 }
                 if(size%2!=0) {
-                    sender.sendMessage(MsgCache.getMsg("Arena.ParisOnly"));
+                    sender.sendMessage(Main.color(MsgCache.get("Arena.ParisOnly")));
                     return false;
                 }
                 if(size<1) {
-                    sender.sendMessage(MsgCache.getMsg("Arena.CanPositive"));
+                    sender.sendMessage(Main.color(MsgCache.get("Arena.CanPositive")));
                     return false;
                 }
                 for(Arena a : ArenaMgr.arenas) {
                     if(Objects.equals(a.name, name)) {
-                        sender.sendMessage(MsgCache.getMsg("Arena.ItAlreadyExists"));
+                        sender.sendMessage(Main.color(MsgCache.get("Arena.ItAlreadyExists")));
                         return false;
                     }
                 }
                 for (Arena a : SetupManager.temporaryArenas) {
                     if (a.name.equalsIgnoreCase(name)) {
-                        sender.sendMessage(MsgCache.getMsg("Arena.Setup.AlreadyInProgress"));
+                        sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadyInProgress")));
                         return false;
                     }
                 }
                 switch (SetupManager.startSetup(player, name, size, true)) {
-                    case 0 -> sender.sendMessage(MsgCache.getMsg("Arena.Create", name, null, null));
-                    case 1 -> sender.sendMessage(MsgCache.getMsg("Arena.NoSuchArena"));
-                    case 2 -> sender.sendMessage(MsgCache.getMsg("Arena.Setup.AlreadySettingUp"));
+                    case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Create").replace("%arena_name%", name)));
+                    case 1 -> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
+                    case 2 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadySettingUp")));
                 }
                 return false;
             }
             case "d","delete" ->{
                 if(args.length< 2){
-                    sender.sendMessage(MsgCache.getMsg("Usage", null, "/sheepwars delete <name>",null));
+                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%", "/sheepwars delete <name>")));
                     return false;
                 }
                 String name =args[1];
                 switch (ArenaMgr.del(name)) {
                     case 0-> {
-                        sender.sendMessage(MsgCache.getMsg("Arena.Delete", "%arena_name%", name, null));
+                        sender.sendMessage(Main.color(MsgCache.get("Arena.Delete").replace("%arena_name%", name)));
                         return true;
                     }
-                    case 1-> sender.sendMessage(MsgCache.getMsg("Arena.NoSuchArena"));
-                    case 2-> sender.sendMessage(MsgCache.getMsg("Arena.PlayersInside"));
+                    case 1-> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
+                    case 2-> sender.sendMessage(Main.color(MsgCache.get("Arena.PlayersInside")));
                 }
                 return false;
-
-
             }
             case "l","list" -> {
-                sender.sendMessage(MsgCache.getMsg("Arena.Arenas"));
+                sender.sendMessage(Main.color(MsgCache.get("Arena.Arenas")));
                 ArenaMgr.arenas.forEach(a->{
                     sender.sendMessage("§6Arena name: §e"+a.name+"§6, Size: §e"+ a.size+"§6, LobbyPlayers: §e"+a.lobbyPlayers +"§6, Status: §e"+ a.stat +"§6 Teams: ");
                     a.teams.forEach(t->{
@@ -118,20 +116,20 @@ public class CMDHandler implements CommandExecutor {
 
             case "join","j" -> {
                 if(args.length <2){
-                    sender.sendMessage(MsgCache.getMsg("Usage", null, "/sheepwars join <name>", null));
+                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%","/sheepwars join <name>")));
                     return false;
                 }
                 String name = args[1];
 
                 switch (ArenaMgr.join(name,player)) {
                     case 0-> {
-                        sender.sendMessage(MsgCache.getMsg("Arena.Join", name, null, null));
+                        sender.sendMessage(Main.color(MsgCache.get("Arena.Join").replace("%arena_name%", name)));
                         return true;
                     }
-                    case 1-> sender.sendMessage(MsgCache.getMsg("Arena.NoSuchArena"));
-                    case 2-> sender.sendMessage(MsgCache.getMsg("Arena.AlreadyInArena"));
-                    case 3-> sender.sendMessage(MsgCache.getMsg("Arena.ArenaIsFull"));
-                    case 4-> sender.sendMessage(MsgCache.getMsg("Arena.ArenaStarted"));
+                    case 1-> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
+                    case 2-> sender.sendMessage(Main.color(MsgCache.get("Arena.AlreadyInArena")));
+                    case 3-> sender.sendMessage(Main.color(MsgCache.get("Arena.ArenaIsFull")));
+                    case 4-> sender.sendMessage(Main.color(MsgCache.get("Arena.ArenaStarted")));
                     case 5-> sender.sendMessage("Waitinglobby=null");
                 }
                 return false;
@@ -139,42 +137,42 @@ public class CMDHandler implements CommandExecutor {
             }
             case "leave","le" -> {
                 if(!ArenaMgr.isInArena(player)) {
-                    sender.sendMessage(MsgCache.getMsg("Arena.NotInAnArena"));
+                    sender.sendMessage(Main.color(MsgCache.get("Arena.NotInAnArena")));
                     return false;
                 }
                 ArenaMgr.leave(player);
-                sender.sendMessage(MsgCache.getMsg("Arena.Leave"));
+                sender.sendMessage(Main.color(MsgCache.get("Arena.Leave")));
                 return true;
 
             }
 
             case "setlobby" -> {
                 SetupManager.setMainLobby(player);
-                sender.sendMessage(MsgCache.getMsg("SetMainLobby"));
+                sender.sendMessage(Main.color(MsgCache.get("SetMainLobby")));
                 return true;
             }
             case "lobby" -> {
                 SetupManager.getMainLobby(player);
-                sender.sendMessage(MsgCache.getMsg("GetMainLobby"));
+                sender.sendMessage(Main.color(MsgCache.get("GetMainLobby")));
                 return true;
             }
 
             case "rl","reload" -> {
                 if (!sender.hasPermission("sheepwars.*") && !sender.hasPermission("sheepwars.reload")) {
-                    sender.sendMessage(MsgCache.getMsg("No-Permission"));
+                    sender.sendMessage(Main.color(MsgCache.get("No-Permission")));
                     return false;
                 }
                 if(args.length < 2) {
-                    sender.sendMessage(MsgCache.getMsg("Reloading"));
+                    sender.sendMessage(Main.color(MsgCache.get("Reloading")));
                     long started = System.currentTimeMillis();
                     Main.getInstance().reload();
                     long endTime = System.currentTimeMillis();
                     long completed = endTime - started;
-                    sender.sendMessage(MsgCache.getMsg("Reloaded", null, String.valueOf(completed), "%ms%"));
+                    sender.sendMessage(Main.color(MsgCache.get("Reloaded").replace("%ms%", String.valueOf(completed))));
                     return true;
                 }
             }
-            default -> sender.sendMessage(MsgCache.getMsg("Invalid-argument"));
+            default -> sender.sendMessage(Main.color(MsgCache.get("Invalid-argument")));
         }
         return false;
     }

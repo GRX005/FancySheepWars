@@ -154,7 +154,7 @@ public final class Main extends JavaPlugin {
         return plugin;
     }
 
-    public static Component translateColorCodes(String str) {
+    public static Component color(String str) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(str);
     }
 }
