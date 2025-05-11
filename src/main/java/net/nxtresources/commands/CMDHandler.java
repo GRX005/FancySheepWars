@@ -48,7 +48,7 @@ public class CMDHandler implements CommandExecutor {
         switch (args[0].toLowerCase()) {
             case "c","create" ->{
                 if(args.length< 3){
-                    sender.sendMessage(MsgCache.getMsg("Usage", "%usage%", "/sheepwars create <name> <size(Pairs only)>"));
+                    sender.sendMessage(MsgCache.getMsg("Usage", null, "/sheepwars create <name> <size(Pairs only)>", null));
                     return false;
                 }
                 String name =args[1];
@@ -80,7 +80,7 @@ public class CMDHandler implements CommandExecutor {
                     }
                 }
                 switch (SetupManager.startSetup(player, name, size, true)) {
-                    case 0 -> sender.sendMessage(MsgCache.getMsg("Arena.Create", "%arena_name%", name));
+                    case 0 -> sender.sendMessage(MsgCache.getMsg("Arena.Create", name, null, null));
                     case 1 -> sender.sendMessage(MsgCache.getMsg("Arena.NoSuchArena"));
                     case 2 -> sender.sendMessage(MsgCache.getMsg("Arena.Setup.AlreadySettingUp"));
                 }
@@ -88,13 +88,13 @@ public class CMDHandler implements CommandExecutor {
             }
             case "d","delete" ->{
                 if(args.length< 2){
-                    sender.sendMessage(MsgCache.getMsg("Usage", "%usage%", "/sheepwars delete <name>"));
+                    sender.sendMessage(MsgCache.getMsg("Usage", null, "/sheepwars delete <name>",null));
                     return false;
                 }
                 String name =args[1];
                 switch (ArenaMgr.del(name)) {
                     case 0-> {
-                        sender.sendMessage(MsgCache.getMsg("Arena.Delete", "%arena_name%", name));
+                        sender.sendMessage(MsgCache.getMsg("Arena.Delete", "%arena_name%", name, null));
                         return true;
                     }
                     case 1-> sender.sendMessage(MsgCache.getMsg("Arena.NoSuchArena"));
@@ -118,14 +118,14 @@ public class CMDHandler implements CommandExecutor {
 
             case "join","j" -> {
                 if(args.length <2){
-                    sender.sendMessage(MsgCache.getMsg("Usage", "%usage%", "/sheepwars join <name>"));
+                    sender.sendMessage(MsgCache.getMsg("Usage", null, "/sheepwars join <name>", null));
                     return false;
                 }
                 String name = args[1];
 
                 switch (ArenaMgr.join(name,player)) {
                     case 0-> {
-                        sender.sendMessage(MsgCache.getMsg("Arena.Join", "%arena_name%", name));
+                        sender.sendMessage(MsgCache.getMsg("Arena.Join", name, null, null));
                         return true;
                     }
                     case 1-> sender.sendMessage(MsgCache.getMsg("Arena.NoSuchArena"));
@@ -170,7 +170,7 @@ public class CMDHandler implements CommandExecutor {
                     Main.getInstance().reload();
                     long endTime = System.currentTimeMillis();
                     long completed = endTime - started;
-                    sender.sendMessage(MsgCache.getMsg("Reloaded", "%ms%", String.valueOf(completed)));
+                    sender.sendMessage(MsgCache.getMsg("Reloaded", null, String.valueOf(completed), "%ms%"));
                     return true;
                 }
             }

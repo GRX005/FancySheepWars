@@ -12,9 +12,15 @@ public class MsgCache {
 
     public static void load(){
         msg.clear();
+        String prefix = Objects.requireNonNullElse(Main.messagesConfig.getString("Prefix"), "");
         for (String key : Main.messagesConfig.getKeys(true)) {
-            if (Main.messagesConfig.isString(key))
-                msg.put(key, Main.messagesConfig.getString(key));
+            if (Main.messagesConfig.isString(key)) {
+                String msgStr = Main.messagesConfig.getString(key);
+                if(msgStr!=null){
+                    msgStr = msgStr.replace("%prefix%", prefix);
+                    msg.put(key, msgStr);
+                }
+            }
         }
     }
 
@@ -22,11 +28,15 @@ public class MsgCache {
         return msg.getOrDefault(key, "ERR: Not found: " + key);
     }
 
-    public static Component getMsg(String key, String... placeholders) {
-        String message = get(key);
-        message = message.replace("%prefix%", Objects.requireNonNull(Main.messagesConfig.getString("Prefix")));
-        for (int i = 0; i < placeholders.length - 1; i += 2)
-            message = message.replace(placeholders[i], placeholders[i + 1]);
-        return Main.translateColorCodes(message);
+    public static Component getMsg(String key) {
+        return Main.translateColorCodes(get(key));
+    }
+
+    public static Component getMsg(String key, String arena, String usage, String ms) {
+        String msg = get(key);
+                if(arena!=null)msg=msg.replace("%arena_name%", arena);
+                if(ms!=null)msg=msg.replace("%ms%", ms);
+                if(usage!=null)msg=msg.replace("%usage%", usage);
+        return Main.translateColorCodes(msg);
     }
 }
