@@ -1,7 +1,7 @@
 package net.nxtresources.listeners;
 
 import net.nxtresources.managers.ArenaMgr;
-import net.nxtresources.managers.DataManager;
+import net.nxtresources.managers.DataMgr;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,12 +13,12 @@ public class DeathEvent implements Listener {
     public void onDeath(PlayerDeathEvent event){
         Player vic = event.getEntity();
         Player killer =vic.getKiller();
-        DataManager.get(vic);
-        DataManager.addDeath(vic);
+        DataMgr.get(vic);
+        DataMgr.addDeath(vic);
         if(!ArenaMgr.isInArena(vic))
             return;
         if(killer!=null && killer!= vic)
-            DataManager.addKill(killer);
+            DataMgr.addKill(killer);
 
     }
 }

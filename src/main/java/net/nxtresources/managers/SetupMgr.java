@@ -5,15 +5,16 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.ItemBuilder;
 import net.nxtresources.Main;
 import net.nxtresources.enums.TeamType;
-import net.nxtresources.listeners.JoinAndQuitEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class SetupManager {
+public class SetupMgr {
     public static final Map<UUID, String> playerSetupArena = new HashMap<>();
     public static final Set<Arena> temporaryArenas = new HashSet<>();
     public static final Map<UUID, TemporaryArena> tempdata = new HashMap<>();
@@ -40,11 +41,7 @@ public class SetupManager {
             tempdata.put(player.getUniqueId(), new TemporaryArena(name, size));
         }
         playerSetupArena.put(player.getUniqueId(), name);
-
-        player.getInventory().clear();
-        player.getInventory().setItem(0, setwaitinglobby);
-        player.getInventory().setItem(7, saveAndExit);
-        player.getInventory().setItem(8, leave);
+        ItemMgr.setupItems(player);
         return 0;
     }
 
@@ -64,10 +61,22 @@ public class SetupManager {
             ArenaMgr.arCache.put(arena.name, arena);
             ArenaMgr.saveArena(arena);
             player.getInventory().clear();
-            JoinAndQuitEvent.addLobbyItems(player);
+            ItemMgr.lobbyItems(player);
+            //copy world
+            //World world = Bukkit.getWorld(name); TODO: kiirtani a barmokat
+            World world =player.getWorld();
+            Bukkit.broadcast(Component.text("World '" + name + "' is not loaded!1"));
+            world.save();
+            String w = world.getName();
+            WorldMgr.copy(w, w + "_copy");
+            Bukkit.broadcast(Component.text("World '" + name + "' is not loaded!2"));
+            WorldMgr.load(w);
+            Bukkit.broadcast(Component.text("World '" + name + "' is not loaded!3"));
+
+
         } else{
             player.getInventory().clear();
-            JoinAndQuitEvent.addLobbyItems(player);
+            ItemMgr.lobbyItems(player);
             temporaryArenas.removeIf(a -> a.name.equals(name));
         }
     }
@@ -89,9 +98,9 @@ public class SetupManager {
         Location loc = player.getLocation();
         ItemStack blue = new ItemBuilder(Material.BLUE_WOOL).setDisplayName("§9§lKÉK §fcsapat").setLore(SUBTline).build();
         ItemStack red = new ItemBuilder(Material.RED_WOOL).setDisplayName("§c§lPIROS §fcsapat").setLore(SUBTline).build();
-        if(!SetupManager.isInSetup(player))
+        if(!SetupMgr.isInSetup(player))
             return;
-        TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
+        TemporaryArena tempData = SetupMgr.tempdata.get(player.getUniqueId());
         if(tempData!=null) {
             player.getInventory().clear();
             player.getInventory().setItem(0, red);
@@ -124,11 +133,11 @@ public class SetupManager {
 
     public static void loadMainLobby(){
         if(Main.lobbyConfig.contains("lobby"))
-            lobby = String.valueOf(LocationManager.get(Main.lobbyConfig.getString("lobby")));
+            lobby = String.valueOf(LocationMgr.get(Main.lobbyConfig.getString("lobby")));
     }
     public static void setMainLobby(Player player) {
         Location location = player.getLocation();
-        Main.lobbyConfig.set("lobby", LocationManager.set(location));
+        Main.lobbyConfig.set("lobby", LocationMgr.set(location));
         setLobby(location);
         Main.saveLobbyConfig();
     }
@@ -140,10 +149,10 @@ public class SetupManager {
         player.teleportAsync(location);
     }
     public static void setLobby(Location loc) {
-        lobby = LocationManager.set(loc);
+        lobby = LocationMgr.set(loc);
     }
     public static Location getLobby() {
-        return LocationManager.get(lobby);
+        return LocationMgr.get(lobby);
     }
     public static String getSetupArena(Player player) {
         return playerSetupArena.get(player.getUniqueId());

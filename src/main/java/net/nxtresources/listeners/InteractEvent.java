@@ -3,7 +3,7 @@ package net.nxtresources.listeners;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
 import net.nxtresources.managers.ArenaMgr;
-import net.nxtresources.managers.SetupManager;
+import net.nxtresources.managers.SetupMgr;
 import net.nxtresources.managers.SheepMgr;
 import net.nxtresources.managers.TemporaryArena;
 import net.nxtresources.menus.ArenaSelectorGui;
@@ -43,8 +43,8 @@ public class InteractEvent implements Listener {
             }
             case DARK_OAK_DOOR -> {
                 if (displayName.equals("§aVárakozó lobby beállítása")) {
-                    String name = SetupManager.getSetupArena(player);
-                    SetupManager.setWaitingLobby(player);
+                    String name = SetupMgr.getSetupArena(player);
+                    SetupMgr.setWaitingLobby(player);
                     player.sendMessage("§aVárakozó lobby beállítva! (§2" + name + "§a)");
                     event.setCancelled(true);
                 }
@@ -62,7 +62,7 @@ public class InteractEvent implements Listener {
                         ArenaMgr.leave(player);
                     }
                     case "§cSetup mód elhagyása" -> {
-                        SetupManager.finishSetup(player, false);
+                        SetupMgr.finishSetup(player, false);
                         player.getInventory().clear();
                         player.sendMessage("§cKiléptél a setup módból!");
                     }
@@ -71,14 +71,14 @@ public class InteractEvent implements Listener {
             }
             case EMERALD_BLOCK -> {
                 if (displayName.equals("§aMentés és kilépés a setup módból")) {
-                    SetupManager.finishSetup(player, true);
+                    SetupMgr.finishSetup(player, true);
                     player.sendMessage("§aAréna sikeresen létrehozva és mentve!");
                     event.setCancelled(true);
                 }
             }
             case BLUE_WOOL -> {
                 if (displayName.equals("§9§lKÉK §fcsapat")) {
-                    TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
+                    TemporaryArena tempData = SetupMgr.tempdata.get(player.getUniqueId());
                     if (tempData != null)
                         tempData.teamSpawns.put("BLUE", player.getLocation());
                     player.sendMessage("§9Kék §fcsapat beállítva!");
@@ -87,7 +87,7 @@ public class InteractEvent implements Listener {
             }
             case RED_WOOL -> {
                 if (displayName.equals("§c§lPIROS §fcsapat")) {
-                    TemporaryArena tempData = SetupManager.tempdata.get(player.getUniqueId());
+                    TemporaryArena tempData = SetupMgr.tempdata.get(player.getUniqueId());
                     if (tempData != null)
                         tempData.teamSpawns.put("RED", player.getLocation());
                     player.sendMessage("§cPiros §fcsapat beállítva!");

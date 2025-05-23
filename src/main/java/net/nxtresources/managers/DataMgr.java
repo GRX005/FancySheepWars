@@ -1,7 +1,6 @@
 package net.nxtresources.managers;
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import net.nxtresources.Main;
 import org.bukkit.entity.Player;
 
@@ -10,11 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import static net.nxtresources.Main.gson;
 
-public class DataManager {
+public class DataMgr {
 
     public static final Map<UUID, Map<String, Integer>> stats = new HashMap<>();
 
@@ -56,7 +54,7 @@ public class DataManager {
             map.put(key, 1);
         else
             map.put(key, map.get(key) + 1);
-        save();
+        save(); //TODO: Potencialis teljesitmenyproblema javitasa -Levi
     }
     public static int get(Player player, String key) {
         Map<String, Integer> map = get(player);

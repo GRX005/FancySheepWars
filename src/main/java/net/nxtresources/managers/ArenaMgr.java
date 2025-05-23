@@ -47,7 +47,7 @@ public class ArenaMgr {
             return 5;
 
         a.lobbyPlayers.add(player);
-        SetupManager.getWaitingLobby(player, arena);
+        SetupMgr.getWaitingLobby(player, arena);
         if(a.size==a.lobbyPlayers.size()) {
             AtomicInteger aInt = new AtomicInteger(10);
             a.countdown(()->{
@@ -70,7 +70,7 @@ public class ArenaMgr {
                 t.tPlayers.forEach(pl->{
                     if(p==pl) {
                         t.tPlayers.remove(pl);
-                        SetupManager.getMainLobby(pl);
+                        SetupMgr.getMainLobby(pl);
                     }
                 });
             }
@@ -134,8 +134,6 @@ public class ArenaMgr {
                 Main.getInstance().getLogger().log(Level.INFO, "Loaded arenas: "+ String.join(", ", loadedArenas));
             else
                 Main.getInstance().getLogger().log(Level.INFO, "No arenas found!");
-
         }
     }
-
 }

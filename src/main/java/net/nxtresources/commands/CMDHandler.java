@@ -1,10 +1,10 @@
 package net.nxtresources.commands;
 
 import net.nxtresources.Main;
-import net.nxtresources.managers.Arena;
-import net.nxtresources.managers.ArenaMgr;
-import net.nxtresources.managers.MsgCache;
-import net.nxtresources.managers.SetupManager;
+import net.nxtresources.managers.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -73,13 +73,13 @@ public class CMDHandler implements CommandExecutor {
                         return false;
                     }
                 }
-                for (Arena a : SetupManager.temporaryArenas) {
+                for (Arena a : SetupMgr.temporaryArenas) {
                     if (a.name.equalsIgnoreCase(name)) {
                         sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadyInProgress")));
                         return false;
                     }
                 }
-                switch (SetupManager.startSetup(player, name, size, true)) {
+                switch (SetupMgr.startSetup(player, name, size, true)) {
                     case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Create").replace("%arena_name%", name)));
                     case 1 -> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
                     case 2 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadySettingUp")));
@@ -147,12 +147,12 @@ public class CMDHandler implements CommandExecutor {
             }
 
             case "setlobby" -> {
-                SetupManager.setMainLobby(player);
+                SetupMgr.setMainLobby(player);
                 sender.sendMessage(Main.color(MsgCache.get("SetMainLobby")));
                 return true;
             }
             case "lobby" -> {
-                SetupManager.getMainLobby(player);
+                SetupMgr.getMainLobby(player);
                 sender.sendMessage(Main.color(MsgCache.get("GetMainLobby")));
                 return true;
             }
@@ -171,6 +171,18 @@ public class CMDHandler implements CommandExecutor {
                     sender.sendMessage(Main.color(MsgCache.get("Reloaded").replace("%ms%", String.valueOf(completed))));
                     return true;
                 }
+            }
+            case "wtp"-> {
+                String wo ="world_copy";
+                    World w = Bukkit.getWorld(wo);
+                    if(w==null)
+                        WorldMgr.load(wo);
+                    if(w==null) {
+                        player.sendMessage("§cNincs ilyen világ!");
+                        return false;
+                    }
+                w = Bukkit.getWorld(wo);
+                player.teleportAsync(new Location(w, -384, 127, -282));
             }
             default -> sender.sendMessage(Main.color(MsgCache.get("Invalid-argument")));
         }

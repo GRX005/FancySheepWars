@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-public class LocationManager {
+public class LocationMgr {
 
     public static String set(Location loc) {
         if (loc == null || loc.getWorld() == null) return "";

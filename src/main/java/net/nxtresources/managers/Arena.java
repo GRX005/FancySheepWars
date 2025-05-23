@@ -78,16 +78,16 @@ public class Arena {
     }
 
     public void setWaitingLobby(Location loc) {
-        this.waitingLobbyLocation = LocationManager.set(loc);
+        this.waitingLobbyLocation = LocationMgr.set(loc);
     }
     public Location getWaitingLobby() {
-        return LocationManager.get(waitingLobbyLocation);
+        return LocationMgr.get(waitingLobbyLocation);
     }
     public void setTeamSpawn(TeamType type, Location loc) {
-        teamSpawns.put(type.name(), LocationManager.set(loc));
+        teamSpawns.put(type.name(), LocationMgr.set(loc));
     }
     public Location getTeamSpawn(TeamType type) {
-        return teamSpawns.get(type.name()) == null ? null : LocationManager.get(teamSpawns.get(type.name()));
+        return teamSpawns.get(type.name()) == null ? null : LocationMgr.get(teamSpawns.get(type.name()));
     }
 
 }

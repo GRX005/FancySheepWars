@@ -1,8 +1,9 @@
 package net.nxtresources.listeners;
 
 import net.nxtresources.ItemBuilder;
-import net.nxtresources.managers.DataManager;
-import net.nxtresources.managers.SetupManager;
+import net.nxtresources.managers.DataMgr;
+import net.nxtresources.managers.ItemMgr;
+import net.nxtresources.managers.SetupMgr;
 import net.nxtresources.managers.SheepMgr;
 import net.nxtresources.sheeps.ExplSheep;
 import org.bukkit.Material;
@@ -18,24 +19,22 @@ public class JoinAndQuitEvent implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        DataManager.get(event.getPlayer());
+        DataMgr.get(event.getPlayer());
         player.getInventory().clear();
-        addLobbyItems(player);
-        SetupManager.getMainLobby(player);
+        ItemMgr.lobbyItems(player);
+        SetupMgr.getMainLobby(player);
         SheepMgr.giveSheep(new ExplSheep(), player);
 
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event){
-        DataManager.save();
+        DataMgr.save();
     }
 
     public static void addLobbyItems(Player player) {
 
         ItemStack arenaselector = new ItemBuilder(Material.BOOK).setDisplayName("§eAréna választó").setAmount(1).build();
         player.getInventory().setItem(4, arenaselector);
-
-
     }
 }

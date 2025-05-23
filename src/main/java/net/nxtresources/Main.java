@@ -5,10 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.commands.CMDHandler;
 import net.nxtresources.listeners.*;
-import net.nxtresources.managers.ArenaMgr;
-import net.nxtresources.managers.DataManager;
-import net.nxtresources.managers.MsgCache;
-import net.nxtresources.managers.SetupManager;
+import net.nxtresources.managers.*;
 import net.nxtresources.menus.ArenaSelectorGui;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -26,7 +23,7 @@ import java.util.logging.Level;
 public final class Main extends JavaPlugin {
 
     private static Main plugin;
-    public static SetupManager setupManager;
+    public static SetupMgr setupManager;
 
     public static FileConfiguration arenaConfig;
     public static File arenaFile;
@@ -53,8 +50,8 @@ public final class Main extends JavaPlugin {
         registerListeners();
         ArenaMgr.mkCache();
         ArenaMgr.loadAllArenas();
-        DataManager.load();
-        SetupManager.loadMainLobby();
+        DataMgr.load();
+        SetupMgr.loadMainLobby();
         MsgCache.load();
         // Plugin startup logic
 
@@ -66,7 +63,7 @@ public final class Main extends JavaPlugin {
     }
 
     private void initialize() {
-        setupManager = new SetupManager();
+        setupManager = new SetupMgr();
 
     }
 
