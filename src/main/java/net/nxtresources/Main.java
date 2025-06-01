@@ -14,8 +14,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +56,8 @@ public final class Main extends JavaPlugin {
         DataMgr.load();
         SetupMgr.loadMainLobby();
         MsgCache.load();
+        System.out.println(MsgCache.get("scoreboards.Lobby.title"));
+        System.out.println(MsgCache.getList("scoreboards.Lobby.lines"));
         // Plugin startup logic
 
     }

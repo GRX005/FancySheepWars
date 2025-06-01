@@ -40,3 +40,15 @@ Arena:
     AlreadyInProgress: '%prefix%&cSomeone is already setting up this arena!'
     AlreadySettingUp: '%prefix%&cYou are already setting up this arena!'
     Setup: '%prefix%&aYou are currently setting up the &2%arena_name% &aarena!'
+Scoreboards:
+  Lobby:
+    title: 'FancySheepWars'
+    lines:
+      - 'Lobby scoreboard cuccok: '
+      - 'Online: %online_players%'
+  Waiting:
+    title: 'FancySheepWars'
+    lines:
+  Ingame:
+    title: 'FancySheepWars'
+    lines:
