@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MsgCache {
-    static Map<String, String> msg = new HashMap<>();
+    static Map<String, String> msg;
 
     public static void load(){
-        msg.clear();
+        msg = new HashMap<>();
         String prefix = Objects.requireNonNullElse(Main.messagesConfig.getString("Prefix"), "§8[§ePrefix§8] ");
         for (String key : Main.messagesConfig.getKeys(true)) {
             if (Main.messagesConfig.isString(key)) {
