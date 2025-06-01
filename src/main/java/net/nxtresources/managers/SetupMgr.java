@@ -64,14 +64,7 @@ public class SetupMgr {
             ItemMgr.lobbyItems(player);
             //copy world
             //World world = Bukkit.getWorld(name); TODO: kiirtani a barmokat
-            World world =player.getWorld();
-            Bukkit.broadcast(Component.text("World '" + name + "' is not loaded!1"));
-            world.save();
-            String w = world.getName();
-            WorldMgr.copy(w, w + "_copy");
-            Bukkit.broadcast(Component.text("World '" + name + "' is not loaded!2"));
-            WorldMgr.load(w);
-            Bukkit.broadcast(Component.text("World '" + name + "' is not loaded!3"));
+
 
 
         } else{

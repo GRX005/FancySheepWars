@@ -172,18 +172,7 @@ public class CMDHandler implements CommandExecutor {
                     return true;
                 }
             }
-            case "wtp"-> {
-                String wo ="world_copy";
-                    World w = Bukkit.getWorld(wo);
-                    if(w==null)
-                        WorldMgr.load(wo);
-                    if(w==null) {
-                        player.sendMessage("§cNincs ilyen világ!");
-                        return false;
-                    }
-                w = Bukkit.getWorld(wo);
-                player.teleportAsync(new Location(w, -384, 127, -282));
-            }
+
             default -> sender.sendMessage(Main.color(MsgCache.get("Invalid-argument")));
         }
         return false;
