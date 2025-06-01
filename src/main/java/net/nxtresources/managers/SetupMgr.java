@@ -56,7 +56,6 @@ public class SetupMgr {
                 for (Map.Entry<String, Location> entry : tempData.teamSpawns.entrySet())
                     arena.setTeamSpawn(TeamType.valueOf(entry.getKey()), entry.getValue());
             ArenaMgr.arenas.add(arena);
-            ArenaMgr.arCache.put(arena.name, arena);
             ArenaMgr.saveArena(arena);
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
@@ -103,20 +102,13 @@ public class SetupMgr {
     }
 
     public static void getWaitingLobby(Player player, String name){
-        Arena arena =null;
-        for (Arena a : ArenaMgr.arenas) {
-            if (a.name.equalsIgnoreCase(name)) {
-                arena = a;
-                break;
-            }
-        }
+        Arena arena = ArenaMgr.getByName(name);
+
         if(arena == null)
             return;
         Location location = arena.getWaitingLobby();
         player.teleportAsync(location);
-
     }
-
 
     //
     //LOBBY
@@ -133,7 +125,7 @@ public class SetupMgr {
         Main.saveLobbyConfig();
     }
 
-    public static void getMainLobby(Player player) {
+    public static void tpToLobby(Player player) {
         Location location = getLobby();
         if(location==null)
             return;

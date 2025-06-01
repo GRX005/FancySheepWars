@@ -16,20 +16,19 @@ public class ArenaMgr {
 
     public static Set<Arena> arenas = new HashSet<>();
 
-    public static final HashMap<String,Arena> arCache = new HashMap<>();
-
-    public static void mkCache() {
-        //RT-CACHE, majd configbol valszeg.
-        for(Arena a : arenas) {
-            arCache.put(a.name, a);
+    public static Arena getByName(String name) {
+        for (Arena a : arenas) {
+            if (Objects.equals(a.name, name))
+                return a;
         }
+        return null;
     }
 
 //Itt hozzaadjuk az adott jatekost az adott arenahoz: (JoinOrLeave) 0=succ,1=noAr,2=alrInAr,3=arFull, 4=started
     public static int join(String arena, Player player) {
         if(ArenaMgr.isInArena(player))
             return 2;
-        Arena a = arCache.get(arena);
+        Arena a = getByName(arena);
         if(a==null)
             return 1;
         if(a.size<a.lobbyPlayers.size())
@@ -42,18 +41,9 @@ public class ArenaMgr {
 
         a.lobbyPlayers.add(player);
         SetupMgr.getWaitingLobby(player, arena);
-        if(a.size==a.lobbyPlayers.size()) {
-            AtomicInteger aInt = new AtomicInteger(10);
-            a.countdown(()->{
-                int toPr = aInt.getAndDecrement();
-                a.lobbyPlayers.forEach((p->p.sendMessage("Az arena indul ennyi mulva: "+toPr)));
-                if(toPr==0) {//Itt indul az arena.
-                    a.stat = ArenaStatus.STARTED;
-                    a.start();
-                    a.cancelCount();
-                }
-            });
-        }
+        if(a.size==a.lobbyPlayers.size())
+            a.countdownTask().runTaskTimerAsynchronously(Main.getInstance(),0L,20L);
+
         return 0;
     }
 
@@ -64,7 +54,7 @@ public class ArenaMgr {
                 t.tPlayers.forEach(pl->{
                     if(p==pl) {
                         t.tPlayers.remove(pl);
-                        SetupMgr.getMainLobby(pl);
+                        SetupMgr.tpToLobby(pl);
                     }
                 });
             }
@@ -88,12 +78,11 @@ public class ArenaMgr {
     }
 //0=succ 1=noSuchArena 2=vannakBenneException
     public static int del(String ar) {
-        if(arCache.containsKey(ar)) {
-            Arena a = arCache.get(ar);
+        var a = getByName(ar);
+        if(a!=null) {
             if(!a.lobbyPlayers.isEmpty() || !a.teams.isEmpty())
                 return 2;
             arenas.remove(a);
-            arCache.remove(ar);
             Main.arenaConfig.set("arenas." + ar, null);
             Main.saveArenaConfig();
             return 0;
@@ -113,7 +102,6 @@ public class ArenaMgr {
 
         if (config.contains("arenas")) {
             arenas.clear();
-            arCache.clear();
             List<String> loadedArenas = new ArrayList<>();
             for (String key : Objects.requireNonNull(config.getConfigurationSection("arenas")).getKeys(false)) {
                 String json = config.getString("arenas." + key);
@@ -121,7 +109,6 @@ public class ArenaMgr {
                 arena.lobbyPlayers = new HashSet<>();
                 arena.teams = new HashSet<>();
                 arenas.add(arena);
-                arCache.put(arena.name, arena);
                 loadedArenas.add(arena.name);
             }
             if(!loadedArenas.isEmpty())

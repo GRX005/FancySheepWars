@@ -152,7 +152,7 @@ public class CMDHandler implements CommandExecutor {
                 return true;
             }
             case "lobby" -> {
-                SetupMgr.getMainLobby(player);
+                SetupMgr.tpToLobby(player);
                 sender.sendMessage(Main.color(MsgCache.get("GetMainLobby")));
                 return true;
             }

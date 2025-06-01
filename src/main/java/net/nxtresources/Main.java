@@ -50,7 +50,6 @@ public final class Main extends JavaPlugin {
         loadFiles();
         registerCommands();
         registerListeners();
-        ArenaMgr.mkCache();
         ArenaMgr.loadAllArenas();
         DataMgr.load();
         SetupMgr.loadMainLobby();

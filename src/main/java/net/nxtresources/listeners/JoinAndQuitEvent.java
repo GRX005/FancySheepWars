@@ -22,7 +22,7 @@ public class JoinAndQuitEvent implements Listener {
         DataMgr.get(event.getPlayer());
         player.getInventory().clear();
         ItemMgr.lobbyItems(player);
-        SetupMgr.getMainLobby(player);
+        SetupMgr.tpToLobby(player);
         SheepMgr.giveSheep(new ExplSheep(), player);
 
     }
@@ -32,9 +32,4 @@ public class JoinAndQuitEvent implements Listener {
         DataMgr.save();
     }
 
-    public static void addLobbyItems(Player player) {
-
-        ItemStack arenaselector = new ItemBuilder(Material.BOOK).setDisplayName("§eAréna választó").setAmount(1).build();
-        player.getInventory().setItem(4, arenaselector);
-    }
 }

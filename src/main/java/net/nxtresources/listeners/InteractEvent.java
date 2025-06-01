@@ -2,10 +2,7 @@ package net.nxtresources.listeners;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
-import net.nxtresources.managers.Arena;
-import net.nxtresources.managers.ArenaMgr;
-import net.nxtresources.managers.SetupMgr;
-import net.nxtresources.managers.SheepMgr;
+import net.nxtresources.managers.*;
 import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.ExplSheep;
 import org.bukkit.Material;
@@ -58,7 +55,7 @@ public class InteractEvent implements Listener {
                         }
                         player.sendMessage("§cKiléptél az arénából.");
                         player.getInventory().clear();
-                        JoinAndQuitEvent.addLobbyItems(player);
+                        ItemMgr.lobbyItems(player);
                         ArenaMgr.leave(player);
                     }
                     case "§cSetup mód elhagyása" -> {

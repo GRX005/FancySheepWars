@@ -1,27 +1,26 @@
 package net.nxtresources.managers;
 
+import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
 import net.nxtresources.enums.TeamType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Arena {
 
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
-    private final Map<String, String> teamSpawns = new HashMap<>();
+    private final Map<TeamType, String> teamSpawns = new HashMap<>();
     //Csak innen lehet hozzaadni, 1 helyen.
     private transient volatile int prog = 0;
 
-    private void addProg() {
-        //noinspection NonAtomicOperationOnVolatileField (Csak 1 helyen szabad modositani)
-        prog++;
-    }
     public int getProg(){
         return prog;
     }
@@ -29,7 +28,6 @@ public class Arena {
     public String name;
     public int size;
     public ArenaStatus stat;
-    private volatile BukkitTask task;
     public String waitingLobbyLocation;
 
     public Arena(String name, int size) {
@@ -39,13 +37,38 @@ public class Arena {
         this.size = size;
         this.stat = ArenaStatus.WAITING;
     }
+//Countdown till start
+    @SuppressWarnings("ConstantConditions")
+    public BukkitRunnable countdownTask() {
+        return new BukkitRunnable(){
+            int toPr = 10;
+            @Override
+            public void run() {
+                toPr--;
+                for (Player p : lobbyPlayers)
+                    p.sendMessage("Az arena indul ennyi mulva: "+toPr);
 
-    public void countdown(Runnable task) {
-        this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(),task,0L,20L);
+                if(toPr==0) {//Itt indul az arena.
+                    stat = ArenaStatus.STARTED;
+                    start();
+                    this.cancel();
+                }
+            }
+        };
     }
-
-    public void cancelCount() {
-        this.task.cancel();
+    @SuppressWarnings("ConstantConditions")
+    private BukkitRunnable arenaTask() {
+        return new BukkitRunnable() {
+            @Override
+            public void run() {
+                //noinspection NonAtomicOperationOnVolatileField (Csak 1 helyen szabad modositani)
+                prog++;
+                if (prog==15) {
+                    end();
+                    this.cancel();
+                }
+            }
+        };
     }
 
     public TeamType getTeam(Player pl) {
@@ -57,7 +80,8 @@ public class Arena {
         }
         return null;
     }
-    public void start() {
+
+    private void start() {
         //TP, etc
         try {
             List<Player> copy = new ArrayList<>(lobbyPlayers); // to safely split
@@ -74,12 +98,23 @@ public class Arena {
             for(Player player : redPlayers)
                 player.teleportAsync(getTeamSpawn(TeamType.RED));
             lobbyPlayers.clear();
-            Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(),this::addProg,0,20);
+            arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);
         } catch (Exception e) {
+            Bukkit.broadcast(Component.text("Hiba tortent (valszeg dög levente hibajabol)"));
             throw new RuntimeException("Hiba tortent (valszeg dög levente hibajabol)");
         }
     }
 
+    public void end() {
+        teams.forEach(e->e.tPlayers.forEach(f->{
+            SetupMgr.tpToLobby(f);
+            ItemMgr.lobbyItems(f);
+        }));
+        teams.clear();
+        prog=0;
+        stat=ArenaStatus.WAITING;
+    }
+//2 teams in 1 arena
     public static final class Team {
         public final Set<Player> tPlayers = new HashSet<>();
         public TeamType type;
@@ -89,7 +124,7 @@ public class Arena {
         }
         //stb...
     }
-
+//For Setup.
     public static final class Temp {
         public String name;
         public int size;
@@ -109,10 +144,10 @@ public class Arena {
         return LocationMgr.get(waitingLobbyLocation);
     }
     public void setTeamSpawn(TeamType type, Location loc) {
-        teamSpawns.put(type.name(), LocationMgr.set(loc));
+        teamSpawns.put(type, LocationMgr.set(loc));
     }
     public Location getTeamSpawn(TeamType type) {
-        return teamSpawns.get(type.name()) == null ? null : LocationMgr.get(teamSpawns.get(type.name()));
+        return teamSpawns.get(type) == null ? null : LocationMgr.get(teamSpawns.get(type));
     }
 
 }
