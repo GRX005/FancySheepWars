@@ -77,6 +77,18 @@ public class Arena {
         //stb...
     }
 
+    public static final class Temp {
+        public String name;
+        public int size;
+        public Location waitingLobby;
+        public Map<String, Location> teamSpawns =new HashMap<>();
+
+        public Temp(String name, int size) {
+            this.name = name;
+            this.size = size;
+        }
+    }
+
     public void setWaitingLobby(Location loc) {
         this.waitingLobbyLocation = LocationMgr.set(loc);
     }

@@ -25,12 +25,6 @@ public class ArenaMgr {
         }
     }
 
-    public static Arena make(String name, int size) {
-        Arena arena = new Arena(name,size);
-        arenas.add(arena);
-        arCache.put(name, arena);
-        return arena;
-    }
 //Itt hozzaadjuk az adott jatekost az adott arenahoz: (JoinOrLeave) 0=succ,1=noAr,2=alrInAr,3=arFull, 4=started
     public static int join(String arena, Player player) {
         if(ArenaMgr.isInArena(player))

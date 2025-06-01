@@ -46,13 +46,6 @@ public class ExplSheep implements FancySheep {
                 Collection<Entity> hits = world.getNearbyEntities(sh.getBoundingBox()); //Get entity collisions
                 if(nmsSh.horizontalCollision || nmsSh.verticalCollision || hits.size() != 1 && !hits.contains(p)) { //We reg a hit here.
                     sh.remove();
-//                    int blockRadius = 3;
-//                    // Manually break blocks in a sphere without visual effects
-//                    for (int x = -blockRadius; x <= blockRadius; x++)
-//                        for (int y = -blockRadius; y <= blockRadius; y++)
-//                            for (int z = -blockRadius; z <= blockRadius; z++)
-//                                if (x*x + y*y + z*z <= blockRadius * blockRadius)
-//                                    world.getBlockAt(sh.getLocation().clone().add(x, y, z)).breakNaturally(false);
                     shLoc.createExplosion(sh,3F, false);
                     world.spawnParticle(Particle.EXPLOSION, shLoc, 1);
                     world.playSound(shLoc, Sound.ENTITY_GENERIC_EXPLODE, 4F,0.7F); //In MC pitch is random betw: 0.56-0.84

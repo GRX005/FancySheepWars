@@ -15,7 +15,7 @@ import java.util.*;
 public class SetupMgr {
     public static final Map<UUID, String> playerSetupArena = new HashMap<>();
     public static final Set<Arena> temporaryArenas = new HashSet<>();
-    public static final Map<UUID, TemporaryArena> tempdata = new HashMap<>();
+    public static final Map<UUID, Arena.Temp> tempdata = new HashMap<>();
     private static String lobby;
 
     //LORE
@@ -36,7 +36,7 @@ public class SetupMgr {
         if(isTemporary){
             arena = new Arena(name,size);
             temporaryArenas.add(arena);
-            tempdata.put(player.getUniqueId(), new TemporaryArena(name, size));
+            tempdata.put(player.getUniqueId(), new Arena.Temp(name, size));
         }
         playerSetupArena.put(player.getUniqueId(), name);
         ItemMgr.setupItems(player);
@@ -45,7 +45,7 @@ public class SetupMgr {
 
     public static void finishSetup(Player player, boolean succ){
         String name = playerSetupArena.remove(player.getUniqueId());
-        TemporaryArena tempData = tempdata.remove(player.getUniqueId());
+        Arena.Temp tempData = tempdata.remove(player.getUniqueId());
         if(name == null ||tempData==null)
             return;
         if(succ) {
@@ -91,7 +91,7 @@ public class SetupMgr {
         ItemStack red = new ItemBuilder(Material.RED_WOOL).setDisplayName("§c§lPIROS §fcsapat").setLore(SUBTline).build();
         if(!SetupMgr.isInSetup(player))
             return;
-        TemporaryArena tempData = SetupMgr.tempdata.get(player.getUniqueId());
+        Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
         if(tempData!=null) {
             player.getInventory().clear();
             player.getInventory().setItem(0, red);

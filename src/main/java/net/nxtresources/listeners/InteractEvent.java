@@ -2,10 +2,10 @@ package net.nxtresources.listeners;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
+import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.SetupMgr;
 import net.nxtresources.managers.SheepMgr;
-import net.nxtresources.managers.TemporaryArena;
 import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.ExplSheep;
 import org.bukkit.Material;
@@ -78,7 +78,7 @@ public class InteractEvent implements Listener {
             }
             case BLUE_WOOL -> {
                 if (displayName.equals("§9§lKÉK §fcsapat")) {
-                    TemporaryArena tempData = SetupMgr.tempdata.get(player.getUniqueId());
+                    Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
                     if (tempData != null)
                         tempData.teamSpawns.put("BLUE", player.getLocation());
                     player.sendMessage("§9Kék §fcsapat beállítva!");
@@ -87,7 +87,7 @@ public class InteractEvent implements Listener {
             }
             case RED_WOOL -> {
                 if (displayName.equals("§c§lPIROS §fcsapat")) {
-                    TemporaryArena tempData = SetupMgr.tempdata.get(player.getUniqueId());
+                    Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
                     if (tempData != null)
                         tempData.teamSpawns.put("RED", player.getLocation());
                     player.sendMessage("§cPiros §fcsapat beállítva!");
