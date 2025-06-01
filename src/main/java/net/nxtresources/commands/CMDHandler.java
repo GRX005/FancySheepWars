@@ -105,7 +105,7 @@ public class CMDHandler implements CommandExecutor {
             case "l","list" -> {
                 sender.sendMessage(Main.color(MsgCache.get("Arena.Arenas")));
                 ArenaMgr.arenas.forEach(a->{
-                    sender.sendMessage("§6Arena name: §e"+a.name+"§6, Size: §e"+ a.size+"§6, LobbyPlayers: §e"+a.lobbyPlayers +"§6, Status: §e"+ a.stat +"§6 Teams: ");
+                    sender.sendMessage("§6Arena name: §e"+a.name+"§6, Size: §e"+ a.size+"§6, LobbyPlayers: §e"+a.lobbyPlayers +"§6, Status: §e"+ a.stat+"§6 Prog: "+a.getProg() +"§6 Teams: " );
                     a.teams.forEach(t->{
                         sender.sendMessage("§a"+t.type+": ");
                         t.tPlayers.forEach(p->sender.sendMessage("§9"+p.toString()));

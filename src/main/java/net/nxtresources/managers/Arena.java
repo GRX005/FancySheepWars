@@ -15,12 +15,21 @@ public class Arena {
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
     private final Map<String, String> teamSpawns = new HashMap<>();
+    //Csak innen lehet hozzaadni, 1 helyen.
+    private transient volatile int prog = 0;
 
+    private void addProg() {
+        //noinspection NonAtomicOperationOnVolatileField (Csak 1 helyen szabad modositani)
+        prog++;
+    }
+    public int getProg(){
+        return prog;
+    }
 
     public String name;
     public int size;
     public ArenaStatus stat;
-    private BukkitTask task;
+    private volatile BukkitTask task;
     public String waitingLobbyLocation;
 
     public Arena(String name, int size) {
@@ -48,23 +57,27 @@ public class Arena {
         }
         return null;
     }
-
     public void start() {
         //TP, etc
-        List<Player> copy = new ArrayList<>(lobbyPlayers); // to safely split
-        int midpoint = copy.size() / 2;
+        try {
+            List<Player> copy = new ArrayList<>(lobbyPlayers); // to safely split
+            int midpoint = copy.size() / 2;
 
-        List<Player> bluePlayers =new ArrayList<>(copy.subList(0, midpoint));
-        List<Player> redPlayers = new ArrayList<>(copy.subList(midpoint, copy.size()));
-        Team blueTeam = new Team(bluePlayers, TeamType.BLUE);
-        Team redTeam = new Team(redPlayers, TeamType.RED);
-        teams.add(blueTeam);
-        teams.add(redTeam);
-        for(Player player : bluePlayers)
-            player.teleportAsync(getTeamSpawn(TeamType.BLUE));
-        for(Player player : redPlayers)
-            player.teleportAsync(getTeamSpawn(TeamType.RED));
-        lobbyPlayers.clear();
+            List<Player> bluePlayers =new ArrayList<>(copy.subList(0, midpoint));
+            List<Player> redPlayers = new ArrayList<>(copy.subList(midpoint, copy.size()));
+            Team blueTeam = new Team(bluePlayers, TeamType.BLUE);
+            Team redTeam = new Team(redPlayers, TeamType.RED);
+            teams.add(blueTeam);
+            teams.add(redTeam);
+            for(Player player : bluePlayers)
+                player.teleportAsync(getTeamSpawn(TeamType.BLUE));
+            for(Player player : redPlayers)
+                player.teleportAsync(getTeamSpawn(TeamType.RED));
+            lobbyPlayers.clear();
+            Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(),this::addProg,0,20);
+        } catch (Exception e) {
+            throw new RuntimeException("Hiba tortent (valszeg dög levente hibajabol)");
+        }
     }
 
     public static final class Team {

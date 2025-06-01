@@ -47,7 +47,7 @@ public class ArenaMgr {
             a.countdown(()->{
                 int toPr = aInt.getAndDecrement();
                 a.lobbyPlayers.forEach((p->p.sendMessage("Az arena indul ennyi mulva: "+toPr)));
-                if(aInt.get()==0) {//Itt indul az arena.
+                if(toPr==0) {//Itt indul az arena.
                     a.stat = ArenaStatus.STARTED;
                     a.start();
                     a.cancelCount();
