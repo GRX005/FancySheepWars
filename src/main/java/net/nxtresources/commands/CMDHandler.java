@@ -1,10 +1,10 @@
 package net.nxtresources.commands;
 
 import net.nxtresources.Main;
-import net.nxtresources.managers.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import net.nxtresources.managers.Arena;
+import net.nxtresources.managers.ArenaMgr;
+import net.nxtresources.managers.MsgCache;
+import net.nxtresources.managers.SetupMgr;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

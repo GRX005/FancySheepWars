@@ -5,10 +5,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.ItemBuilder;
 import net.nxtresources.Main;
 import net.nxtresources.enums.TeamType;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

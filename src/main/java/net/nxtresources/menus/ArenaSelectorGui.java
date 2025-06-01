@@ -5,7 +5,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.ItemBuilder;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
-import net.nxtresources.enums.TeamType;
 import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
 import org.bukkit.Bukkit;

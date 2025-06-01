@@ -5,7 +5,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.commands.CMDHandler;
 import net.nxtresources.listeners.*;
-import net.nxtresources.managers.*;
+import net.nxtresources.managers.ArenaMgr;
+import net.nxtresources.managers.DataMgr;
+import net.nxtresources.managers.MsgCache;
+import net.nxtresources.managers.SetupMgr;
 import net.nxtresources.menus.ArenaSelectorGui;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -17,7 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public final class Main extends JavaPlugin {
