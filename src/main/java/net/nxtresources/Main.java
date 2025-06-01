@@ -68,20 +68,19 @@ public final class Main extends JavaPlugin {
     }
 
     private void loadFiles() {
-        loadConfig("arenas.yml", config -> arenaConfig = config);
-        loadConfig("messages.yml", config -> messagesConfig = config);
-        loadConfig("lobby.yml", config -> lobbyConfig = config);
-        loadConfig("data.yml", config -> dataConfig = config);
+        arenaConfig = loadConfig("arenas.yml");
+        messagesConfig = loadConfig("messages.yml");
+        lobbyConfig = loadConfig("lobby.yml");
+        dataConfig = loadConfig("data.yml");
     }
 
-    private void loadConfig(String fileName, Consumer<YamlConfiguration> configSetter) {
+    private YamlConfiguration loadConfig(String fileName) {
         File file = new File(getDataFolder(), fileName);
         if (!file.exists()) {
             saveResource(fileName, false);
             getLogger().log(Level.INFO, fileName + " created!");
         }
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        configSetter.accept(config);
         switch (fileName) {
             case "lobby.yml" -> lobbyFile = file;
             case "arenas.yml" -> arenaFile = file;
@@ -89,6 +88,7 @@ public final class Main extends JavaPlugin {
             case "data.yml" -> dataFile = file;
         }
         getLogger().log(Level.INFO, fileName + " loaded!");
+        return config;
     }
 
     public void reload() {
