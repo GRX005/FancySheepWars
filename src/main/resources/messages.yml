@@ -44,8 +44,15 @@ Scoreboards:
   Lobby:
     title: 'FancySheepWars'
     lines:
-      - 'Lobby scoreboard cuccok: '
-      - 'Online: %online_players%'
+      - 'Online players: %online_players%'
+      - '&c'
+      - '&eStats:'
+      - '&a'
+      - '&7Wins: &f%wins%'
+      - '&7Kills: &f%kills%'
+      - '&7Deaths: &f%deaths%'
+      - '&4'
+      - '&eyourServer.com'
   Waiting:
     title: 'FancySheepWars'
     lines:

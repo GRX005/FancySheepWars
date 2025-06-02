@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.*;
 
 public abstract class BaseBoard {
@@ -11,6 +12,7 @@ public abstract class BaseBoard {
     Scoreboard sb;
     Objective obj;
     Player player;
+    BukkitTask task;
 
     public BaseBoard() {
         this.sbm = Bukkit.getScoreboardManager();
@@ -28,8 +30,8 @@ public abstract class BaseBoard {
             team = sb.registerNewTeam(line + score);
             team.addEntry(entry);
         }
-        team.prefix(Component.text(prefix));
-        team.suffix(Component.text(suffix));
+        team.prefix(Main.color(prefix));
+        team.suffix(Main.color(suffix));
         obj.getScore(entry).setScore(score);
     }
 
@@ -38,10 +40,11 @@ public abstract class BaseBoard {
     }
 
     public void updateB() {
-        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> update(player), 0L, 20L);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> update(player), 0L, 20L);
     }
 
     public void set(Player player){
+        this.player = player;
         player.setScoreboard(this.sb);
     }
 

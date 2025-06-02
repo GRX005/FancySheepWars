@@ -4,6 +4,7 @@ import net.nxtresources.managers.DataMgr;
 import net.nxtresources.managers.ItemMgr;
 import net.nxtresources.managers.SetupMgr;
 import net.nxtresources.managers.SheepMgr;
+import net.nxtresources.managers.scoreboard.boards.LobbyBoard;
 import net.nxtresources.sheeps.ExplSheep;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +22,8 @@ public class JoinAndQuitEvent implements Listener {
         ItemMgr.lobbyItems(player);
         SetupMgr.tpToLobby(player);
         SheepMgr.giveSheep(new ExplSheep(), player);
+        LobbyBoard board = new LobbyBoard();
+        board.build(player);
 
     }
 
