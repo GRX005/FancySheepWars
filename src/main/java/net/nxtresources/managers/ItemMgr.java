@@ -27,36 +27,28 @@ public class ItemMgr {
 
     }
 
-    public static void arenaItems(Player player){
+    public static void arenaItems(Player player){}
 
-    }
-
-    public static void setupItems(Player player){
-        Component SWLline1 = LegacyComponentSerializer.legacySection().deserialize("§eVálassz ki egy várakozó lobbynak megfelelő helyet,");
-        Component SWLline2 = LegacyComponentSerializer.legacySection().deserialize("§eállj oda majd kattints ezzel az itemmel!");
-        Component SUBTline = LegacyComponentSerializer.legacySection().deserialize("§eEzzel kattintva elkezded setupolni az adott csapatot");
-        ItemStack setwaitinglobby = new ItemBuilder(Material.DARK_OAK_DOOR)
-                .setDisplayName("§aVárakozó lobby beállítása")
-                .setLore(SWLline1, SWLline2)
-                .build();
-        ItemStack leave = new ItemBuilder(Material.BARRIER)
-                .setDisplayName("§cSetup mód elhagyása")
-                .build();
-        ItemStack saveAndExit = new ItemBuilder(Material.EMERALD_BLOCK)
-                .setDisplayName("§aMentés és kilépés a setup módból")
-                .build();
-        player.getInventory().clear();
-        player.getInventory().setItem(0, setwaitinglobby);
-        player.getInventory().setItem(7, saveAndExit);
-        player.getInventory().setItem(8, leave);
-
-    }
-    public static void setup(Player player){
-
-    }
-
-    public static void selectTeam(){
-
-    }
+    //setup items
+    public static ItemStack blue = new ItemBuilder(Material.BLUE_WOOL)
+            .setDisplayName("§9§lKÉK §fcsapat")
+            .setLore(LegacyComponentSerializer.legacySection().deserialize("§eEzzel kattintva elkezded setupolni az adott csapatot"))
+            .build();
+    public static ItemStack red = new ItemBuilder(Material.RED_WOOL)
+            .setDisplayName("§c§lPIROS §fcsapat")
+            .setLore(LegacyComponentSerializer.legacySection().deserialize("§eEzzel kattintva elkezded setupolni az adott csapatot"))
+            .build();
+    public static ItemStack leave = new ItemBuilder(Material.BARRIER)
+            .setDisplayName("§cSetup mód elhagyása")
+            .build();
+    public static ItemStack saveAndExit = new ItemBuilder(Material.EMERALD_BLOCK)
+            .setDisplayName("§aMentés és kilépés a setup módból")
+            .build();
+    public static ItemStack setwaitinglobby = new ItemBuilder(Material.DARK_OAK_DOOR)
+            .setDisplayName("§aVárakozó lobby beállítása")
+            .setLore(
+                    LegacyComponentSerializer.legacySection().deserialize("§eVálassz ki egy várakozó lobbynak megfelelő helyet,"),
+                    LegacyComponentSerializer.legacySection().deserialize("§eállj oda majd kattints ezzel az itemmel!"))
+            .build();
 
 }

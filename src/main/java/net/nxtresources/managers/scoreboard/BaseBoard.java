@@ -17,7 +17,7 @@ public abstract class BaseBoard {
     public BaseBoard() {
         this.sbm = Bukkit.getScoreboardManager();
         this.sb = sbm.getNewScoreboard();
-        this.obj = sb.registerNewObjective("fancysheepwars", Criteria.DUMMY, Component.text("Fancy Sheepwars"));
+        this.obj = sb.registerNewObjective("fancysheepwars", Criteria.DUMMY, Component.text("Fancy Sheepwars")); //TODO: random value generator
         this.obj.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 

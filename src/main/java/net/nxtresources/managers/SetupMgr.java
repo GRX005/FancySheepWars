@@ -1,33 +1,19 @@
 package net.nxtresources.managers;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.nxtresources.ItemBuilder;
 import net.nxtresources.Main;
 import net.nxtresources.enums.TeamType;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+
+import static net.nxtresources.managers.ItemMgr.*;
 
 public class SetupMgr {
     public static final Map<UUID, String> playerSetupArena = new HashMap<>();
     public static final Set<Arena> temporaryArenas = new HashSet<>();
     public static final Map<UUID, Arena.Temp> tempdata = new HashMap<>();
     private static String lobby;
-
-    //LORE
-    /*SETWAITINGLOBBY*/private static final Component SWLline1 = LegacyComponentSerializer.legacySection().deserialize("§eVálassz ki egy várakozó lobbynak megfelelő helyet,");
-    /*SETWAITINGLOBBY*/private static final Component SWLline2 = LegacyComponentSerializer.legacySection().deserialize("§eállj oda majd kattints ezzel az itemmel!");
-
-    /*SETUPTEAM*/private static final Component SUBTline = LegacyComponentSerializer.legacySection().deserialize("§eEzzel kattintva elkezded setupolni az adott csapatot");
-
-    //ITEMSTACK
-    static ItemStack setwaitinglobby = new ItemBuilder(Material.DARK_OAK_DOOR).setDisplayName("§aVárakozó lobby beállítása").setLore(SWLline1, SWLline2).build();
-    static ItemStack leave = new ItemBuilder(Material.BARRIER).setDisplayName("§cSetup mód elhagyása").build();
-    static ItemStack saveAndExit = new ItemBuilder(Material.EMERALD_BLOCK).setDisplayName("§aMentés és kilépés a setup módból").build();
 
     public static int startSetup(Player player, String name, int size, boolean isTemporary){
         if(isInSetup(player))
@@ -39,7 +25,10 @@ public class SetupMgr {
             tempdata.put(player.getUniqueId(), new Arena.Temp(name, size));
         }
         playerSetupArena.put(player.getUniqueId(), name);
-        ItemMgr.setupItems(player);
+        player.getInventory().clear();
+        player.getInventory().setItem(0, setwaitinglobby);
+        player.getInventory().setItem(7, saveAndExit);
+        player.getInventory().setItem(8, leave);
         return 0;
     }
 
@@ -72,22 +61,19 @@ public class SetupMgr {
     }
 
     //
+    //tools
+    //
+    public void addSelector(){}
+
+    //
     //ARENA
     //
-    public void setSpawn(Player player) {
+    public void setSpawn(Player player) {}
 
-
-
-    }
-
-    public void setSheep(Player player) {
-
-    }
+    public void setSheep(Player player) {}
 
     public static void setWaitingLobby(Player player) {
         Location loc = player.getLocation();
-        ItemStack blue = new ItemBuilder(Material.BLUE_WOOL).setDisplayName("§9§lKÉK §fcsapat").setLore(SUBTline).build();
-        ItemStack red = new ItemBuilder(Material.RED_WOOL).setDisplayName("§c§lPIROS §fcsapat").setLore(SUBTline).build();
         if(!SetupMgr.isInSetup(player))
             return;
         Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
