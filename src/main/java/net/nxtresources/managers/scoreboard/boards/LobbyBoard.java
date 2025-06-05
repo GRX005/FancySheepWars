@@ -36,7 +36,7 @@ public class LobbyBoard extends BaseBoard{
     }
 
     public void animate() {
-        taskId = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
+        taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> {
             i = (i + 1) % sbTitles.size();
             title(Main.color(sbTitles.get(i)));
         }, 5L, 5L).getTaskId();
