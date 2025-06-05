@@ -55,7 +55,7 @@ public final class Main extends JavaPlugin {
         SetupMgr.loadMainLobby();
         MsgCache.load();
         // Plugin startup logic
-
+        //asd
     }
 
     @Override
