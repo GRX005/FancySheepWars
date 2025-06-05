@@ -5,6 +5,9 @@ import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.MsgCache;
 import net.nxtresources.managers.SetupMgr;
+import net.nxtresources.managers.scoreboard.BoardMgr;
+import net.nxtresources.managers.scoreboard.boards.LobbyBoard;
+import net.nxtresources.managers.scoreboard.boards.WaitingBoard;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -141,6 +144,7 @@ public class CMDHandler implements CommandExecutor {
                     return false;
                 }
                 ArenaMgr.leave(player);
+                ArenaMgr.leaveLobby(player);
                 sender.sendMessage(Main.color(MsgCache.get("Arena.Leave")));
                 return true;
 

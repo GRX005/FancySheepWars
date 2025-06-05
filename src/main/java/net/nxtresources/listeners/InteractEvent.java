@@ -5,17 +5,21 @@ import net.nxtresources.Main;
 import net.nxtresources.managers.*;
 import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.ExplSheep;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class InteractEvent implements Listener {
 
@@ -57,6 +61,7 @@ public class InteractEvent implements Listener {
                         player.getInventory().clear();
                         ItemMgr.lobbyItems(player);
                         ArenaMgr.leave(player);
+                        ArenaMgr.leaveLobby(player);
                     }
                     case "§cSetup mód elhagyása" -> {
                         SetupMgr.finishSetup(player, false);
@@ -95,6 +100,30 @@ public class InteractEvent implements Listener {
                 switch (item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING)) {
                     case "expl" -> SheepMgr.shootSheep(new ExplSheep(),player);
                     case null, default -> {}
+                }
+            }
+            case WOODEN_AXE -> {
+                if (displayName.equals("§aKijelölő")) {
+                    Block block = event.getClickedBlock();
+                    if (block == null) {
+                        player.sendMessage("Blockra kell kattintanod!");
+                        return;
+                    }
+                    if (event.getHand() != EquipmentSlot.HAND)
+                        return;
+
+                    UUID uuid = player.getUniqueId();
+                    Arena.Temp temp = SetupMgr.tempdata.get(uuid);
+                    Location loc = block.getLocation();
+                    if(temp.pos1==null){
+                        temp.pos1=loc;
+                        player.sendMessage(String.valueOf(loc.getX() + loc.getY() + loc.getZ()));
+
+                    }else{
+                        temp.pos2=loc;
+                        player.sendMessage(String.valueOf(loc.getX() + loc.getY() + loc.getZ()));
+                    }
+                    event.setCancelled(true);
                 }
             }
             default -> {

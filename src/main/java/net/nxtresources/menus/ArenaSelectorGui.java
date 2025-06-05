@@ -19,6 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import static net.nxtresources.managers.ItemMgr.leaveArena;
+
 public class ArenaSelectorGui implements Listener {
 
     public static void open(Player player) {
@@ -51,12 +53,11 @@ public class ArenaSelectorGui implements Listener {
             player.closeInventory();
             return;
         }
-        ItemStack leave = new ItemBuilder(Material.BARRIER).setDisplayName("§eAréna elhagyása").build();
         switch (ArenaMgr.join(name, player)) {
             case 0 -> {
                 player.sendMessage("Csatlakoztál a következő arénához: " + name + "!");
                 player.getInventory().clear();
-                player.getInventory().setItem(8, leave);
+                player.getInventory().setItem(8, leaveArena);
                 }
 
             case 1-> player.sendMessage("Nem findoltam az arénát.");

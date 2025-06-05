@@ -42,6 +42,11 @@ public class LobbyBoard extends BaseBoard{
         }, 5L, 5L).getTaskId();
     }
 
+    public void cancelAnimation() {
+        super.cancel();
+        Bukkit.getScheduler().cancelTask(taskId);
+    }
+
     @Override
     public void update(Player player) {
         for (Map.Entry<Integer, String> entry : sbLines.entrySet())

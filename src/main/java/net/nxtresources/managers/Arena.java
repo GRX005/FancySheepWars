@@ -29,6 +29,8 @@ public class Arena {
     public int size;
     public ArenaStatus stat;
     public String waitingLobbyLocation;
+    public String pos1;
+    public String pos2;
 
     public Arena(String name, int size) {
         if(size %2!=0)
@@ -130,6 +132,8 @@ public class Arena {
         public int size;
         public Location waitingLobby;
         public Map<String, Location> teamSpawns =new HashMap<>();
+        public Location pos1;
+        public Location pos2;
 
         public Temp(String name, int size) {
             this.name = name;
@@ -149,5 +153,16 @@ public class Arena {
     public Location getTeamSpawn(TeamType type) {
         return teamSpawns.get(type) == null ? null : LocationMgr.get(teamSpawns.get(type));
     }
-
+    public void setPos1(Location loc) {
+        this.pos1 = LocationMgr.set(loc);
+    }
+    public String getPos1() {
+        return pos1;
+    }
+    public void setPos2(Location loc) {
+        this.pos2 = LocationMgr.set(loc);
+    }
+    public String getPos2() {
+        return pos2;
+    }
 }

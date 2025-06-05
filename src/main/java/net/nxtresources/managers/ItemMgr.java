@@ -38,7 +38,7 @@ public class ItemMgr {
             .setDisplayName("§c§lPIROS §fcsapat")
             .setLore(LegacyComponentSerializer.legacySection().deserialize("§eEzzel kattintva elkezded setupolni az adott csapatot"))
             .build();
-    public static ItemStack leave = new ItemBuilder(Material.BARRIER)
+    public static ItemStack leaveSetup = new ItemBuilder(Material.BARRIER)
             .setDisplayName("§cSetup mód elhagyása")
             .build();
     public static ItemStack saveAndExit = new ItemBuilder(Material.EMERALD_BLOCK)
@@ -49,6 +49,14 @@ public class ItemMgr {
             .setLore(
                     LegacyComponentSerializer.legacySection().deserialize("§eVálassz ki egy várakozó lobbynak megfelelő helyet,"),
                     LegacyComponentSerializer.legacySection().deserialize("§eállj oda majd kattints ezzel az itemmel!"))
+            .build();
+    public static ItemStack selectorTool =new ItemBuilder(Material.WOODEN_AXE)
+            .setDisplayName("§AKijelölő")
+            .build();
+
+    //default items
+    public static ItemStack leaveArena = new ItemBuilder(Material.BARRIER)
+            .setDisplayName("§eAréna elhagyása")
             .build();
 
 }

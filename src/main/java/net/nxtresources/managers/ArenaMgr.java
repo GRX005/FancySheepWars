@@ -2,12 +2,13 @@ package net.nxtresources.managers;
 
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
+import net.nxtresources.managers.scoreboard.BoardMgr;
+import net.nxtresources.managers.scoreboard.boards.LobbyBoard;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static net.nxtresources.Main.gson;
@@ -59,6 +60,12 @@ public class ArenaMgr {
                 });
             }
         }
+    }
+    public static void leaveLobby(Player p) {
+        for(Arena a : arenas)
+            a.lobbyPlayers.remove(p);
+        SetupMgr.tpToLobby(p);
+        BoardMgr.setBoard(p, new LobbyBoard());
     }
 
     public static boolean isInArena(Player p) {

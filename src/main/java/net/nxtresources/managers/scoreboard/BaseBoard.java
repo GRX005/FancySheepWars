@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.*;
 
+import java.util.UUID;
+
 public abstract class BaseBoard {
     ScoreboardManager sbm;
     Scoreboard sb;
@@ -17,7 +19,7 @@ public abstract class BaseBoard {
     public BaseBoard() {
         this.sbm = Bukkit.getScoreboardManager();
         this.sb = sbm.getNewScoreboard();
-        this.obj = sb.registerNewObjective("fancysheepwars", Criteria.DUMMY, Component.text("Fancy Sheepwars")); //TODO: random value generator
+        this.obj = sb.registerNewObjective("fsw_" + UUID.randomUUID().toString().substring(0,6), Criteria.DUMMY, Component.text("Fancy SheepWars"));
         this.obj.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
@@ -40,12 +42,20 @@ public abstract class BaseBoard {
     }
 
     public void updateB() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> update(player), 0L, 20L);
+        task=Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> update(player), 0L, 20L);
     }
 
+    /*public void set(Player player){
+        this.player = player;
+        task=Bukkit.getScheduler().runTask(Main.getInstance(), () -> player.setScoreboard(this.sb));
+    }*/
     public void set(Player player){
         this.player = player;
         player.setScoreboard(this.sb);
+    }
+
+    public void cancel(){
+        task.cancel();
     }
 
     public abstract void build(Player player);

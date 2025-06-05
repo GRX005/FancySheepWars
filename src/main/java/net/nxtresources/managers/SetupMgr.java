@@ -28,7 +28,7 @@ public class SetupMgr {
         player.getInventory().clear();
         player.getInventory().setItem(0, setwaitinglobby);
         player.getInventory().setItem(7, saveAndExit);
-        player.getInventory().setItem(8, leave);
+        player.getInventory().setItem(8, leaveSetup);
         return 0;
     }
 
@@ -44,6 +44,10 @@ public class SetupMgr {
             if(tempData.teamSpawns!=null)
                 for (Map.Entry<String, Location> entry : tempData.teamSpawns.entrySet())
                     arena.setTeamSpawn(TeamType.valueOf(entry.getKey()), entry.getValue());
+            if(tempData.pos1 != null && tempData.pos2 != null) {
+                arena.setPos1(tempData.pos1);
+                arena.setPos2(tempData.pos2);
+            }
             ArenaMgr.arenas.add(arena);
             ArenaMgr.saveArena(arena);
             player.getInventory().clear();
@@ -81,8 +85,9 @@ public class SetupMgr {
             player.getInventory().clear();
             player.getInventory().setItem(0, red);
             player.getInventory().setItem(1, blue);
+            player.getInventory().setItem(2, selectorTool);
             player.getInventory().setItem(7, saveAndExit);
-            player.getInventory().setItem(8, leave);
+            player.getInventory().setItem(8, leaveSetup);
             tempData.waitingLobby = loc;
         }
     }
