@@ -1,4 +1,4 @@
-package net.nxtresources;
+okpackage net.nxtresources;
 
 import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;
@@ -62,6 +62,10 @@ public final class Main extends JavaPlugin {
     public void onDisable() {
         saveConfig();
         saveMessagesConfig();
+        saveArenaConfig();
+        saveLobbyConfig();
+        saveDataConfig();
+
         // Plugin shutdown logic
     }
 
