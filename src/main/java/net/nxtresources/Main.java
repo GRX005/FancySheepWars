@@ -1,4 +1,4 @@
-okpackage net.nxtresources;
+package net.nxtresources;
 
 import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;
