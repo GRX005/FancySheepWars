@@ -60,6 +60,8 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        saveConfig();
+        saveMessagesConfig();
         // Plugin shutdown logic
     }
 
@@ -93,13 +95,9 @@ public final class Main extends JavaPlugin {
     }
 
     public void reload() {
-        saveConfig();
         reloadConfig();
-        saveMessagesConfig();
         loadFiles();
         MsgCache.load();
-
-
     }
 
     public static void saveArenaConfig() {
