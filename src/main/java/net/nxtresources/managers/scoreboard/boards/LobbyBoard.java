@@ -3,9 +3,9 @@ package net.nxtresources.managers.scoreboard.boards;
 import net.nxtresources.Main;
 import net.nxtresources.managers.DataMgr;
 import net.nxtresources.managers.MsgCache;
+import net.nxtresources.managers.scoreboard.BaseBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import net.nxtresources.managers.scoreboard.BaseBoard;
 
 import java.util.LinkedHashMap;
 import java.util.List;

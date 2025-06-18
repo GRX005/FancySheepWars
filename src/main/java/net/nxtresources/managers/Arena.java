@@ -8,10 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Arena {
 
@@ -40,7 +38,6 @@ public class Arena {
         this.stat = ArenaStatus.WAITING;
     }
 //Countdown till start
-    @SuppressWarnings("ConstantConditions")
     public BukkitRunnable countdownTask() {
         return new BukkitRunnable(){
             int toPr = 10;
@@ -58,7 +55,7 @@ public class Arena {
             }
         };
     }
-    @SuppressWarnings("ConstantConditions")
+
     private BukkitRunnable arenaTask() {
         return new BukkitRunnable() {
             @Override

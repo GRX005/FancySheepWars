@@ -1,6 +1,5 @@
 package net.nxtresources.managers;
 
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.ItemBuilder;
 import org.bukkit.Material;
