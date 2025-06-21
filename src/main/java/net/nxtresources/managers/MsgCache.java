@@ -6,7 +6,7 @@ import java.util.*;
 
 public class MsgCache {
     static Map<String, String> msg;
-    static Map<String, List<String>> msgList = new HashMap<>();
+    static Map<String, List<String>> msgList;
 
     public static void load(){
         msg = new HashMap<>();
