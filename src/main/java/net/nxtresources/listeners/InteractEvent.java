@@ -126,6 +126,21 @@ public class InteractEvent implements Listener {
                     event.setCancelled(true);
                 }
             }
+            case ORANGE_WOOL -> {
+                if(displayName.equals("bb")){
+                    Block block = event.getClickedBlock();
+                    Player p = event.getPlayer();
+                    if(block == null) {
+                        player.sendMessage("Blockra kell kattintanod!");
+                        return;
+                    }
+                    Arena.Temp temp = SetupMgr.tempdata.get(p.getUniqueId());
+                    Location loc = event.getClickedBlock().getLocation().add(0.5, 1, 0.5);
+                    temp.sheepSpawns.add(loc);
+                    player.sendMessage("§aBárány spawnolási hely mentve! loc: "+ (loc.getX() + loc.getY() + loc.getZ()));
+                    event.setCancelled(true);
+                }
+            }
             default -> {
             }
         }

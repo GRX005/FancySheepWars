@@ -11,11 +11,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
+import static net.nxtresources.managers.ItemMgr.explSheep;
+
 public class Arena {
 
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
     private final Map<TeamType, String> teamSpawns = new HashMap<>();
+    private Set<String> sheepSpawns = new HashSet<>();
     //Csak innen lehet hozzaadni, 1 helyen.
     private transient volatile int prog = 0;
 
@@ -70,6 +73,25 @@ public class Arena {
         };
     }
 
+    private BukkitRunnable dropTask() {
+        return new BukkitRunnable() {
+            int drop =10; //10 krumpli
+            final List<Player> copyp = new ArrayList<>(lobbyPlayers);
+            final Set<Location> sheepSpawns = getSheepSpawns();
+            final List<Location> list = new ArrayList<>(sheepSpawns);
+            final Random r = new Random();
+            final Player player = copyp.getFirst();
+            @Override
+            public void run() {
+                drop--;
+                if (prog==0){
+                    Location randomLoc = list.get(r.nextInt(list.size()));
+                    Bukkit.getScheduler().runTask(Main.getInstance(), () -> player.getWorld().dropItem(randomLoc, explSheep));
+                }
+            }
+        };
+    }
+
     public TeamType getTeam(Player pl) {
         for(Team t : teams) {
             for(Player p : t.tPlayers) {
@@ -96,8 +118,9 @@ public class Arena {
                 player.teleportAsync(getTeamSpawn(TeamType.BLUE));
             for(Player player : redPlayers)
                 player.teleportAsync(getTeamSpawn(TeamType.RED));
-            lobbyPlayers.clear();
+            dropTask().runTaskTimerAsynchronously(Main.getInstance(), 20L, 200L);
             arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);
+            lobbyPlayers.clear();
         } catch (Exception e) {
             Bukkit.broadcast(Component.text("Hiba tortent (valszeg dög levente hibajabol)"));
             throw new RuntimeException("Hiba tortent (valszeg dög levente hibajabol)");
@@ -127,10 +150,9 @@ public class Arena {
     public static final class Temp {
         public String name;
         public int size;
-        public Location waitingLobby;
         public Map<String, Location> teamSpawns =new HashMap<>();
-        public Location pos1;
-        public Location pos2;
+        public Set<Location> sheepSpawns = new HashSet<>();
+        public Location pos1, pos2, waitingLobby;
 
         public Temp(String name, int size) {
             this.name = name;
@@ -161,5 +183,17 @@ public class Arena {
     }
     public String getPos2() {
         return pos2;
+    }
+    public void setSheepSpawns(Set<Location> locs) {
+        Set<String> sheeps = new HashSet<>();
+        for(Location loc : locs)
+            sheeps.add(LocationMgr.set(loc));
+        sheepSpawns = sheeps;
+    }
+    public Set<Location> getSheepSpawns() {
+        Set<Location> sheeps = new HashSet<>();
+        for(String s : sheepSpawns)
+            sheeps.add(LocationMgr.get(s));
+        return sheeps;
     }
 }

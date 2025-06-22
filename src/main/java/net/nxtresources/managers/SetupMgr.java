@@ -48,15 +48,13 @@ public class SetupMgr {
                 arena.setPos1(tempData.pos1);
                 arena.setPos2(tempData.pos2);
             }
+            if (tempData.sheepSpawns != null && !tempData.sheepSpawns.isEmpty()) {
+                arena.setSheepSpawns(tempData.sheepSpawns);
+            }
             ArenaMgr.arenas.add(arena);
             ArenaMgr.saveArena(arena);
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
-            //copy world
-            //World world = Bukkit.getWorld(name); TODO: kiirtani a barmokat
-
-
-
         } else{
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
@@ -65,27 +63,20 @@ public class SetupMgr {
     }
 
     //
-    //tools
-    //
-    public void addSelector(){}
-
-    //
     //ARENA
     //
-    public void setSpawn(Player player) {}
-
-    public void setSheep(Player player) {}
 
     public static void setWaitingLobby(Player player) {
         Location loc = player.getLocation();
-        if(!SetupMgr.isInSetup(player))
+        if(!isInSetup(player))
             return;
-        Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
+        Arena.Temp tempData = tempdata.get(player.getUniqueId());
         if(tempData!=null) {
             player.getInventory().clear();
             player.getInventory().setItem(0, red);
             player.getInventory().setItem(1, blue);
             player.getInventory().setItem(2, selectorTool);
+            player.getInventory().setItem(3, setsheep);
             player.getInventory().setItem(7, saveAndExit);
             player.getInventory().setItem(8, leaveSetup);
             tempData.waitingLobby = loc;
