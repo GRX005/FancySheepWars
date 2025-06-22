@@ -11,6 +11,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
+import static net.nxtresources.enums.TeamType.BLUE;
+import static net.nxtresources.enums.TeamType.RED;
+
 import static net.nxtresources.managers.ItemMgr.explSheep;
 
 public class Arena {
@@ -105,22 +108,16 @@ public class Arena {
     private void start() {
         //TP, etc
         try {
-            List<Player> copy = new ArrayList<>(lobbyPlayers); // to safely split
-            int midpoint = copy.size() / 2;
-
-            List<Player> bluePlayers =new ArrayList<>(copy.subList(0, midpoint));
-            List<Player> redPlayers = new ArrayList<>(copy.subList(midpoint, copy.size()));
-            Team blueTeam = new Team(bluePlayers, TeamType.BLUE);
-            Team redTeam = new Team(redPlayers, TeamType.RED);
-            teams.add(blueTeam);
-            teams.add(redTeam);
-            for(Player player : bluePlayers)
-                player.teleportAsync(getTeamSpawn(TeamType.BLUE));
-            for(Player player : redPlayers)
-                player.teleportAsync(getTeamSpawn(TeamType.RED));
+            var players = new ArrayList<>(lobbyPlayers);
+            int mid = players.size() / 2;
+            var blue = new ArrayList<>(players.subList(0, mid));
+            var red = new ArrayList<>(players.subList(mid, players.size()));
+            teams.addAll(List.of(new Team(blue, BLUE), new Team(red, RED)));
+            blue.forEach(p -> p.teleportAsync(getTeamSpawn(BLUE)));
+            red.forEach(p -> p.teleportAsync(getTeamSpawn(RED)));
+            lobbyPlayers.clear();
             dropTask().runTaskTimerAsynchronously(Main.getInstance(), 20L, 200L);
             arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);
-            lobbyPlayers.clear();
         } catch (Exception e) {
             Bukkit.broadcast(Component.text("Hiba tortent (valszeg dög levente hibajabol)"));
             throw new RuntimeException("Hiba tortent (valszeg dög levente hibajabol)");

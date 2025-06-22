@@ -1,9 +1,6 @@
 package net.nxtresources.listeners;
 
-import net.nxtresources.managers.DataMgr;
-import net.nxtresources.managers.ItemMgr;
-import net.nxtresources.managers.SetupMgr;
-import net.nxtresources.managers.SheepMgr;
+import net.nxtresources.managers.*;
 import net.nxtresources.managers.scoreboard.BoardMgr;
 import net.nxtresources.managers.scoreboard.boards.LobbyBoard;
 import net.nxtresources.sheeps.ExplSheep;
