@@ -47,6 +47,7 @@ public class SetupMgr {
             if(tempData.pos1 != null && tempData.pos2 != null) {
                 arena.setPos1(tempData.pos1);
                 arena.setPos2(tempData.pos2);
+                arena.wName =tempData.pos1.getWorld().getName();
             }
             if (tempData.sheepSpawns != null && !tempData.sheepSpawns.isEmpty()) {
                 arena.setSheepSpawns(tempData.sheepSpawns);

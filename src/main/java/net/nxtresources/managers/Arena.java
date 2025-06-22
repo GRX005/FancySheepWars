@@ -4,26 +4,32 @@ import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
 import net.nxtresources.enums.TeamType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BlockVector;
 
 import java.util.*;
 
 import static net.nxtresources.enums.TeamType.BLUE;
 import static net.nxtresources.enums.TeamType.RED;
-
 import static net.nxtresources.managers.ItemMgr.explSheep;
 
 public class Arena {
 
+    private static final Logger log = LogManager.getLogger(Arena.class);
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
     private final Map<TeamType, String> teamSpawns = new HashMap<>();
     private Set<String> sheepSpawns = new HashSet<>();
     //Csak innen lehet hozzaadni, 1 helyen.
     private transient volatile int prog = 0;
+
+    private HashMap<BlockVector, BlockData> worldRAM;
 
     public int getProg(){
         return prog;
@@ -33,8 +39,9 @@ public class Arena {
     public int size;
     public ArenaStatus stat;
     public String waitingLobbyLocation;
-    public String pos1;
-    public String pos2;
+    public BlockVector pos1;
+    public BlockVector pos2;
+    public String wName; //Temp atm
 
     public Arena(String name, int size) {
         if(size %2!=0)
@@ -46,7 +53,7 @@ public class Arena {
 //Countdown till start
     public BukkitRunnable countdownTask() {
         return new BukkitRunnable(){
-            int toPr = 10;
+            int toPr = 5;
             @Override
             public void run() {
                 toPr--;
@@ -54,6 +61,7 @@ public class Arena {
                     p.sendMessage("Az arena indul ennyi mulva: "+toPr);
 
                 if(toPr==0) {//Itt indul az arena.
+                    worldRAM = WorldMgr.getInst().save(Bukkit.getWorld(wName), pos1,pos2);
                     stat = ArenaStatus.STARTED;
                     start();
                     this.cancel();
@@ -68,7 +76,7 @@ public class Arena {
             public void run() {
                 //noinspection NonAtomicOperationOnVolatileField (Csak 1 helyen szabad modositani)
                 prog++;
-                if (prog==15) {
+                if (prog==10) {
                     end();
                     this.cancel();
                 }
@@ -116,10 +124,11 @@ public class Arena {
             blue.forEach(p -> p.teleportAsync(getTeamSpawn(BLUE)));
             red.forEach(p -> p.teleportAsync(getTeamSpawn(RED)));
             lobbyPlayers.clear();
-            dropTask().runTaskTimerAsynchronously(Main.getInstance(), 20L, 200L);
+            //dropTask().runTaskTimerAsynchronously(Main.getInstance(), 20L, 200L);
             arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);
         } catch (Exception e) {
             Bukkit.broadcast(Component.text("Hiba tortent (valszeg dög levente hibajabol)"));
+            log.error("Exception: ", e);
             throw new RuntimeException("Hiba tortent (valszeg dög levente hibajabol)");
         }
     }
@@ -131,6 +140,8 @@ public class Arena {
         }));
         teams.clear();
         prog=0;
+        //Prog ==0 and status != waiting -> Arena is restoring.
+        Bukkit.getScheduler().runTask(Main.getInstance(),()->WorldMgr.getInst().load(Bukkit.getWorld(wName), worldRAM));
         stat=ArenaStatus.WAITING;
     }
 //2 teams in 1 arena
@@ -170,15 +181,15 @@ public class Arena {
         return teamSpawns.get(type) == null ? null : LocationMgr.get(teamSpawns.get(type));
     }
     public void setPos1(Location loc) {
-        this.pos1 = LocationMgr.set(loc);
+        this.pos1 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
     }
-    public String getPos1() {
+    public BlockVector getPos1() {
         return pos1;
     }
     public void setPos2(Location loc) {
-        this.pos2 = LocationMgr.set(loc);
+        this.pos2 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
     }
-    public String getPos2() {
+    public BlockVector getPos2() {
         return pos2;
     }
     public void setSheepSpawns(Set<Location> locs) {
