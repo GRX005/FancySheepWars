@@ -27,11 +27,11 @@ public class Arena {
     private final Map<TeamType, String> teamSpawns = new HashMap<>();
     private Set<String> sheepSpawns = new HashSet<>();
     //Csak innen lehet hozzaadni, 1 helyen.
-    private transient volatile int prog = 0;
+    private transient volatile long prog = 0;
 
-    private HashMap<BlockVector, BlockData> worldRAM;
+    private transient HashMap<BlockVector, BlockData> worldRAM;
 
-    public int getProg(){
+    public long getProg(){
         return prog;
     }
 
@@ -61,7 +61,9 @@ public class Arena {
                     p.sendMessage("Az arena indul ennyi mulva: "+toPr);
 
                 if(toPr==0) {//Itt indul az arena.
-                    worldRAM = WorldMgr.getInst().save(Bukkit.getWorld(wName), pos1,pos2);
+                    var tim = System.currentTimeMillis();
+                    worldRAM = WorldMgr.getInst().saveAsync(Bukkit.getWorld(wName), pos1,pos2);
+                    System.out.println("WMGR Save: "+(System.currentTimeMillis()-tim)+" ms");
                     stat = ArenaStatus.STARTED;
                     start();
                     this.cancel();
@@ -76,7 +78,7 @@ public class Arena {
             public void run() {
                 //noinspection NonAtomicOperationOnVolatileField (Csak 1 helyen szabad modositani)
                 prog++;
-                if (prog==10) {
+                if (prog== 3600L || !sufficientPlayers()) {
                     end();
                     this.cancel();
                 }
@@ -111,6 +113,13 @@ public class Arena {
             }
         }
         return null;
+    }
+
+    private boolean sufficientPlayers() {
+        for (Team t : teams)
+            if(t.tPlayers.isEmpty())
+                return false;
+        return true;
     }
 
     private void start() {

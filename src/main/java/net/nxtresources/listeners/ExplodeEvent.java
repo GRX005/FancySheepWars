@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 public class ExplodeEvent implements Listener {
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {
-        e.blockList().forEach(Block::breakNaturally);
-        e.setCancelled(true);
+//        e.blockList().forEach(Block::breakNaturally); //TODO Make only for sheep
+//        e.setCancelled(true);
     }
 }

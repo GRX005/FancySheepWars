@@ -61,7 +61,6 @@ public class InteractEvent implements Listener {
                         player.getInventory().clear();
                         ItemMgr.lobbyItems(player);
                         ArenaMgr.leave(player);
-                        ArenaMgr.leaveLobby(player);
                     }
                     case "§cSetup mód elhagyása" -> {
                         SetupMgr.finishSetup(player, false);

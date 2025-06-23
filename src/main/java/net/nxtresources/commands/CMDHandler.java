@@ -141,7 +141,6 @@ public class CMDHandler implements CommandExecutor {
                     return false;
                 }
                 ArenaMgr.leave(player);
-                ArenaMgr.leaveLobby(player);
                 sender.sendMessage(Main.color(MsgCache.get("Arena.Leave")));
                 return true;
 

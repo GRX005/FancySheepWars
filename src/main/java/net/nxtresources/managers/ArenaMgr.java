@@ -50,22 +50,22 @@ public class ArenaMgr {
 
     public static void leave(Player p) {
         for(Arena a : arenas) { //Beepitett if check az alabb definialt func-ban
-            a.lobbyPlayers.remove(p);
+            if (a.lobbyPlayers.contains(p)) {
+                a.lobbyPlayers.remove(p);
+                SetupMgr.tpToLobby(p);
+                BoardMgr.setBoard(p, new LobbyBoard());
+                return;
+            }
             for(Arena.Team t : a.teams) {
                 t.tPlayers.forEach(pl->{
                     if(p==pl) {
                         t.tPlayers.remove(pl);
                         SetupMgr.tpToLobby(pl);
+                        BoardMgr.setBoard(p, new LobbyBoard());
                     }
                 });
             }
         }
-    }
-    public static void leaveLobby(Player p) {
-        for(Arena a : arenas)
-            a.lobbyPlayers.remove(p);
-        SetupMgr.tpToLobby(p);
-        BoardMgr.setBoard(p, new LobbyBoard());
     }
 
     public static boolean isInArena(Player p) {
