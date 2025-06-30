@@ -4,20 +4,22 @@ import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
 import net.nxtresources.enums.TeamType;
+import net.nxtresources.sheeps.ExplSheep;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockVector;
 
 import java.util.*;
 
 import static net.nxtresources.enums.TeamType.BLUE;
 import static net.nxtresources.enums.TeamType.RED;
-import static net.nxtresources.managers.ItemMgr.explSheep;
 
 public class Arena {
 
@@ -25,11 +27,14 @@ public class Arena {
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
     private final Map<TeamType, String> teamSpawns = new HashMap<>();
-    private Set<String> sheepSpawns = new HashSet<>();
+    private final Set<String> REDsheepSpawns = new HashSet<>();
+    private final Set<String> BLUEsheepSpawns = new HashSet<>();
     //Csak innen lehet hozzaadni, 1 helyen.
     private transient volatile long prog = 0;
 
     private transient HashMap<BlockVector, BlockData> worldRAM;
+
+    BukkitTask droptask;
 
     public long getProg(){
         return prog;
@@ -88,19 +93,19 @@ public class Arena {
 
     private BukkitRunnable dropTask() {
         return new BukkitRunnable() {
-            int drop =10; //10 krumpli
-            final List<Player> copyp = new ArrayList<>(lobbyPlayers);
-            final Set<Location> sheepSpawns = getSheepSpawns();
-            final List<Location> list = new ArrayList<>(sheepSpawns);
             final Random r = new Random();
-            final Player player = copyp.getFirst();
             @Override
             public void run() {
-                drop--;
-                if (prog==0){
-                    Location randomLoc = list.get(r.nextInt(list.size()));
-                    Bukkit.getScheduler().runTask(Main.getInstance(), () -> player.getWorld().dropItem(randomLoc, explSheep));
-                }
+                Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                var redAvailable = ExplSheep.getFreeSheepSpawns(getRedSheepSpawns());
+                var blueAvailable = ExplSheep.getFreeSheepSpawns(getBlueSheepSpawns());
+                    if (!redAvailable.isEmpty() && !blueAvailable.isEmpty()) {
+                        var redLoc = redAvailable.get(r.nextInt(redAvailable.size()));
+                        var blueLoc = blueAvailable.get(r.nextInt(blueAvailable.size()));
+                        ExplSheep.spawnSheep(redLoc);
+                        ExplSheep.spawnSheep(blueLoc);
+                    }
+                });
             }
         };
     }
@@ -133,7 +138,7 @@ public class Arena {
             blue.forEach(p -> p.teleportAsync(getTeamSpawn(BLUE)));
             red.forEach(p -> p.teleportAsync(getTeamSpawn(RED)));
             lobbyPlayers.clear();
-            //dropTask().runTaskTimerAsynchronously(Main.getInstance(), 20L, 200L);
+            droptask =dropTask().runTaskTimerAsynchronously(Main.getInstance(), 20L, 200L);
             arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);
         } catch (Exception e) {
             Bukkit.broadcast(Component.text("Hiba tortent (valszeg dög levente hibajabol)"));
@@ -152,6 +157,15 @@ public class Arena {
         //Prog ==0 and status != waiting -> Arena is restoring.
         Bukkit.getScheduler().runTask(Main.getInstance(),()->WorldMgr.getInst().load(Bukkit.getWorld(wName), worldRAM));
         stat=ArenaStatus.WAITING;
+        if(droptask!=null) {
+            droptask.cancel();
+            droptask=null;
+        }
+        Bukkit.getScheduler().runTask(Main.getInstance(),()->{
+            World world = Bukkit.getWorld(wName);
+            if(world!=null)
+                ExplSheep.removeSheeps(world);
+        });
     }
 //2 teams in 1 arena
     public static final class Team {
@@ -168,7 +182,8 @@ public class Arena {
         public String name;
         public int size;
         public Map<String, Location> teamSpawns =new HashMap<>();
-        public Set<Location> sheepSpawns = new HashSet<>();
+        public Set<Location> redSheepSpawns = new HashSet<>();
+        public Set<Location> blueSheepSpawns = new HashSet<>();
         public Location pos1, pos2, waitingLobby;
 
         public Temp(String name, int size) {
@@ -201,16 +216,29 @@ public class Arena {
     public BlockVector getPos2() {
         return pos2;
     }
-    public void setSheepSpawns(Set<Location> locs) {
-        Set<String> sheeps = new HashSet<>();
-        for(Location loc : locs)
-            sheeps.add(LocationMgr.set(loc));
-        sheepSpawns = sheeps;
+    public void setRedSheepSpawns(Set<Location> locs) {
+        REDsheepSpawns.clear();
+        for (Location loc : locs)
+            REDsheepSpawns.add(LocationMgr.set(loc));
     }
-    public Set<Location> getSheepSpawns() {
-        Set<Location> sheeps = new HashSet<>();
-        for(String s : sheepSpawns)
-            sheeps.add(LocationMgr.get(s));
-        return sheeps;
+
+    public void setBlueSheepSpawns(Set<Location> locs) {
+        BLUEsheepSpawns.clear();
+        for (Location loc : locs)
+            BLUEsheepSpawns.add(LocationMgr.set(loc));
+    }
+
+    public Set<Location> getRedSheepSpawns() {
+        Set<Location> locs = new HashSet<>();
+        for (String s : REDsheepSpawns)
+            locs.add(LocationMgr.get(s));
+        return locs;
+    }
+
+    public Set<Location> getBlueSheepSpawns() {
+        Set<Location> locs = new HashSet<>();
+        for (String s : BLUEsheepSpawns)
+            locs.add(LocationMgr.get(s));
+        return locs;
     }
 }

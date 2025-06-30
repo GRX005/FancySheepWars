@@ -49,9 +49,10 @@ public class SetupMgr {
                 arena.setPos2(tempData.pos2);
                 arena.wName =tempData.pos1.getWorld().getName();
             }
-            if (tempData.sheepSpawns != null && !tempData.sheepSpawns.isEmpty()) {
-                arena.setSheepSpawns(tempData.sheepSpawns);
-            }
+            if (tempData.redSheepSpawns != null && !tempData.redSheepSpawns.isEmpty())
+                arena.setRedSheepSpawns(tempData.redSheepSpawns);
+            if (tempData.blueSheepSpawns != null && !tempData.blueSheepSpawns.isEmpty())
+                arena.setBlueSheepSpawns(tempData.blueSheepSpawns);
             ArenaMgr.arenas.add(arena);
             ArenaMgr.saveArena(arena);
             player.getInventory().clear();

@@ -23,13 +23,13 @@ public abstract class BaseBoard {
         this.obj.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
-    public void line(int score, String prefix, String suffix) {
+    public synchronized void line(int score, String prefix, String suffix) {
         String line="line"+score;
         String entry = "§" + score;
 
-        Team team = sb.getTeam(line + score);
+        Team team = sb.getTeam(line);
         if(team == null) {
-            team = sb.registerNewTeam(line + score);
+            team = sb.registerNewTeam(line);
             team.addEntry(entry);
         }
         team.prefix(Main.color(prefix));
@@ -50,6 +50,7 @@ public abstract class BaseBoard {
         task=Bukkit.getScheduler().runTask(Main.getInstance(), () -> player.setScoreboard(this.sb));
     }*/
     public void set(Player player){
+        if(player==null || !player.isOnline()) return;
         this.player = player;
         player.setScoreboard(this.sb);
     }

@@ -129,14 +129,28 @@ public class InteractEvent implements Listener {
                 if(displayName.equals("bb")){
                     Block block = event.getClickedBlock();
                     Player p = event.getPlayer();
+                    Location playerLoc = p.getLocation();
                     if(block == null) {
                         player.sendMessage("Blockra kell kattintanod!");
                         return;
                     }
                     Arena.Temp temp = SetupMgr.tempdata.get(p.getUniqueId());
-                    Location loc = event.getClickedBlock().getLocation().add(0.5, 1, 0.5);
-                    temp.sheepSpawns.add(loc);
-                    player.sendMessage("§aBárány spawnolási hely mentve! loc: "+ (loc.getX() + loc.getY() + loc.getZ()));
+                    Location loc = block.getLocation().add(0.5, 1, 0.5);
+                    Location blue = temp.teamSpawns.get("BLUE");
+                    Location red = temp.teamSpawns.get("RED");
+                    if(blue==null||red==null){
+                        player.sendMessage("A csapatok nincsenek megfelelően beállítva! blue: " + blue + " red: " + red);
+                        return;
+                    }
+                    var blued = playerLoc.distanceSquared(blue);
+                    var redb = playerLoc.distanceSquared(red);
+                    if (blued <= redb) {
+                        temp.blueSheepSpawns.add(loc);
+                        p.sendMessage("§9Kék csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
+                    } else {
+                        temp.redSheepSpawns.add(loc);
+                        p.sendMessage("§cPiros csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
+                    }
                     event.setCancelled(true);
                 }
             }
