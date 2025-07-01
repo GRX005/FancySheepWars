@@ -44,8 +44,7 @@ public class Arena {
     public int size;
     public ArenaStatus stat;
     public String waitingLobbyLocation;
-    public BlockVector pos1;
-    public BlockVector pos2;
+    public BlockVector pos1, pos2, waitingPos1, waitingPos2;
     public String wName; //Temp atm
 
     public Arena(String name, int size) {
@@ -184,7 +183,7 @@ public class Arena {
         public Map<String, Location> teamSpawns =new HashMap<>();
         public Set<Location> redSheepSpawns = new HashSet<>();
         public Set<Location> blueSheepSpawns = new HashSet<>();
-        public Location pos1, pos2, waitingLobby;
+        public Location pos1, pos2, waitingLobby, waitingPos1, waitingPos2;
 
         public Temp(String name, int size) {
             this.name = name;
@@ -204,6 +203,7 @@ public class Arena {
     public Location getTeamSpawn(TeamType type) {
         return teamSpawns.get(type) == null ? null : LocationMgr.get(teamSpawns.get(type));
     }
+    //for arena
     public void setPos1(Location loc) {
         this.pos1 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
     }
@@ -216,6 +216,21 @@ public class Arena {
     public BlockVector getPos2() {
         return pos2;
     }
+    //for waitinglobby
+    public void setWaitingPos1(Location loc) {
+        this.waitingPos1 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
+    }
+    public void setWaitingPos2(Location loc) {
+        this.waitingPos2 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
+    }
+    public BlockVector getWaitingPos1() {
+        return waitingPos1;
+    }
+    public BlockVector getWaitingPos2() {
+        return waitingPos2;
+    }
+    /*
+    * */
     public void setRedSheepSpawns(Set<Location> locs) {
         REDsheepSpawns.clear();
         for (Location loc : locs)

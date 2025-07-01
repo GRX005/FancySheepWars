@@ -103,28 +103,24 @@ public class InteractEvent implements Listener {
             }
             case WOODEN_AXE -> {
                 if (displayName.equals("§aKijelölő")) {
-                    Block block = event.getClickedBlock();
-                    if (block == null) {
-                        player.sendMessage("Blockra kell kattintanod!");
-                        return;
-                    }
                     if (event.getHand() != EquipmentSlot.HAND)
                         return;
 
-                    UUID uuid = player.getUniqueId();
-                    Arena.Temp temp = SetupMgr.tempdata.get(uuid);
-                    Location loc = block.getLocation();
-                    if(temp.pos1==null){
-                        temp.pos1=loc;
-                        player.sendMessage(String.valueOf(loc.getX() + loc.getY() + loc.getZ()));
+                    Arena.Temp temp = SetupMgr.tempdata.get(player.getUniqueId());
+                    Location loc = player.getLocation();
 
-                    }else{
-                        temp.pos2=loc;
-                        player.sendMessage(String.valueOf(loc.getX() + loc.getY() + loc.getZ()));
+                    if (temp.pos1 == null) {
+                        temp.pos1 = loc;
+                        player.sendMessage("Arena pos1 beállítva! loc: " + loc);
+                    } else {
+                        temp.pos2 = loc;
+                        player.sendMessage("Arena pos2 beállítva! loc: " + loc);
                     }
+
                     event.setCancelled(true);
                 }
             }
+
             case ORANGE_WOOL -> {
                 if(displayName.equals("bb")){
                     Block block = event.getClickedBlock();
@@ -150,6 +146,24 @@ public class InteractEvent implements Listener {
                     } else {
                         temp.redSheepSpawns.add(loc);
                         p.sendMessage("§cPiros csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
+                    }
+                    event.setCancelled(true);
+                }
+            }
+            case GOLDEN_AXE -> {
+                if (displayName.equals("WaitingLobby kijelolo")) {
+                    if (event.getHand() != EquipmentSlot.HAND)
+                        return;
+
+                    Arena.Temp temp = SetupMgr.tempdata.get(player.getUniqueId());
+                    Location loc = player.getLocation();
+
+                    if (temp.waitingPos1 == null && temp.waitingPos2 == null) {
+                        temp.waitingPos1 = loc;
+                        player.sendMessage("Waiting pos1 beállítva! loc: " + loc);
+                    } else {
+                        temp.waitingPos2 = loc;
+                        player.sendMessage("Waiting pos2 beállítva! loc: " + loc);
                     }
                     event.setCancelled(true);
                 }

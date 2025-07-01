@@ -47,6 +47,8 @@ public class SetupMgr {
             if(tempData.pos1 != null && tempData.pos2 != null) {
                 arena.setPos1(tempData.pos1);
                 arena.setPos2(tempData.pos2);
+                arena.setWaitingPos1(tempData.waitingPos1);
+                arena.setWaitingPos2(tempData.waitingPos2);
                 arena.wName =tempData.pos1.getWorld().getName();
             }
             if (tempData.redSheepSpawns != null && !tempData.redSheepSpawns.isEmpty())
@@ -78,7 +80,8 @@ public class SetupMgr {
             player.getInventory().setItem(0, red);
             player.getInventory().setItem(1, blue);
             player.getInventory().setItem(2, selectorTool);
-            player.getInventory().setItem(3, setsheep);
+            player.getInventory().setItem(3, waitingSelectorTool);
+            player.getInventory().setItem(4, setsheep);
             player.getInventory().setItem(7, saveAndExit);
             player.getInventory().setItem(8, leaveSetup);
             tempData.waitingLobby = loc;

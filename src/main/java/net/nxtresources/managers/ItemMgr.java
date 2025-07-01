@@ -17,17 +17,6 @@ public class ItemMgr {
 
     }
 
-    public static void waitingItems(Player player){
-        ItemStack returnToLobby = new ItemBuilder(Material.BARRIER)
-                .setDisplayName("Return to lobby")
-                .setAmount(1)
-                .build();
-        player.getInventory().setItem(8, returnToLobby);
-
-    }
-
-    public static void arenaItems(Player player){}
-
     //setup items
     public static ItemStack blue = new ItemBuilder(Material.BLUE_WOOL)
             .setDisplayName("§9§lKÉK §fcsapat")
@@ -55,6 +44,10 @@ public class ItemMgr {
     public static ItemStack setsheep=new ItemBuilder(Material.ORANGE_WOOL)
             .setDisplayName("bb")
             .setLore(LegacyComponentSerializer.legacySection().deserialize("§eEzzel állíthatod be a bárányokat hogy hol spawnoljanak tetszőleges mennyiségben."))
+            .build();
+    public static ItemStack waitingSelectorTool=new ItemBuilder(Material.GOLDEN_AXE)
+            .setDisplayName("WaitingLobby kijelolo")
+            .setLore(LegacyComponentSerializer.legacySection().deserialize("§eEzzel kell kijelolni a waiting lobby területét hogy aréna közben eltünjön."))
             .build();
 
     //default items
