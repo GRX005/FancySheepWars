@@ -32,8 +32,6 @@ public class Arena {
     //Csak innen lehet hozzaadni, 1 helyen.
     private transient volatile long prog = 0;
 
-    private transient HashMap<BlockVector, BlockData> worldRAM;
-
     BukkitTask droptask;
 
     public long getProg(){
@@ -65,9 +63,6 @@ public class Arena {
                     p.sendMessage("Az arena indul ennyi mulva: "+toPr);
 
                 if(toPr==0) {//Itt indul az arena.
-                    var tim = System.currentTimeMillis();
-                    worldRAM = WorldMgr.getInst().saveAsync(Bukkit.getWorld(wName), pos1,pos2);
-                    System.out.println("WMGR Save: "+(System.currentTimeMillis()-tim)+" ms");
                     stat = ArenaStatus.STARTED;
                     start();
                     this.cancel();
@@ -154,7 +149,7 @@ public class Arena {
         teams.clear();
         prog=0;
         //Prog ==0 and status != waiting -> Arena is restoring.
-        Bukkit.getScheduler().runTask(Main.getInstance(),()->WorldMgr.getInst().load(Bukkit.getWorld(wName), worldRAM));
+        Bukkit.getScheduler().runTask(Main.getInstance(),()->WorldMgr.getInst().load(Objects.requireNonNull(Bukkit.getWorld(wName))));
         stat=ArenaStatus.WAITING;
         if(droptask!=null) {
             droptask.cancel();

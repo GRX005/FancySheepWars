@@ -31,8 +31,9 @@ public class SetupMgr {
         player.getInventory().setItem(8, leaveSetup);
         return 0;
     }
-
+//TODO Ne lehessen az arena teruleten kivul szarokat lerakni. WaitingLobby autodetect? Elobb keljen kijelolni az arena teruletet es utana a tobbit
     public static void finishSetup(Player player, boolean succ){
+        player.sendMessage("Finishing setup...");
         String name = playerSetupArena.remove(player.getUniqueId());
         Arena.Temp tempData = tempdata.remove(player.getUniqueId());
         if(name == null ||tempData==null)
@@ -59,6 +60,8 @@ public class SetupMgr {
             ArenaMgr.saveArena(arena);
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
+
+            WorldMgr.getInst().saveAsync(tempData.pos1.getWorld(),arena.pos1,arena.pos2);
         } else{
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
