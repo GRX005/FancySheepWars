@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockVector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -23,7 +24,6 @@ import static net.nxtresources.enums.TeamType.RED;
 
 public class Arena {
 
-    private static final Logger log = LogManager.getLogger(Arena.class);
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
     private final Map<TeamType, String> teamSpawns = new HashMap<>();
@@ -32,18 +32,16 @@ public class Arena {
     //Csak innen lehet hozzaadni, 1 helyen.
     private transient volatile long prog = 0;
 
-    BukkitTask droptask;
-
     public long getProg(){
         return prog;
     }
 
     public String name;
     public int size;
-    public ArenaStatus stat;
+    public transient ArenaStatus stat;
     public String waitingLobbyLocation;
     public BlockVector pos1, pos2, waitingPos1, waitingPos2;
-    public String wName; //Temp atm
+    public String wName; //Needs to be str, as gson can't save World.
 
     public Arena(String name, int size) {
         if(size %2!=0)
@@ -90,16 +88,16 @@ public class Arena {
             final Random r = new Random();
             @Override
             public void run() {
-                Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                 var redAvailable = ExplSheep.getFreeSheepSpawns(getRedSheepSpawns());
                 var blueAvailable = ExplSheep.getFreeSheepSpawns(getBlueSheepSpawns());
-                    if (!redAvailable.isEmpty() && !blueAvailable.isEmpty()) {
-                        var redLoc = redAvailable.get(r.nextInt(redAvailable.size()));
-                        var blueLoc = blueAvailable.get(r.nextInt(blueAvailable.size()));
-                        ExplSheep.spawnSheep(redLoc);
-                        ExplSheep.spawnSheep(blueLoc);
-                    }
-                });
+                if (!redAvailable.isEmpty() && !blueAvailable.isEmpty()) {
+                    var redLoc = redAvailable.get(r.nextInt(redAvailable.size()));
+                    var blueLoc = blueAvailable.get(r.nextInt(blueAvailable.size()));
+                    ExplSheep.spawnSheep(redLoc);
+                    ExplSheep.spawnSheep(blueLoc);
+                }
+                if(stat==ArenaStatus.WAITING)
+                    this.cancel();
             }
         };
     }
@@ -131,12 +129,17 @@ public class Arena {
             teams.addAll(List.of(new Team(blue, BLUE), new Team(red, RED)));
             blue.forEach(p -> p.teleportAsync(getTeamSpawn(BLUE)));
             red.forEach(p -> p.teleportAsync(getTeamSpawn(RED)));
+            //Optionally remove waiting lobby.
+            if (waitingPos1!=null&&waitingPos2!=null) {
+                WorldMgr.getInst().rmLobby(Bukkit.getWorld(wName),waitingPos1,waitingPos2);
+            }
             lobbyPlayers.clear();
-            droptask =dropTask().runTaskTimerAsynchronously(Main.getInstance(), 20L, 200L);
+            dropTask().runTaskTimer(Main.getInstance(), 20L, 200L);
             arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);
+
         } catch (Exception e) {
             Bukkit.broadcast(Component.text("Hiba tortent (valszeg dög levente hibajabol)"));
-            log.error("Exception: ", e);
+            System.out.println("Exception: "+e);
             throw new RuntimeException("Hiba tortent (valszeg dög levente hibajabol)");
         }
     }
@@ -149,17 +152,10 @@ public class Arena {
         teams.clear();
         prog=0;
         //Prog ==0 and status != waiting -> Arena is restoring.
-        Bukkit.getScheduler().runTask(Main.getInstance(),()->WorldMgr.getInst().load(Objects.requireNonNull(Bukkit.getWorld(wName))));
+        var wrld = Objects.requireNonNull(Bukkit.getWorld(wName));
+        WorldMgr.getInst().load(wrld,name);
         stat=ArenaStatus.WAITING;
-        if(droptask!=null) {
-            droptask.cancel();
-            droptask=null;
-        }
-        Bukkit.getScheduler().runTask(Main.getInstance(),()->{
-            World world = Bukkit.getWorld(wName);
-            if(world!=null)
-                ExplSheep.removeSheeps(world);
-        });
+        Bukkit.getScheduler().runTask(Main.getInstance(),()-> ExplSheep.removeSheeps(wrld));
     }
 //2 teams in 1 arena
     public static final class Team {
@@ -202,14 +198,8 @@ public class Arena {
     public void setPos1(Location loc) {
         this.pos1 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
     }
-    public BlockVector getPos1() {
-        return pos1;
-    }
     public void setPos2(Location loc) {
         this.pos2 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
-    }
-    public BlockVector getPos2() {
-        return pos2;
     }
     //for waitinglobby
     public void setWaitingPos1(Location loc) {
@@ -217,12 +207,6 @@ public class Arena {
     }
     public void setWaitingPos2(Location loc) {
         this.waitingPos2 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
-    }
-    public BlockVector getWaitingPos1() {
-        return waitingPos1;
-    }
-    public BlockVector getWaitingPos2() {
-        return waitingPos2;
     }
     /*
     * */

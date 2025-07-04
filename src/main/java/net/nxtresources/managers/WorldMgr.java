@@ -28,7 +28,7 @@ public class WorldMgr {
     }
     private record WorldDB(@SerializedName("L") String BlockLoc,@SerializedName("D") String BlockData) {}
 //TODO HashSet vs ArrayList, Per-Chunk saving,Replace Gson?,Replace String BlockLoc with packed long or ints,Remove hashmap presize,Chunk snapshots async?,
-    public void saveAsync(World wrld, BlockVector pos1, BlockVector pos2) {
+    public void saveAsync(World wrld,String arName, BlockVector pos1, BlockVector pos2) {
         // Calculate region bounds
         int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
         int minY = Math.min(pos1.getBlockY(), pos2.getBlockY());
@@ -52,7 +52,7 @@ public class WorldMgr {
             }
         }
 
-        // Process snapshots in parallel with all threads //TODO VirtualThreads
+        // Process snapshots in parallel with all threads
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             List<Future<Set<WorldDB>>> futures = new ArrayList<>();
 
@@ -64,8 +64,7 @@ public class WorldMgr {
                     int endX = Math.min(maxX, chunkX + 15);
                     int startZ = Math.max(minZ, chunkZ);
                     int endZ = Math.min(maxZ, chunkZ + 15);
-                    int blocksInChunk = (endX - startX + 1) * (maxY - minY + 1) * (endZ - startZ + 1);
-                    Set<WorldDB> chunkMap = new HashSet<>(blocksInChunk);
+                    Set<WorldDB> chunkMap = new HashSet<>();
 
                     for (int x = startX; x <= endX; x++) {
                         for (int y = minY; y <= maxY; y++) {
@@ -83,26 +82,24 @@ public class WorldMgr {
             }
 
             // Combine results
-            long totalBlocks = (long)(maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1);
-            int mapCapacity = (int) Math.min(totalBlocks, Integer.MAX_VALUE - 8);
-            Set<WorldDB> result = new HashSet<>(mapCapacity);
+            Set<WorldDB> result = new HashSet<>();
             for (Future<Set<WorldDB>> future : futures)
                 result.addAll(future.get());
-            Thread.ofVirtual().start(()->toDisk(wrld.getName(),result));
+            Thread.ofVirtual().start(()->toDisk(arName,result));
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException("WorldRAM SAVE EXCEPT",e);
         }
     }
 //Runs every arena end.
-    public void load(World wrld) {
+    public void load(World wrld, String arName) {
         Thread.ofVirtual().start(()->{
             try {
-                String json = Files.readString(Path.of("plugins\\FancySheepWars\\Arenas", wrld.getName() + ".dat"));
+                String json = Files.readString(Path.of("plugins\\FancySheepWars\\Arenas", arName + ".dat"));
                 Set<WorldDB> wrldState = Main.gson.fromJson(json, new TypeToken<Set<WorldDB>>() {}.getType());
-                wrldState.forEach(w-> {
+                Bukkit.getScheduler().runTask(Main.getInstance(),()-> wrldState.forEach(w-> {
                     String[] coords = w.BlockLoc.split(",");
-                    Bukkit.getScheduler().runTask(Main.getInstance(),()->wrld.getBlockAt(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), Integer.parseInt(coords[2])).setBlockData(Bukkit.createBlockData(w.BlockData)));
-                });
+                    wrld.getBlockAt(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), Integer.parseInt(coords[2])).setBlockData(Bukkit.createBlockData(w.BlockData));
+                }));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -118,6 +115,26 @@ public class WorldMgr {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void rmLobby(World wrld,BlockVector pos1,BlockVector pos2) {
+        int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
+        int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX());
+        int minY = Math.min(pos1.getBlockY(), pos2.getBlockY());
+        int maxY = Math.max(pos1.getBlockY(), pos2.getBlockY());
+        int minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+        int maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
+
+        Bukkit.getScheduler().runTask(Main.getInstance(),()->{
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) {
+                    for (int z = minZ; z <= maxZ; z++) {
+                        // false = don't run block physics (much faster when clearing large areas)
+                        wrld.getBlockAt(x, y, z).setType(Material.AIR, false);
+                    }
+                }
+            }
+        });
     }
 
 }
