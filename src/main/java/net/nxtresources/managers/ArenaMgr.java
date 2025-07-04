@@ -115,6 +115,7 @@ public class ArenaMgr {
                 Arena arena = gson.fromJson(json, Arena.class);
                 arena.lobbyPlayers = new HashSet<>();
                 arena.teams = new HashSet<>();
+                arena.stat=ArenaStatus.WAITING;
                 arenas.add(arena);
                 loadedArenas.add(arena.name);
             }

@@ -61,7 +61,7 @@ public class SetupMgr {
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
 
-            WorldMgr.getInst().saveAsync(tempData.pos1.getWorld(),arena.pos1,arena.pos2);
+            WorldMgr.getInst().saveAsync(tempData.pos1.getWorld(),arena.name,arena.pos1,arena.pos2);
         } else{
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
