@@ -91,19 +91,19 @@ public class ExplSheep implements FancySheep {
 
         final double radius = 0.02; /* minimalism radiusz kell a szaggatás elkerulese erdekeben */
         final Location center = sheep.getLocation().clone();
-        final double[] speed = { 0 };
-        final double[] floating = { 0 };
+        dVariable floating = new dVariable(0);
+        dVariable speed = new dVariable(0);
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), updateTask -> {
-            double x = center.getX() + radius * Math.cos(speed[0]);
-            double z = center.getZ() + radius * Math.sin(speed[0]);
+            double x = center.getX() + radius * Math.cos(speed.d);
+            double z = center.getZ() + radius * Math.sin(speed.d);
             //floating
             double baseY = center.getY() + 0.2;
-            double y = baseY + Math.sin(floating[0]) * 0.2;
+            double y = baseY + Math.sin(floating.d) * 0.2;
             Location newLoc = new Location(center.getWorld(), x, y, z);
-            newLoc.setYaw((float) Math.toDegrees(-speed[0] + Math.PI));
+            newLoc.setYaw((float) Math.toDegrees(-speed.d + Math.PI));
             sheep.teleport(newLoc);
-            speed[0] += Math.toRadians(5); /* forgási sebesség */
-            floating[0] += 0.1; /* fel-le sebesség */
+            speed.d += Math.toRadians(5); /* forgási sebesség */
+            floating.d += 0.1; /* fel-le sebesség */
 
             //pickup sheep
             Collection<Entity> nearbyEntities = sheep.getWorld().getNearbyEntities(sheep.getBoundingBox().expand(0.2, 0.5, 0.2));
@@ -149,5 +149,13 @@ public class ExplSheep implements FancySheep {
             if (!sheep) free.add(loc);
         }
         return free;
+    }
+
+    static class dVariable {
+        double d;
+        public dVariable(double d) {
+            this.d = d;
+        }
+
     }
 }
