@@ -2,6 +2,7 @@ package net.nxtresources.sheeps;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.util.parsing.packrat.Atom;
 import net.nxtresources.Main;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -16,7 +17,9 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static net.nxtresources.managers.ItemMgr.blue;
 import static net.nxtresources.managers.ItemMgr.explSheep;
 
 public class ExplSheep implements FancySheep {
@@ -39,7 +42,13 @@ public class ExplSheep implements FancySheep {
             sh.setGravity(false);
             final var sp = 1.0;
             final var nmsSh = ((CraftEntity) sh).getHandle(); //We check block collisions via NMS
+            var timer = new AtomicInteger(0);
             Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
+                var tim = timer.get();
+                timer.set(tim+1);
+                if (tim%20==0) {
+                    //Eltelt egy mp?
+                }
                 final Location shLoc = sh.getLocation();
                 if(sh.isDead() || !sh.isValid())
                     task.cancel();
