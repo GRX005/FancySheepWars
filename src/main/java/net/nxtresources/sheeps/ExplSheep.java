@@ -46,8 +46,12 @@ public class ExplSheep implements FancySheep {
             Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
                 var tim = timer.get();
                 timer.set(tim+1);
-                if (tim%20==0) {
-                    //Eltelt egy mp?
+                if (tim>0&& tim%20==0) {
+                    DyeColor dc = sh.getColor();
+                    if(dc==DyeColor.RED)
+                        sh.setColor(DyeColor.WHITE);
+                    else if(dc==DyeColor.WHITE)
+                        sh.setColor(DyeColor.RED);
                 }
                 final Location shLoc = sh.getLocation();
                 if(sh.isDead() || !sh.isValid())
