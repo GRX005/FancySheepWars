@@ -50,7 +50,7 @@ public class ExplSheep implements FancySheep {
                     DyeColor dc = sh.getColor();
                     if(dc==DyeColor.RED)
                         sh.setColor(DyeColor.WHITE);
-                    else if(dc==DyeColor.WHITE)
+                    else
                         sh.setColor(DyeColor.RED);
                 }
                 final Location shLoc = sh.getLocation();
