@@ -2,7 +2,6 @@ package net.nxtresources.sheeps;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.util.parsing.packrat.Atom;
 import net.nxtresources.Main;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -12,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.nxtresources.managers.ItemMgr.blue;
 import static net.nxtresources.managers.ItemMgr.explSheep;
 
 public class ExplSheep implements FancySheep {
@@ -28,13 +28,16 @@ public class ExplSheep implements FancySheep {
         p.getInventory().addItem(explSheep);
 
     }
-
+//TODO Sheep egyre kozelebb a robbanashoz -> egyre gyorsabban villog, kiloveskor 1szer flame particle szet loves?
     @Override
     public void shootSheep(Player p) {//TODO ADD DEFAULT FOR COMMON?
         final Location loc = p.getLocation();
         final World world = loc.getWorld();
         final Vector dir = loc.getDirection().normalize();
-        world.spawn(loc.add(dir.multiply(1.5)), Sheep.class, sh -> {
+        var fLoc = loc.add(dir.multiply(1.5));
+        fLoc.setY(loc.getY()+1.8);
+
+        world.spawn(fLoc, Sheep.class, sh -> {
             sh.setColor(DyeColor.RED);
             sh.customName(Component.text("Explosive Sheep", NamedTextColor.RED));
             sh.setCustomNameVisible(true); //Name visible all the time, not just when entity in aim
