@@ -4,7 +4,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
 import net.nxtresources.managers.*;
 import net.nxtresources.menus.ArenaSelectorGui;
-import net.nxtresources.sheeps.ExplSheep;
+import net.nxtresources.sheeps.types.ExplSheep;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,7 +19,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class InteractEvent implements Listener {
 

@@ -4,25 +4,22 @@ import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
 import net.nxtresources.enums.TeamType;
-import net.nxtresources.sheeps.ExplSheep;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.nxtresources.sheeps.types.ExplSheep;
+import net.nxtresources.sheeps.FancySheep;
+import net.nxtresources.sheeps.SpawnAndRmSheep;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockVector;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static net.nxtresources.enums.TeamType.BLUE;
 import static net.nxtresources.enums.TeamType.RED;
 
-public class Arena {
+public class Arena{
 
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
@@ -31,6 +28,7 @@ public class Arena {
     private final Set<String> BLUEsheepSpawns = new HashSet<>();
     //Csak innen lehet hozzaadni, 1 helyen.
     private transient volatile long prog = 0;
+    private BukkitTask dTask;
 
     public long getProg(){
         return prog;
@@ -86,15 +84,20 @@ public class Arena {
     private BukkitRunnable dropTask() {
         return new BukkitRunnable() {
             final Random r = new Random();
+            private final List<FancySheep> sheeps =List.of(
+                    new ExplSheep()
+            );
             @Override
             public void run() {
-                var redAvailable = ExplSheep.getFreeSheepSpawns(getRedSheepSpawns());
-                var blueAvailable = ExplSheep.getFreeSheepSpawns(getBlueSheepSpawns());
+                var redAvailable = SpawnAndRmSheep.getFreeSheepSpawns(getRedSheepSpawns());
+                var blueAvailable = SpawnAndRmSheep.getFreeSheepSpawns(getBlueSheepSpawns());
                 if (!redAvailable.isEmpty() && !blueAvailable.isEmpty()) {
                     var redLoc = redAvailable.get(r.nextInt(redAvailable.size()));
                     var blueLoc = blueAvailable.get(r.nextInt(blueAvailable.size()));
-                    ExplSheep.spawnSheep(redLoc);
-                    ExplSheep.spawnSheep(blueLoc);
+                    var redSheep = sheeps.get(r.nextInt(sheeps.size()));
+                    var blueSheep = sheeps.get(r.nextInt(sheeps.size()));
+                    SheepMgr.spawnSheep(redSheep, redLoc);
+                    SheepMgr.spawnSheep(blueSheep, blueLoc);
                 }
                 if(stat==ArenaStatus.WAITING)
                     this.cancel();
@@ -134,7 +137,7 @@ public class Arena {
                 WorldMgr.getInst().rmLobby(Bukkit.getWorld(wName),waitingPos1,waitingPos2);
             }
             lobbyPlayers.clear();
-            dropTask().runTaskTimer(Main.getInstance(), 20L, 200L);
+            dTask=dropTask().runTaskTimer(Main.getInstance(), 20L, 200L);
             arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);
 
         } catch (Exception e) {
@@ -155,7 +158,11 @@ public class Arena {
         var wrld = Objects.requireNonNull(Bukkit.getWorld(wName));
         WorldMgr.getInst().load(wrld,name);
         stat=ArenaStatus.WAITING;
-        Bukkit.getScheduler().runTask(Main.getInstance(),()-> ExplSheep.removeSheeps(wrld));
+        if(dTask!=null) {
+            dTask.cancel();
+            dTask=null;
+        }
+        Bukkit.getScheduler().runTask(Main.getInstance(),()->SpawnAndRmSheep.rmSheeps(wrld));
     }
 //2 teams in 1 arena
     public static final class Team {
