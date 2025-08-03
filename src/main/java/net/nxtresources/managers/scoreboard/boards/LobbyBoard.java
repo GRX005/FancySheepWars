@@ -14,7 +14,7 @@ import java.util.Map;
 public class LobbyBoard extends BaseBoard{
 
     LinkedHashMap<Integer, String> sbLines;
-    List<String> sbTitles;
+    List<String> sbTitles = List.of();
     int i=0;
     int taskId = -1;
 
@@ -29,7 +29,6 @@ public class LobbyBoard extends BaseBoard{
             sbLines.put(max - i, lines.get(i));
         title(Main.color(sbTitles.getFirst()));
         set(player);
-        updateB();
         if (sbTitles.size() > 1)
             animate();
 
@@ -40,11 +39,6 @@ public class LobbyBoard extends BaseBoard{
             i = (i + 1) % sbTitles.size();
             title(Main.color(sbTitles.get(i)));
         }, 5L, 5L).getTaskId();
-    }
-
-    public void cancelAnimation() {
-        super.cancel();
-        Bukkit.getScheduler().cancelTask(taskId);
     }
 
     @Override

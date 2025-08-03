@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.*;
 
 import java.util.UUID;
@@ -14,7 +13,6 @@ public abstract class BaseBoard {
     Scoreboard sb;
     Objective obj;
     Player player;
-    BukkitTask task;
 
     public BaseBoard() {
         this.sbm = Bukkit.getScoreboardManager();
@@ -41,10 +39,6 @@ public abstract class BaseBoard {
         obj.displayName(content);
     }
 
-    public void updateB() {
-        task=Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> update(player), 0L, 20L);
-    }
-
     /*public void set(Player player){
         this.player = player;
         task=Bukkit.getScheduler().runTask(Main.getInstance(), () -> player.setScoreboard(this.sb));
@@ -53,10 +47,6 @@ public abstract class BaseBoard {
         if(player==null || !player.isOnline()) return;
         this.player = player;
         player.setScoreboard(this.sb);
-    }
-
-    public void cancel(){
-        task.cancel();
     }
 
     public abstract void build(Player player);
