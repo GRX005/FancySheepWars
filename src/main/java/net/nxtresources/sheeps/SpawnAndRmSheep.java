@@ -9,28 +9,27 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static net.nxtresources.managers.ItemMgr.explSheep;
 
 public abstract class SpawnAndRmSheep implements FancySheep {
 
     public NamespacedKey npk;
+    public static List<NamespacedKey> sheeps = new ArrayList<>();
 
-    public SpawnAndRmSheep(String id) {
-        this.npk = new NamespacedKey(Main.getInstance(), id);
+    public SpawnAndRmSheep(String key) {
+        Main pl = Main.getInstance();
+        npk = new NamespacedKey(pl, key);
+        sheeps.add(npk);
     }
 
     @Override
     public void spawnSheep(Location loc) {
-        NamespacedKey sheepid = this.npk;
         Collection<Entity> nearby = loc.getWorld().getNearbyEntities(loc, 0.5, 1.0, 0.5);
         for (Entity e : nearby) {
             PersistentDataContainer data = e.getPersistentDataContainer();
-            if (data.has(sheepid, PersistentDataType.BYTE))
-                return;
+            for(NamespacedKey key : sheeps) if (data.has(key, PersistentDataType.BYTE)) return;
         }
 
         Sheep sheep = (Sheep) loc.getWorld().spawnEntity(loc, EntityType.SHEEP);
@@ -40,22 +39,25 @@ public abstract class SpawnAndRmSheep implements FancySheep {
         sheep.setBaby();
         sheep.setAgeLock(true);
         customizeSheep(sheep);
-
         PersistentDataContainer data = sheep.getPersistentDataContainer();
-        data.set(sheepid, PersistentDataType.BYTE, (byte) 1);
+        data.set(npk, PersistentDataType.BYTE, (byte) 1);
 
         final double radius = 0.02; /* minimalism radiusz kell a szaggatás elkerulese erdekeben */
         final Location center = sheep.getLocation().clone();
-        //var floating = 0;
-        //var speed = 0;
         final double[]floating={0};
         final double[] speed= {0};
+
+        /*SHEEP ROTATING*/
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), updateTask -> {
-            double x = center.getX() + radius * Math.cos(speed[0]);
-            double z = center.getZ() + radius * Math.sin(speed[0]);
+            if(!sheep.isValid() || sheep.isDead()){
+                updateTask.cancel();
+                return;
+            }
+            var x = center.getX() + radius * Math.cos(speed[0]);
+            var z = center.getZ() + radius * Math.sin(speed[0]);
             //floating
-            double baseY = center.getY() + 0.2;
-            double y = baseY + Math.sin(floating[0]) * 0.2;
+            var baseY = center.getY() + 0.2;
+            var y = baseY + Math.sin(floating[0]) * 0.2;
             Location newLoc = new Location(center.getWorld(), x, y, z);
             newLoc.setYaw((float) Math.toDegrees(-speed[0] + Math.PI));
             sheep.teleport(newLoc);
@@ -67,10 +69,9 @@ public abstract class SpawnAndRmSheep implements FancySheep {
             for (Entity e : nearbyEntities) {
                 if (e instanceof Player player) {
                     PersistentDataContainer sheepData = sheep.getPersistentDataContainer();
-                    if (sheepData.has(sheepid, PersistentDataType.BYTE)) {
+                    if (sheepData.has(npk, PersistentDataType.BYTE)) {
                         player.getInventory().addItem(explSheep);
                         sheep.getWorld().playSound(sheep.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
-                        //removeSheeps(sheep.getWorld());
                         updateTask.cancel(); //stop animation
                         sheep.remove();
                         break;
@@ -83,8 +84,7 @@ public abstract class SpawnAndRmSheep implements FancySheep {
     public static void rmSheeps(World w){
         for (Entity e : w.getEntitiesByClass(Sheep.class)) {
             PersistentDataContainer data = e.getPersistentDataContainer();
-            if (data.has(new NamespacedKey(Main.getInstance(), "expl_sheep"), PersistentDataType.BYTE))
-                e.remove();
+            if (data.has(new NamespacedKey(Main.getInstance(), "expl_sheep"), PersistentDataType.BYTE)) e.remove();
             //etc
         }
     }
@@ -92,14 +92,17 @@ public abstract class SpawnAndRmSheep implements FancySheep {
 
     public static List<Location> getFreeSheepSpawns(Collection<Location> locations) {
         List<Location> free = new ArrayList<>();
-        NamespacedKey explosiveSheepKey = new NamespacedKey(Main.getInstance(), "expl_sheep");
         for (Location loc : locations) {
-            boolean sheep = false;
+            var sheep = false;
             for (Entity e : loc.getWorld().getNearbyEntities(loc, 0.5, 1.0, 0.5)) { //sync only
-                if (e.getPersistentDataContainer().has(explosiveSheepKey, PersistentDataType.BYTE)) {
-                    sheep = true;
-                    break;
+                PersistentDataContainer data = e.getPersistentDataContainer();
+                for (NamespacedKey key : sheeps) {
+                    if (data.has(key, PersistentDataType.BYTE)) {
+                        sheep = true;
+                        break;
+                    }
                 }
+                if(sheep)break;
             }
             if (!sheep) free.add(loc);
         }
@@ -109,5 +112,4 @@ public abstract class SpawnAndRmSheep implements FancySheep {
     public NamespacedKey getSheepId() {
         return this.npk;
     }
-
 }
