@@ -37,12 +37,13 @@ public final class Main extends JavaPlugin {
     public static File dataFile;
 
     public static final Gson gson =new Gson();
-    public static NamespacedKey shKey;
+    public static NamespacedKey shKey, EXPL_SHEEP;
 
     @Override
     public void onEnable() {
         plugin =this;
         shKey = new NamespacedKey(plugin, "SheepData");
+        EXPL_SHEEP = new NamespacedKey(plugin, "expl_sheep");
         initialize();
         loadFiles();
         registerCommands();
