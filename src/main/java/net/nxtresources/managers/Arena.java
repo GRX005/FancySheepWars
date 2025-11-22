@@ -156,7 +156,7 @@ public class Arena{
         prog=0;
         //Prog ==0 and status != waiting -> Arena is restoring.
         var wrld = Objects.requireNonNull(Bukkit.getWorld(wName));
-        WorldMgr.getInst().load(wrld,name);
+        WorldMgr.getInst().toWrld(wrld,name);
         stat=ArenaStatus.WAITING;
         if(dTask!=null) {
             dTask.cancel();
