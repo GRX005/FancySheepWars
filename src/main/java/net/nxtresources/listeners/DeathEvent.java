@@ -25,10 +25,10 @@ public class DeathEvent implements Listener {
 
     }
 
-    @EventHandler
-    public void onSheepDeath(EntityDeathEvent e) {
-        if(e.getEntityType()==EntityType.SHEEP) {
-            e.setCancelled(true);
-        }
-    }
+//    @EventHandler
+//    public void onSheepDeath(EntityDeathEvent e) {
+//        if(e.getEntityType()==EntityType.SHEEP) {
+//            e.setCancelled(true);
+//        }
+//    }
 }

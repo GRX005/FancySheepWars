@@ -3,7 +3,7 @@ package net.nxtresources.listeners;
 import net.nxtresources.managers.*;
 import net.nxtresources.managers.scoreboard.BoardMgr;
 import net.nxtresources.managers.scoreboard.boards.LobbyBoard;
-import net.nxtresources.sheeps.ExplSheep;
+import net.nxtresources.sheeps.types.ExplSheep;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
