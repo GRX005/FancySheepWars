@@ -1,6 +1,5 @@
 package net.nxtresources.managers;
 
-import com.google.gson.annotations.SerializedName;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.nxtresources.Main;
 import org.bukkit.*;
@@ -13,11 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.zip.Deflater;
@@ -31,12 +27,12 @@ public class WorldMgr {
     public static WorldMgr getInst() {
         return inst;
     }
-    private record WorldDB(@SerializedName("L") String BlockLoc,@SerializedName("D") String BlockData) {}
+    private record WorldDB(String BlockLoc, String BlockData) {}
 
-    private static final long MAGIC = 0x4172656E61444200L; // "WORLDBUL"
+    private static final long MAGIC = 0x4172656E61444200L; // "ArenaDB"
     private static final byte VERSION = 1;
 
-//TODO HashSet vs ArrayList, Per-Chunk saving,Replace Gson?,Replace String BlockLoc with packed long or ints,Remove hashmap presize,Chunk snapshots async?,
+//TODO HashSet vs ArrayList, Per-Chunk saving,Replace String BlockLoc with packed long or ints,Remove hashmap presize,Chunk snapshots async?,
     public void saveAsync(World wrld,String arName, BlockVector pos1, BlockVector pos2) {
         // Calculate region bounds
         int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
@@ -62,8 +58,8 @@ public class WorldMgr {
         }
 
         // Process snapshots in parallel with all threads
-        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            List<Future<Set<WorldDB>>> futures = new ArrayList<>();
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<Future<List<WorldDB>>> futures = new ArrayList<>();
 
             for (ChunkSnapshot snapshot : snapshots) {
                 futures.add(executor.submit(() -> {
@@ -73,7 +69,7 @@ public class WorldMgr {
                     int endX = Math.min(maxX, chunkX + 15);
                     int startZ = Math.max(minZ, chunkZ);
                     int endZ = Math.min(maxZ, chunkZ + 15);
-                    Set<WorldDB> chunkMap = new HashSet<>();
+                    ArrayList<WorldDB> chunkMap = new ArrayList<>();
 
                     for (int x = startX; x <= endX; x++) {
                         for (int y = minY; y <= maxY; y++) {
@@ -92,7 +88,7 @@ public class WorldMgr {
 
             // Combine results
             List<WorldDB> result = new ArrayList<>();
-            for (Future<Set<WorldDB>> future : futures)
+            for (Future<List<WorldDB>> future : futures)
                 result.addAll(future.get());
             Thread.ofVirtual().start(()-> {
                 try {
@@ -108,6 +104,7 @@ public class WorldMgr {
 //Runs every arena end.
     public void toWrld(World wrld, String arName) {
         Thread.ofVirtual().name("ArenaLoad-" + arName).start(() -> {
+            var start = System.currentTimeMillis();
             try {
                 List<WorldDB> blocks = load(arName);
 
@@ -125,17 +122,30 @@ public class WorldMgr {
                 }
 
                 // NOW switch to main thread and blast blocks as fast as possible
-                Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                final long timeBudgetNs = 3_000_000L; // 3 ms per tick budget (tune this: 2-6 ms typical)
+                long startAll = System.currentTimeMillis();
+                final int[] index = {0};
+                Bukkit.getScheduler().runTaskTimer(Main.getInstance(), t-> {
+                    long tickStart = System.nanoTime();
+                    while (index[0] < toPlace.size()) {
+                        // stop if we've reached time budget for this tick
+                        if (System.nanoTime() - tickStart > timeBudgetNs) break;
 
-                    for (PlacedBlock pb : toPlace) {
+                        PlacedBlock pb = toPlace.get(index[0]++);
+                        // If you can, ensure chunk is loaded beforehand to avoid chunk-load lag here
                         Block b = wrld.getBlockAt(pb.x, pb.y, pb.z);
-                        // Fastest possible way:
-                        b.setBlockData(pb.data, false); // false = no physics
+                        b.setBlockData(pb.data, false);
                     }
 
-                    Bukkit.getConsoleSender().sendMessage("Arena '" + arName + "' loaded (" + toPlace.size() + " blocks)");
-                });
+                    // finished
+                    if (index[0] >= toPlace.size()) {
+                        t.cancel();
+                        long totalMs = System.currentTimeMillis() - startAll;
+                        Main.getInstance().getLogger().info("AllTime: " + totalMs + "ms");
+                    }
+                }, 0L,1L); //Run every tick
 
+                Main.getInstance().getLogger().info("AllTime: "+(System.currentTimeMillis()-start));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -146,8 +156,8 @@ public class WorldMgr {
         try (var in = new DataInputStream(new BufferedInputStream(
                 new InflaterInputStream(Files.newInputStream(Path.of("plugins\\FancySheepWars\\Arenas"+"\\"+arName+".dat")))))) {
 
-            if (in.readLong() != MAGIC) throw new IOException("Not a WorldDBUltra file");
-            if (in.readByte() != VERSION) throw new IOException("Unsupported version");
+            if (in.readLong() != MAGIC) throw new IOException("Not an ArenaDB file");
+            if (in.readByte() != VERSION) throw new IOException("Unsupported ArenaDB file version");
 
             int count = in.readInt();
             int tableSize = in.readUnsignedShort();
@@ -206,7 +216,6 @@ public class WorldMgr {
         if (!Files.exists(pth)) {
             Files.createDirectory(pth);
         }
-
         pth = pth.resolve(arName+".dat");
         Files.createFile(pth);
 

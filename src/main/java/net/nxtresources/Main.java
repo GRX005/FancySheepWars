@@ -52,7 +52,6 @@ public final class Main extends JavaPlugin {
         DataMgr.load();
         SetupMgr.loadMainLobby();
         MsgCache.load();
-
         // Plugin startup logic
     }
 
