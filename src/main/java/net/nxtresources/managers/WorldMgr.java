@@ -2,7 +2,10 @@ package net.nxtresources.managers;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.nxtresources.Main;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChunkSnapshot;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.util.BlockVector;
@@ -42,7 +45,6 @@ public class WorldMgr {
         int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX());
         int maxY = Math.max(pos1.getBlockY(), pos2.getBlockY());
         int maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
-
         // Determine chunk boundaries
         List<ChunkSnapshot> snapshots = new ArrayList<>();
         for (int cx = minX>>4; cx <= (maxX>>4); cx++)
@@ -61,19 +63,17 @@ public class WorldMgr {
                     int endX = Math.min(maxX, chunkX + 15);
                     int startZ = Math.max(minZ, chunkZ);
                     int endZ = Math.min(maxZ, chunkZ + 15);
-                    ArrayList<WorldDB> chunkMap = new ArrayList<>();
+                    List<WorldDB> chunkMap = new ArrayList<>();
 
-                    for (int x = startX; x <= endX; x++) {
-                        for (int y = minY; y <= maxY; y++) {
+                    for (int x = startX; x <= endX; x++)
+                        for (int y = minY; y <= maxY; y++)
                             for (int z = startZ; z <= endZ; z++) {
                                 BlockData blockData = snapshot.getBlockData(x & 15, y, z & 15);
                                 //OPT: No new blocks will be created.
-                                if(blockData.getMaterial()== Material.AIR)
+                                if (!blockData.getMaterial().isAir())
                                     continue;
-                                chunkMap.add(new WorldDB(x,y,z,blockData.getAsString()));
+                                chunkMap.add(new WorldDB(x, y, z, blockData.getAsString()));
                             }
-                        }
-                    }
                     return chunkMap;
                 }));
             }
@@ -104,17 +104,16 @@ public class WorldMgr {
         var stateToId = new Object2IntOpenHashMap<String>();
         stateToId.defaultReturnValue(-1);
 
-        for (WorldDB b : wrld) {
+        for (WorldDB b : wrld)
             stateToId.putIfAbsent(b.BlockData, stateToId.size());
-        }
 
         int tableSize = stateToId.size();
         if (tableSize > 65535) throw new IOException("Too many unique block states: " + tableSize);
 
         var pth = Path.of("plugins","FancySheepWars","Arenas");
-        if (!Files.exists(pth)) {
+        if (!Files.exists(pth))
             Files.createDirectory(pth);
-        }
+
         pth = pth.resolve(arName+".dat");
         Files.createFile(pth);
 
@@ -282,14 +281,12 @@ public class WorldMgr {
         int maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
 
         Bukkit.getScheduler().runTask(Main.getInstance(),()->{
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
+            for (int x = minX; x <= maxX; x++)
+                for (int y = minY; y <= maxY; y++)
                     for (int z = minZ; z <= maxZ; z++) {
                         // false = don't run block physics (much faster when clearing large areas)
                         wrld.getBlockAt(x, y, z).setType(Material.AIR, false);
                     }
-                }
-            }
         });
     }
 
