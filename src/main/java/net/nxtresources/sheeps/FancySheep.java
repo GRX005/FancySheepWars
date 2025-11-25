@@ -17,6 +17,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class FancySheep {
 
+
+    /*
+    * Harom allapota van a baranyoknak
+    *
+    * 1. Item (jatekos invjebe) -> ItemMgr.java
+    * 2. Kilott barany -> 'sheeps' package
+    * 3. forgo barany modell (amit felvesz a jatekos) -> SheepMgr.java
+    *
+    * */
+
     public SheepType type;
     public double speed;
     public double damage;
