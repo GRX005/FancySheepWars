@@ -3,10 +3,8 @@ package net.nxtresources.managers;
 import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
+import net.nxtresources.enums.SheepType;
 import net.nxtresources.enums.TeamType;
-import net.nxtresources.sheeps.types.ExplSheep;
-import net.nxtresources.sheeps.FancySheep;
-import net.nxtresources.sheeps.SpawnAndRmSheep;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -84,20 +82,18 @@ public class Arena{
     private BukkitRunnable dropTask() {
         return new BukkitRunnable() {
             final Random r = new Random();
-            private final List<FancySheep> sheeps =List.of(
-                    new ExplSheep()
-            );
+            private final List<SheepType> sheeps =List.of(SheepType.EXPLOSIVE,SheepType.HEALING);
             @Override
             public void run() {
-                var redAvailable = SpawnAndRmSheep.getFreeSheepSpawns(getRedSheepSpawns());
-                var blueAvailable = SpawnAndRmSheep.getFreeSheepSpawns(getBlueSheepSpawns());
+                var redAvailable = SheepMgr.getFreeSheepSpawns(getRedSheepSpawns());
+                var blueAvailable = SheepMgr.getFreeSheepSpawns(getBlueSheepSpawns());
                 if (!redAvailable.isEmpty() && !blueAvailable.isEmpty()) {
                     var redLoc = redAvailable.get(r.nextInt(redAvailable.size()));
                     var blueLoc = blueAvailable.get(r.nextInt(blueAvailable.size()));
                     var redSheep = sheeps.get(r.nextInt(sheeps.size()));
                     var blueSheep = sheeps.get(r.nextInt(sheeps.size()));
-                    SheepMgr.spawnSheep(redSheep, redLoc);
-                    SheepMgr.spawnSheep(blueSheep, blueLoc);
+                    SheepMgr.spawnSheep(redLoc, redSheep);
+                    SheepMgr.spawnSheep(blueLoc, blueSheep);
                 }
                 if(stat==ArenaStatus.WAITING)
                     this.cancel();
@@ -162,7 +158,7 @@ public class Arena{
             dTask.cancel();
             dTask=null;
         }
-        Bukkit.getScheduler().runTask(Main.getInstance(),()->SpawnAndRmSheep.rmSheeps(wrld));
+        Bukkit.getScheduler().runTask(Main.getInstance(),()-> SheepMgr.rmSheeps(wrld));
     }
 //2 teams in 1 arena
     public static final class Team {

@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.commands.CMDHandler;
+import net.nxtresources.enums.SheepType;
 import net.nxtresources.listeners.*;
 import net.nxtresources.managers.*;
 import net.nxtresources.menus.ArenaSelectorGui;
+import net.nxtresources.sheeps.FancySheep;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -37,13 +40,13 @@ public final class Main extends JavaPlugin {
     public static File dataFile;
 
     public static final Gson gson =new Gson();
-    public static NamespacedKey shKey, EXPL_SHEEP;
+    public static NamespacedKey shKey, sheepKickupKey;
 
     @Override
     public void onEnable() {
         plugin =this;
         shKey = new NamespacedKey(plugin, "SheepData");
-        EXPL_SHEEP = new NamespacedKey(plugin, "expl_sheep");
+        sheepKickupKey = new NamespacedKey(plugin, "PickupSheepData");
         initialize();
         loadFiles();
         registerCommands();
@@ -144,6 +147,7 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(new DeathEvent(), this);
         pm.registerEvents(new ArenaSelectorGui(), this);
         pm.registerEvents(new ExplodeEvent(), this);
+        pm.registerEvents(new SheepEvent(), this);
 
     }
 
