@@ -2,9 +2,10 @@ package net.nxtresources.listeners;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
+import net.nxtresources.enums.SheepType;
 import net.nxtresources.managers.*;
 import net.nxtresources.menus.ArenaSelectorGui;
-import net.nxtresources.sheeps.types.ExplSheep;
+import net.nxtresources.sheeps.FancySheep;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -95,10 +96,11 @@ public class InteractEvent implements Listener {
                 }
             }
             case PLAYER_HEAD -> {
-                switch (item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING)) {
-                    case "expl" -> SheepMgr.shootSheep(new ExplSheep(),player);
-                    case null, default -> {}
-                }
+                var key = item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING);
+                SheepType type;
+                type = SheepType.valueOf(key);
+                FancySheep sheep = FancySheep.create(type, player);
+                sheep.movement();
             }
             case WOODEN_AXE -> {
                 if (displayName.equals("§aKijelölő")) {
