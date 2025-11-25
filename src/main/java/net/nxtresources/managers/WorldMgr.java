@@ -70,7 +70,7 @@ public class WorldMgr {
                             for (int z = startZ; z <= endZ; z++) {
                                 BlockData blockData = snapshot.getBlockData(x & 15, y, z & 15);
                                 //OPT: No new blocks will be created.
-                                if (!blockData.getMaterial().isAir())
+                                if (blockData.getMaterial().isAir())
                                     continue;
                                 chunkMap.add(new WorldDB(x, y, z, blockData.getAsString()));
                             }
