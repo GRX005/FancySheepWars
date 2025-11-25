@@ -3,3 +3,5 @@
 build
 gradle
 run
+gradlew
+gradlew.bat
