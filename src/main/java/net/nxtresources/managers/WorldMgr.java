@@ -40,7 +40,7 @@ public class WorldMgr {
     public void saveAsync(World wrld,String arName, BlockVector pos1, BlockVector pos2) {
         // Calculate region bounds
         int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
-        int minY = Math.min(pos1.getBlockY(), pos2.getBlockY());
+        int minY = Math.min(pos1.getBlockY(), pos2.getBlockY());//AsdTest
         int minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
         int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX());
         int maxY = Math.max(pos1.getBlockY(), pos2.getBlockY());
