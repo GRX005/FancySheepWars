@@ -161,7 +161,7 @@ public class WorldMgr {
     }
 
 //Runs every arena end.
-    public void toWrld(World wrld, String arName) {
+    public void toWrld(World wrld, String arName) {//TODO ENABLE PYSIC UPDATE ON WATER PLACEMENT?
         Thread.ofVirtual().name("ArenaLoad-" + arName).start(() -> {
             var start = System.currentTimeMillis();
             try {
