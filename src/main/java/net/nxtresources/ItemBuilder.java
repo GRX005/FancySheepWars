@@ -34,8 +34,8 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setDisplayName(String str) {
-        im.displayName(LegacyComponentSerializer.legacySection().deserialize(str));
+    public ItemBuilder setDisplayName(Component str) {
+        im.displayName((str));
         return this;
     }
 
@@ -80,8 +80,8 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setPD(String data) {
-        im.getPersistentDataContainer().set(Main.shKey, PersistentDataType.STRING, data);
+    public ItemBuilder setPD(NamespacedKey key, String data) {
+        im.getPersistentDataContainer().set(key, PersistentDataType.STRING, data);
         return this;
     }
 }

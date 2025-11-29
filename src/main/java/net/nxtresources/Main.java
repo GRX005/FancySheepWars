@@ -40,13 +40,14 @@ public final class Main extends JavaPlugin {
     public static File dataFile;
 
     public static final Gson gson =new Gson();
-    public static NamespacedKey shKey, sheepKickupKey;
+    public static NamespacedKey shKey, sheepKickupKey, itemData;
 
     @Override
     public void onEnable() {
         plugin =this;
         shKey = new NamespacedKey(plugin, "SheepData");
         sheepKickupKey = new NamespacedKey(plugin, "PickupSheepData");
+        itemData = new NamespacedKey(plugin, "ItemData");
         initialize();
         loadFiles();
         registerCommands();

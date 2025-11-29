@@ -34,16 +34,13 @@ public class InteractEvent implements Listener {
         if (item.getType() == Material.AIR) return;
         if(meta ==null || !meta.hasDisplayName()) return;
 
-        String displayName = LegacyComponentSerializer.legacySection().serialize(Objects.requireNonNull(meta.displayName()));
-
+        var pdc = meta.getPersistentDataContainer().get(Main.itemData, PersistentDataType.STRING);
         switch (item.getType()) {
             case BOOK -> {
-                if (displayName.equals("§eAréna választó")) {
-                    ArenaSelectorGui.open(player);
-                }
+                if ("ArenaSelector".equals(pdc)) ArenaSelectorGui.open(player);
             }
             case DARK_OAK_DOOR -> {
-                if (displayName.equals("§aVárakozó lobby beállítása")) {
+                if ("SetWaitingLobby".equals(pdc)) {
                     String name = SetupMgr.getSetupArena(player);
                     SetupMgr.setWaitingLobby(player);
                     player.sendMessage("§aVárakozó lobby beállítva! (§2" + name + "§a)");
@@ -51,34 +48,32 @@ public class InteractEvent implements Listener {
                 }
             }
             case BARRIER -> {
-                switch (displayName) {
-                    case "§eAréna elhagyása" -> {
-                        if (!ArenaMgr.isInArena(player)) {
-                            player.sendMessage("Nem vagy arenaban.");
-                            return;
-                        }
-                        player.sendMessage("§cKiléptél az arénából.");
-                        player.getInventory().clear();
-                        ItemMgr.lobbyItems(player);
-                        ArenaMgr.leave(player);
+                if("LeaveArena".equals(pdc)){
+                    if (!ArenaMgr.isInArena(player)) {
+                        player.sendMessage("Nem vagy arenaban.");
+                        return;
                     }
-                    case "§cSetup mód elhagyása" -> {
-                        SetupMgr.finishSetup(player, false);
-                        player.getInventory().clear();
-                        player.sendMessage("§cKiléptél a setup módból!");
-                    }
+                    player.sendMessage("§cKiléptél az arénából.");
+                    player.getInventory().clear();
+                    ItemMgr.lobbyItems(player);
+                    ArenaMgr.leave(player);
+                    return;
                 }
-                event.setCancelled(true);
+                if("LeaveSetup".equals(pdc)){
+                    SetupMgr.finishSetup(player, false);
+                    player.getInventory().clear();
+                    player.sendMessage("§cKiléptél a setup módból!");
+                }
             }
             case EMERALD_BLOCK -> {
-                if (displayName.equals("§aMentés és kilépés a setup módból")) {
+                if ("SaveAndExit".equals(pdc)) {
                     SetupMgr.finishSetup(player, true);
                     player.sendMessage("§aAréna sikeresen létrehozva és mentve!");
                     event.setCancelled(true);
                 }
             }
             case BLUE_WOOL -> {
-                if (displayName.equals("§9§lKÉK §fcsapat")) {
+                if ("TeamSelector_Blue".equals(pdc)) {
                     Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
                     if (tempData != null)
                         tempData.teamSpawns.put("BLUE", player.getLocation());
@@ -87,7 +82,7 @@ public class InteractEvent implements Listener {
                 }
             }
             case RED_WOOL -> {
-                if (displayName.equals("§c§lPIROS §fcsapat")) {
+                if ("TeamSelector_Red".equals(pdc)) {
                     Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
                     if (tempData != null)
                         tempData.teamSpawns.put("RED", player.getLocation());
@@ -103,10 +98,8 @@ public class InteractEvent implements Listener {
                 sheep.movement();
             }
             case WOODEN_AXE -> {
-                if (displayName.equals("§aKijelölő")) {
-                    if (event.getHand() != EquipmentSlot.HAND)
-                        return;
-
+                if ("MapSelector".equals(pdc)) {
+                    if (event.getHand() != EquipmentSlot.HAND) return;
                     Arena.Temp temp = SetupMgr.tempdata.get(player.getUniqueId());
                     Location loc = player.getLocation();
 
@@ -123,7 +116,7 @@ public class InteractEvent implements Listener {
             }
 
             case ORANGE_WOOL -> {
-                if(displayName.equals("bb")){
+                if("SetSheep".equals(pdc)){
                     Block block = event.getClickedBlock();
                     Player p = event.getPlayer();
                     Location playerLoc = p.getLocation();
@@ -152,7 +145,7 @@ public class InteractEvent implements Listener {
                 }
             }
             case GOLDEN_AXE -> {
-                if (displayName.equals("WaitingLobby kijelolo")) {
+                if ("WaitingLobbySelector".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND)
                         return;
 

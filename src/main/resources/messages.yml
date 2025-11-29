@@ -33,6 +33,11 @@ Arena:
   ItAlreadyExists: '%prefix% &cAn arena with this name already exists!'
   PlayersInside: '%prefix% &cYou cant delete this arena while players are inside.'
 
+  #ARENA STATUS
+  WAITING: '&eWaiting'
+  STARTING: '&aStarting'
+  STARTED: '&cStarted'
+
   Setup:
     setWaitingLobby: '%prefix% &aYou have set the waiting lobby! &8(&2%arena_name%&8)'
     setTeamSpawn: '%prefix% &aSpawn point set! &8(&2%team%&8)'
@@ -40,6 +45,56 @@ Arena:
     AlreadyInProgress: '%prefix% &cSomeone is already setting up this arena!'
     AlreadySettingUp: '%prefix% &cYou are already setting up this arena!'
     Setup: '%prefix% &aYou are currently setting up the &2%arena_name% &aarena!'
+
+Guis:
+  ArenaSelector:
+    title: '&8Select!'
+    name: '&f%arena_name%'
+    lore:
+      - '&fPlayers: &a%players_size%&8/&f%arena_size%'
+      - '&fStatus: %arena_status%'
+      - ''
+      - '&e&nClick to join!'
+
+Items:
+  ArenaSelector:
+    name: '&eArena selector'
+    lore:
+  LeaveArena:
+    name: '&cLeave arena'
+    lore: '&e&nClick to leave this arena'
+  #SETUP
+  TeamSelector:
+    RED:
+      name: '&c&lRED &fTeam'
+    lore: '&e&nClick to leave this arena'
+    BLUE:
+      name: '&9&lBLUE &fTeam'
+      lore: '&e&nClick to set the team spawn'
+  LeaveSetup:
+    name: '&cLeave setup mode'
+    lore: '&e&nClick to leave setup mode'
+  SaveAndExit:
+    name: '&aSave and leave setup mode'
+    lore: '&e&nClick to save and leave setup mode'
+  SetWaitingLobby:
+    name: '&aSet waiting lobby'
+    lore: '&e&nClick to set'
+  SetSheep:
+    name: '&cSet sheeps'
+    lore: '&eYou can use this to select where should sheep spawn'
+  WaitingLobbySelector:
+    name: '&aWaiting lobby selector'
+    lore: '&eYou can use this to select the area of the &a&nWaiting lobby'
+  MapSelector:
+    name: '&aMap selector'
+    lore: '&eYou can use this to select the area of the Map'
+  #SHEEPS
+  Sheeps:
+    Explosive:
+      name: '&cExplosive'
+    Healing:
+      name: '&dHealing'
 Scoreboards:
   Lobby:
     title:
@@ -75,8 +130,16 @@ Scoreboards:
       - '&4'
       - '&e  yourServer.com'
   Waiting:
-    title: 'FancySheepWars'
+    title:
+      - '&eWaiting...'
     lines:
+      - ''
+      - '&8» &7Arena name: &f%arena_name%'
+      - '&8» &7Players: &a%players_size%&8/&f%arena_size%'
+      - ''
+      - '%arena_status%'
+      - ''
+      - '&e  yourServer.com'
   Ingame:
     title: 'FancySheepWars game'
     lines:

@@ -38,6 +38,7 @@ public class Arena{
     public String waitingLobbyLocation;
     public BlockVector pos1, pos2, waitingPos1, waitingPos2;
     public String wName; //Needs to be str, as gson can't save World.
+    public int toPr = -1;
 
     public Arena(String name, int size) {
         if(size %2!=0)
@@ -48,8 +49,9 @@ public class Arena{
     }
 //Countdown till start
     public BukkitRunnable countdownTask() {
+        stat = ArenaStatus.STARTING;
+        toPr = 5;
         return new BukkitRunnable(){
-            int toPr = 5;
             @Override
             public void run() {
                 toPr--;
