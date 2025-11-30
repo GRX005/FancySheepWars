@@ -1,9 +1,11 @@
 package net.nxtresources.listeners;
 
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
 import net.nxtresources.enums.SheepType;
-import net.nxtresources.managers.*;
+import net.nxtresources.managers.Arena;
+import net.nxtresources.managers.ArenaMgr;
+import net.nxtresources.managers.ItemMgr;
+import net.nxtresources.managers.SetupMgr;
 import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.FancySheep;
 import org.bukkit.Location;
@@ -18,8 +20,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Objects;
 
 public class InteractEvent implements Listener {
 
