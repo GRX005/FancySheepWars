@@ -55,7 +55,7 @@ public class ArenaSelectorGui implements Listener {
 
     @EventHandler
     public void OnClick(InventoryClickEvent e) {
-        if (!e.getView().title().equals(Main.color(MsgCache.get("Guis.ArenaSelector.name")))) return;
+        if (!e.getView().title().equals(Main.color(MsgCache.get("Guis.ArenaSelector.title")))) return;
         e.setCancelled(true);
         if (e.getCurrentItem() == null || !e.getCurrentItem().hasItemMeta()) return;
         Player player = (Player) e.getWhoClicked();
