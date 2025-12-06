@@ -15,6 +15,7 @@ public class SetupMgr {
     public static final Map<UUID, Arena.Temp> tempdata = new HashMap<>();
     private static String lobby;
 
+
     public static int startSetup(Player player, String name, int size, boolean isTemporary){
         if(isInSetup(player))
             return 1;
@@ -27,7 +28,7 @@ public class SetupMgr {
         playerSetupArena.put(player.getUniqueId(), name);
         player.getInventory().clear();
         player.getInventory().setItem(0, setwaitinglobby);
-        player.getInventory().setItem(7, saveAndExit);
+        //player.getInventory().setItem(7, saveAndExit);
         player.getInventory().setItem(8, leaveSetup);
         return 0;
     }
@@ -84,8 +85,8 @@ public class SetupMgr {
             player.getInventory().setItem(1, blue);
             player.getInventory().setItem(2, selectorTool);
             player.getInventory().setItem(3, waitingSelectorTool);
-            player.getInventory().setItem(4, setsheep);
-            player.getInventory().setItem(7, saveAndExit);
+            //player.getInventory().setItem(4, setsheep);
+            //player.getInventory().setItem(7, saveAndExit);
             player.getInventory().setItem(8, leaveSetup);
             tempData.waitingLobby = loc;
         }

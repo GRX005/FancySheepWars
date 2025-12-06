@@ -1,6 +1,5 @@
 package net.nxtresources.listeners;
 
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.Main;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.managers.*;
@@ -18,8 +17,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Objects;
 
 public class InteractEvent implements Listener {
 
@@ -41,9 +38,11 @@ public class InteractEvent implements Listener {
             }
             case DARK_OAK_DOOR -> {
                 if ("SetWaitingLobby".equals(pdc)) {
-                    String name = SetupMgr.getSetupArena(player);
-                    SetupMgr.setWaitingLobby(player);
-                    player.sendMessage("§aVárakozó lobby beállítva! (§2" + name + "§a)");
+                    //String name = SetupMgr.getSetupArena(player);
+                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    session.temp.waitingLobby = player.getLocation();
+                    Main.getSetupMgr().checkStep(player);
+                    player.sendMessage("§aVárakozó lobby beállítva! (§2" + session.arenaName + "§a)");
                     event.setCancelled(true);
                 }
             }
@@ -60,33 +59,32 @@ public class InteractEvent implements Listener {
                     return;
                 }
                 if("LeaveSetup".equals(pdc)){
-                    SetupMgr.finishSetup(player, false);
-                    player.getInventory().clear();
+                    SetupMgrNew.finish(player, false);
                     player.sendMessage("§cKiléptél a setup módból!");
                 }
             }
             case EMERALD_BLOCK -> {
                 if ("SaveAndExit".equals(pdc)) {
-                    SetupMgr.finishSetup(player, true);
+                    SetupMgrNew.finish(player, true);
                     player.sendMessage("§aAréna sikeresen létrehozva és mentve!");
                     event.setCancelled(true);
                 }
             }
             case BLUE_WOOL -> {
                 if ("TeamSelector_Blue".equals(pdc)) {
-                    Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
-                    if (tempData != null)
-                        tempData.teamSpawns.put("BLUE", player.getLocation());
+                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    session.temp.teamSpawns.put("BLUE", player.getLocation());
                     player.sendMessage("§9Kék §fcsapat beállítva!");
+                    Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
                 }
             }
             case RED_WOOL -> {
                 if ("TeamSelector_Red".equals(pdc)) {
-                    Arena.Temp tempData = SetupMgr.tempdata.get(player.getUniqueId());
-                    if (tempData != null)
-                        tempData.teamSpawns.put("RED", player.getLocation());
+                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    session.temp.teamSpawns.put("RED", player.getLocation());
                     player.sendMessage("§cPiros §fcsapat beállítva!");
+                    Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
                 }
             }
@@ -100,7 +98,8 @@ public class InteractEvent implements Listener {
             case WOODEN_AXE -> {
                 if ("MapSelector".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
-                    Arena.Temp temp = SetupMgr.tempdata.get(player.getUniqueId());
+                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var temp = session.temp;
                     Location loc = player.getLocation();
 
                     if (temp.pos1 == null) {
@@ -110,46 +109,50 @@ public class InteractEvent implements Listener {
                         temp.pos2 = loc;
                         player.sendMessage("Arena pos2 beállítva! loc: " + loc);
                     }
-
+                    Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
                 }
             }
 
-            case ORANGE_WOOL -> {
-                if("SetSheep".equals(pdc)){
+            case RED_CONCRETE -> {
+                if("SetRedSheep".equals(pdc)) {
+                    if (event.getHand() != EquipmentSlot.HAND) return;
+                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var temp = session.temp;
                     Block block = event.getClickedBlock();
-                    Player p = event.getPlayer();
-                    Location playerLoc = p.getLocation();
-                    if(block == null) {
+                    if (block == null) {
                         player.sendMessage("Blockra kell kattintanod!");
                         return;
                     }
-                    Arena.Temp temp = SetupMgr.tempdata.get(p.getUniqueId());
                     Location loc = block.getLocation().add(0.5, 1, 0.5);
-                    Location blue = temp.teamSpawns.get("BLUE");
-                    Location red = temp.teamSpawns.get("RED");
-                    if(blue==null||red==null){
-                        player.sendMessage("A csapatok nincsenek megfelelően beállítva! blue: " + blue + " red: " + red);
-                        return;
-                    }
-                    var blued = playerLoc.distanceSquared(blue);
-                    var redb = playerLoc.distanceSquared(red);
-                    if (blued <= redb) {
-                        temp.blueSheepSpawns.add(loc);
-                        p.sendMessage("§9Kék csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
-                    } else {
-                        temp.redSheepSpawns.add(loc);
-                        p.sendMessage("§cPiros csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
-                    }
+                    temp.redSheepSpawns.add(loc);
+                    player.sendMessage("§cPiros csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
                     event.setCancelled(true);
                 }
             }
+
+            case BLUE_CONCRETE -> {
+                if("SetBlueSheep".equals(pdc)) {
+                    if (event.getHand() != EquipmentSlot.HAND) return;
+                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var temp = session.temp;
+                    Block block = event.getClickedBlock();
+                    if (block == null) {
+                        player.sendMessage("Blockra kell kattintanod!");
+                        return;
+                    }
+                    Location loc = block.getLocation().add(0.5, 1, 0.5);
+                    temp.blueSheepSpawns.add(loc);
+                    player.sendMessage("§9Kék csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
+                    event.setCancelled(true);
+                }
+            }
+
             case GOLDEN_AXE -> {
                 if ("WaitingLobbySelector".equals(pdc)) {
-                    if (event.getHand() != EquipmentSlot.HAND)
-                        return;
-
-                    Arena.Temp temp = SetupMgr.tempdata.get(player.getUniqueId());
+                    if (event.getHand() != EquipmentSlot.HAND) return;
+                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var temp = session.temp;
                     Location loc = player.getLocation();
 
                     if (temp.waitingPos1 == null && temp.waitingPos2 == null) {
@@ -159,11 +162,11 @@ public class InteractEvent implements Listener {
                         temp.waitingPos2 = loc;
                         player.sendMessage("Waiting pos2 beállítva! loc: " + loc);
                     }
+                    Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
                 }
             }
-            default -> {
-            }
+            default -> {}
         }
     }
 }

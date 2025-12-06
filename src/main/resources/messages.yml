@@ -38,6 +38,11 @@ Arena:
   STARTING: '&aStarting'
   STARTED: '&cStarted'
 
+  #ICONS
+  Icons:
+    X: '&c✘'
+    PIPE: '&a✔'
+
   Setup:
     setWaitingLobby: '%prefix% &aYou have set the waiting lobby! &8(&2%arena_name%&8)'
     setTeamSpawn: '%prefix% &aSpawn point set! &8(&2%team%&8)'
@@ -121,15 +126,16 @@ Scoreboards:
       - '&6&lFANCY!'
     lines:
       - '&7Online players: &f%online_players%'
-      - '&c'
+      - ''
       - '&eStats:'
-      - '&a'
+      - ''
       - '&8» &7Wins: &f%wins%'
       - '&8» &7Kills: &f%kills%'
       - '&8» &7Deaths: &f%deaths%'
-      - '&4'
+      - ''
       - '&e  yourServer.com'
   Waiting:
+    placeholder: 'Starting:'
     title:
       - '&eWaiting...'
     lines:
@@ -141,5 +147,22 @@ Scoreboards:
       - ''
       - '&e  yourServer.com'
   Ingame:
-    title: 'FancySheepWars game'
+    title:
+      - 'FancySheepWars game'
     lines:
+      - 'asd'
+  Setup:
+    title:
+      - '&eFancySheepWars &8| &cSetup'
+    lines:
+      - ''
+      - '&c1. &7Map region: %map_region%'
+      - '&c2. &7Lobby region: %lobby_region%'
+      - '&c3. &7Lobby spawn: %lobby_spawn%'
+      - '&c4. &7Red team spawn: %red_team%'
+      - '&c5. &7Blue team spawn: %blue_team%'
+      - '&c6. &7Red sheep spawn: %red_sheep%'
+      - '&c7. &7Blue sheep spawn: %blue_sheep%'
+      - ''
+      - '&8» &7Finish: &c%finished%&8/&a%max%'
+      - ''

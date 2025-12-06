@@ -25,7 +25,7 @@ import java.util.logging.Level;
 public final class Main extends JavaPlugin {
 
     private static Main plugin;
-    public static SetupMgr setupManager;
+    public static SetupMgrNew setupManager;
 
     public static FileConfiguration arenaConfig;
     public static File arenaFile;
@@ -71,7 +71,7 @@ public final class Main extends JavaPlugin {
     }
 
     private void initialize() {
-        setupManager = new SetupMgr();
+        setupManager = new SetupMgrNew();
 
     }
 
@@ -158,5 +158,9 @@ public final class Main extends JavaPlugin {
 
     public static Component color(String str) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(str);
+    }
+
+    public static SetupMgrNew getSetupMgr(){
+        return setupManager;
     }
 }

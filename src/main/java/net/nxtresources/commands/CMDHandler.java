@@ -1,10 +1,7 @@
 package net.nxtresources.commands;
 
 import net.nxtresources.Main;
-import net.nxtresources.managers.Arena;
-import net.nxtresources.managers.ArenaMgr;
-import net.nxtresources.managers.MsgCache;
-import net.nxtresources.managers.SetupMgr;
+import net.nxtresources.managers.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -79,7 +76,13 @@ public class CMDHandler implements CommandExecutor {
                         return false;
                     }
                 }
-                switch (SetupMgr.startSetup(player, name, size, true)) {
+//                switch (SetupMgr.startSetup(player, name, size, true)) {
+//                    case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Create").replace("%arena_name%", name)));
+//                    case 1 -> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
+//                    case 2 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadySettingUp")));
+//                }
+                SetupMgrNew setup = new SetupMgrNew();
+                switch (setup.start(player, name, size, true)) {
                     case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Create").replace("%arena_name%", name)));
                     case 1 -> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
                     case 2 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadySettingUp")));

@@ -54,17 +54,29 @@ public class ItemMgr {
             .setLore(Main.color(MsgCache.get("Items.MapSelector.lore")))
             .setPD(Main.itemData, "MapSelector")
             .build();
-    public static ItemStack setsheep=new ItemBuilder(Material.ORANGE_WOOL)
-            .setDisplayName(Main.color(MsgCache.get("Items.SetSheep.name")))
-            .setLore(Main.color(MsgCache.get("Items.SetSheep.lore")))
-            .setAmount(1)
-            .setPD(Main.itemData, "SetSheep")
-            .build();
+//    public static ItemStack setsheep=new ItemBuilder(Material.ORANGE_WOOL)
+//            .setDisplayName(Main.color(MsgCache.get("Items.SetSheep.name")))
+//            .setLore(Main.color(MsgCache.get("Items.SetSheep.lore")))
+//            .setAmount(1)
+//            .setPD(Main.itemData, "SetSheep")
+//            .build();
     public static ItemStack waitingSelectorTool=new ItemBuilder(Material.GOLDEN_AXE)
             .setDisplayName(Main.color(MsgCache.get("Items.WaitingLobbySelector.name")))
             .setLore(Main.color(MsgCache.get("Items.WaitingLobbySelector.lore")))
             .setAmount(1)
             .setPD(Main.itemData, "WaitingLobbySelector")
+            .build();
+    public static ItemStack setRedSheep = new ItemBuilder(Material.RED_CONCRETE)
+            .setDisplayName(Main.color(MsgCache.get("Items.SetSheep.name")))
+            .setLore(Main.color(MsgCache.get("Items.SetSheep.lore")))
+            .setAmount(1)
+            .setPD(Main.itemData, "SetRedSheep")
+            .build();
+    public static ItemStack setBlueSheep = new ItemBuilder(Material.BLUE_CONCRETE)
+            .setDisplayName(Main.color(MsgCache.get("Items.SetSheep.name")))
+            .setLore(Main.color(MsgCache.get("Items.SetSheep.lore")))
+            .setAmount(1)
+            .setPD(Main.itemData, "SetBlueSheep")
             .build();
 
     //default items

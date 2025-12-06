@@ -64,6 +64,7 @@ public class ExplodeEvent implements Listener {
 
             // Optional: Prevent the block from dropping an item when it breaks
             fallingBlock.setDropItem(false);
+            fallingBlock.setCancelDrop(true);
         }
         // Clear the block list so the server doesn't try to break them (since we just did)
         e.blockList().clear();

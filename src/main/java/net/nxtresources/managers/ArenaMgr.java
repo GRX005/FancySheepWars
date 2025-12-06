@@ -2,9 +2,8 @@ package net.nxtresources.managers;
 
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
+import net.nxtresources.managers.scoreboard.Board;
 import net.nxtresources.managers.scoreboard.BoardMgr;
-import net.nxtresources.managers.scoreboard.boards.LobbyBoard;
-import net.nxtresources.managers.scoreboard.boards.WaitingBoard;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -43,7 +42,7 @@ public class ArenaMgr {
 
         a.lobbyPlayers.add(player);
         SetupMgr.getWaitingLobby(player, arena);
-        BoardMgr.setBoard(player, new WaitingBoard()); //show a waiting board
+        BoardMgr.setBoard(player, new Board("Scoreboards.Waiting")); //show a waiting board
         if(a.size==a.lobbyPlayers.size())
             a.countdownTask().runTaskTimerAsynchronously(Main.getInstance(),0L,20L);
 
@@ -55,7 +54,7 @@ public class ArenaMgr {
             if (a.lobbyPlayers.contains(p)) {
                 a.lobbyPlayers.remove(p);
                 SetupMgr.tpToLobby(p);
-                BoardMgr.setBoard(p, new LobbyBoard());
+                BoardMgr.setBoard(p, new Board("Scoreboards.Lobby"));
                 return;
             }
             for(Arena.Team t : a.teams) {
@@ -63,7 +62,7 @@ public class ArenaMgr {
                     if(p==pl) {
                         t.tPlayers.remove(pl);
                         SetupMgr.tpToLobby(pl);
-                        BoardMgr.setBoard(p, new LobbyBoard());
+                        BoardMgr.setBoard(p, new Board("Scoreboards.Lobby"));
                     }
                 });
             }
