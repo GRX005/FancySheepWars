@@ -3,6 +3,7 @@ package net.nxtresources.managers;
 import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
+import net.nxtresources.enums.BoardType;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.enums.TeamType;
 import net.nxtresources.managers.scoreboard.Board;
@@ -137,11 +138,11 @@ public class Arena{
             }
             blue.forEach(p ->{
                 p.teleportAsync(getTeamSpawn(BLUE));
-                BoardMgr.setBoard(p, new Board("Scoreboards.Ingame"));
+                BoardMgr.setBoard(p, new Board(BoardType.LOBBYBOARD));
             });
             red.forEach(p -> {
                 p.teleportAsync(getTeamSpawn(RED));
-                BoardMgr.setBoard(p, new Board("Scoreboards.Ingame"));
+                BoardMgr.setBoard(p, new Board(BoardType.LOBBYBOARD));
             });
             //Optionally remove waiting lobby.
             if (waitingPos1!=null&&waitingPos2!=null) {

@@ -1,5 +1,6 @@
 package net.nxtresources.listeners;
 
+import net.nxtresources.enums.BoardType;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.managers.*;
 import net.nxtresources.managers.scoreboard.Board;
@@ -20,8 +21,7 @@ public class JoinAndQuitEvent implements Listener {
         player.getInventory().clear();
         ItemMgr.lobbyItems(player);
         SetupMgr.tpToLobby(player);
-        //BoardMgr.setBoard(player, new LobbyBoard());
-        BoardMgr.setBoard(player, new Board("Scoreboards.Lobby"));
+        BoardMgr.setBoard(player, new Board(BoardType.LOBBYBOARD));
 
         FancySheep healing = FancySheep.create(SheepType.HEALING, player);
         healing.giveSheep(player);

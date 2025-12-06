@@ -1,6 +1,7 @@
 package net.nxtresources.managers;
 
 import net.kyori.adventure.text.Component;
+import net.nxtresources.enums.BoardType;
 import net.nxtresources.enums.SetupStep;
 import net.nxtresources.enums.TeamType;
 import net.nxtresources.managers.scoreboard.Board;
@@ -38,7 +39,7 @@ public class SetupMgrNew {
         if(sessions.containsKey(uuid)) return 1;
 
         if(isTemporary) {
-            BoardMgr.setBoard(player, new Board("Scoreboards.Setup"));
+            BoardMgr.setBoard(player, new Board(BoardType.SETUPBOARD));
             SessionData session = new SessionData(player, name, size);
             sessions.put(uuid, session);
             player.getInventory().clear();
@@ -70,11 +71,11 @@ public class SetupMgrNew {
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
             WorldMgr.getInst().saveAsync(tempData.pos1.getWorld(),arena.name,arena.pos1,arena.pos2);
-            BoardMgr.setBoard(player, new Board("Scoreboards.Lobby"));
+            BoardMgr.setBoard(player, new Board(BoardType.LOBBYBOARD));
         } else{
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
-            BoardMgr.setBoard(player, new Board("Scoreboards.Lobby"));
+            BoardMgr.setBoard(player, new Board(BoardType.LOBBYBOARD));
         }
     }
 

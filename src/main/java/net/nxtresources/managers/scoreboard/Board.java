@@ -2,6 +2,7 @@ package net.nxtresources.managers.scoreboard;
 
 import net.nxtresources.Main;
 import net.nxtresources.enums.ArenaStatus;
+import net.nxtresources.enums.BoardType;
 import net.nxtresources.managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,8 +19,8 @@ public class Board extends BaseBoard{
     int i = 0;
     int taskId;
 
-    public Board(String configPath) {
-        this.configPath = configPath;
+    public Board(BoardType type) {
+        this.configPath = type.get();
     }
 
     @Override
