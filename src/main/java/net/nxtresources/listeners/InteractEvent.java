@@ -2,7 +2,9 @@ package net.nxtresources.listeners;
 
 import net.nxtresources.Main;
 import net.nxtresources.enums.SheepType;
-import net.nxtresources.managers.*;
+import net.nxtresources.managers.ArenaMgr;
+import net.nxtresources.managers.ItemMgr;
+import net.nxtresources.managers.SetupMgrNew;
 import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.FancySheep;
 import org.bukkit.Location;

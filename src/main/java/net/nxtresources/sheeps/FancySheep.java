@@ -4,7 +4,10 @@ import net.nxtresources.Main;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.sheeps.types.ExplSheep;
 import net.nxtresources.sheeps.types.HealingSheep;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -54,8 +57,7 @@ public abstract class FancySheep {
         radius=3.0;
     }
 
-    public void spawnLaunchParticle(Location shLoc){}
-    public void customize(Sheep sheep){}
+
     public void tick(Sheep sheep, int tick, Location loc){}
     public void movement(){
         Location loc = owner.getLocation();
@@ -102,4 +104,6 @@ public abstract class FancySheep {
     }
     public abstract void explode(Location loc);
     public abstract void giveSheep(Player player);
+    public abstract void spawnLaunchParticle(Location shLoc);
+    public abstract void customize(Sheep sheep);
 }

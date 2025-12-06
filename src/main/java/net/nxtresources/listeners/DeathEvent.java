@@ -2,12 +2,9 @@ package net.nxtresources.listeners;
 
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.DataMgr;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class DeathEvent implements Listener {

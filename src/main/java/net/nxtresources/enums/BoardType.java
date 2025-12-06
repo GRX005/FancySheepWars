@@ -2,7 +2,7 @@ package net.nxtresources.enums;
 
 public enum BoardType {
 
-    LOBBYBOARD("Lobby"), WAITINGBOARD("Waiting"), INGAMEBOARD("Ingame"), SETUPBOARD("Setup");
+    LOBBY("Lobby"), WAITING("Waiting"), INGAME("Ingame"), SETUP("Setup");
 
     final String value;
     final String prefix = "Scoreboards.";

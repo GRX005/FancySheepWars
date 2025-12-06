@@ -13,9 +13,11 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public abstract class SheepMgr {
+public class SheepMgr {
 
     public static void spawnSheep(Location loc, SheepType type) {
         Collection<Entity> nearby = loc.getWorld().getNearbyEntities(loc, 0.5, 1.0, 0.5);

@@ -1,7 +1,6 @@
 package net.nxtresources.menus;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.ItemBuilder;
 import net.nxtresources.Main;
 import net.nxtresources.managers.Arena;

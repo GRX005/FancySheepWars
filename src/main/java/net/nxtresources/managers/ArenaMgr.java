@@ -43,7 +43,7 @@ public class ArenaMgr {
 
         a.lobbyPlayers.add(player);
         SetupMgr.getWaitingLobby(player, arena);
-        BoardMgr.setBoard(player, new Board(BoardType.WAITINGBOARD)); //show a waiting board
+        BoardMgr.setBoard(player, new Board(BoardType.WAITING)); //show a waiting board
         if(a.size==a.lobbyPlayers.size())
             a.countdownTask().runTaskTimerAsynchronously(Main.getInstance(),0L,20L);
 
@@ -55,7 +55,7 @@ public class ArenaMgr {
             if (a.lobbyPlayers.contains(p)) {
                 a.lobbyPlayers.remove(p);
                 SetupMgr.tpToLobby(p);
-                BoardMgr.setBoard(p, new Board(BoardType.LOBBYBOARD));
+                BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
                 return;
             }
             for(Arena.Team t : a.teams) {
@@ -63,7 +63,7 @@ public class ArenaMgr {
                     if(p==pl) {
                         t.tPlayers.remove(pl);
                         SetupMgr.tpToLobby(pl);
-                        BoardMgr.setBoard(p, new Board(BoardType.LOBBYBOARD));
+                        BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
                     }
                 });
             }

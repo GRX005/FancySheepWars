@@ -9,7 +9,9 @@ import net.nxtresources.managers.scoreboard.BoardMgr;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static net.nxtresources.managers.ItemMgr.*;
 
@@ -39,7 +41,7 @@ public class SetupMgrNew {
         if(sessions.containsKey(uuid)) return 1;
 
         if(isTemporary) {
-            BoardMgr.setBoard(player, new Board(BoardType.SETUPBOARD));
+            BoardMgr.setBoard(player, new Board(BoardType.SETUP));
             SessionData session = new SessionData(player, name, size);
             sessions.put(uuid, session);
             player.getInventory().clear();
@@ -71,11 +73,11 @@ public class SetupMgrNew {
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
             WorldMgr.getInst().saveAsync(tempData.pos1.getWorld(),arena.name,arena.pos1,arena.pos2);
-            BoardMgr.setBoard(player, new Board(BoardType.LOBBYBOARD));
+            BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
         } else{
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
-            BoardMgr.setBoard(player, new Board(BoardType.LOBBYBOARD));
+            BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
         }
     }
 

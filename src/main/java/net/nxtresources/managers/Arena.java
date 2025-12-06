@@ -63,7 +63,7 @@ public class Arena{
 
                 if(toPr==0) {//Itt indul az arena.
                     stat = ArenaStatus.STARTED;
-                    start();
+                    Bukkit.getScheduler().runTask(Main.getInstance(), Arena.this::start);
                     this.cancel();
                 }
             }
@@ -132,22 +132,16 @@ public class Arena{
             var red = new ArrayList<>(players.subList(mid, players.size()));
             teams.addAll(List.of(new Team(blue, BLUE), new Team(red, RED)));
 
-            if (!Bukkit.isPrimaryThread()) { //!!Main thread only for ingame scoreboard
-                Bukkit.getScheduler().runTask(Main.getInstance(), this::start);
-                return;
-            }
             blue.forEach(p ->{
                 p.teleportAsync(getTeamSpawn(BLUE));
-                BoardMgr.setBoard(p, new Board(BoardType.LOBBYBOARD));
+                BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
             });
             red.forEach(p -> {
                 p.teleportAsync(getTeamSpawn(RED));
-                BoardMgr.setBoard(p, new Board(BoardType.LOBBYBOARD));
+                BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
             });
-            //Optionally remove waiting lobby.
-            if (waitingPos1!=null&&waitingPos2!=null) {
-                WorldMgr.getInst().rmLobby(Bukkit.getWorld(wName),waitingPos1,waitingPos2);
-            }
+
+            WorldMgr.getInst().rmLobby(Bukkit.getWorld(wName),waitingPos1,waitingPos2);
             lobbyPlayers.clear();
             dTask=dropTask().runTaskTimer(Main.getInstance(), 20L, 200L);
             arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);

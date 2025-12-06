@@ -1,15 +1,12 @@
 package net.nxtresources.listeners;
 
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.util.Vector;
-
-import java.util.EnumSet;
 
 public class ExplodeEvent implements Listener {
 
