@@ -1,14 +1,10 @@
 package net.nxtresources.managers;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.nxtresources.ItemBuilder;
 import net.nxtresources.Main;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 public class ItemMgr {
 
@@ -54,12 +50,6 @@ public class ItemMgr {
             .setLore(Main.color(MsgCache.get("Items.MapSelector.lore")))
             .setPD(Main.itemData, "MapSelector")
             .build();
-//    public static ItemStack setsheep=new ItemBuilder(Material.ORANGE_WOOL)
-//            .setDisplayName(Main.color(MsgCache.get("Items.SetSheep.name")))
-//            .setLore(Main.color(MsgCache.get("Items.SetSheep.lore")))
-//            .setAmount(1)
-//            .setPD(Main.itemData, "SetSheep")
-//            .build();
     public static ItemStack waitingSelectorTool=new ItemBuilder(Material.GOLDEN_AXE)
             .setDisplayName(Main.color(MsgCache.get("Items.WaitingLobbySelector.name")))
             .setLore(Main.color(MsgCache.get("Items.WaitingLobbySelector.lore")))

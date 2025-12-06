@@ -76,11 +76,6 @@ public class CMDHandler implements CommandExecutor {
                         return false;
                     }
                 }
-//                switch (SetupMgr.startSetup(player, name, size, true)) {
-//                    case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Create").replace("%arena_name%", name)));
-//                    case 1 -> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
-//                    case 2 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadySettingUp")));
-//                }
                 SetupMgrNew setup = new SetupMgrNew();
                 switch (setup.start(player, name, size, true)) {
                     case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Create").replace("%arena_name%", name)));
