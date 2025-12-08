@@ -13,15 +13,17 @@ public class SheepEvent implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent event){
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
-        var pdc = event.getEntity().getPersistentDataContainer();
-        if (!pdc.has(Main.shKey, PersistentDataType.STRING)) return;
+        var ent = event.getEntity();
+        var pdc = ent.getPersistentDataContainer();
+        if (!pdc.has(Main.shKey, PersistentDataType.STRING) && !(ent instanceof Player)) return;
         event.setCancelled(true);
     }
 
-    @EventHandler
-    public void onDamageByPlayer(EntityDamageByEntityEvent event){
-        var pdc = event.getEntity().getPersistentDataContainer();
-        if (!pdc.has(Main.shKey, PersistentDataType.STRING)) return;
-        if (event.getDamager() instanceof Player) event.setCancelled(true); //TODO: team system implementation
-    }
+
+//    @EventHandler
+//    public void onDamageByPlayer(EntityDamageByEntityEvent event){
+//        var pdc = event.getEntity().getPersistentDataContainer();
+//        if (!pdc.has(Main.shKey, PersistentDataType.STRING)) return;
+//        if (event.getDamager() instanceof Player) event.setCancelled(true); //TODO: team system implementation
+//    }
 }

@@ -20,7 +20,7 @@ public class ExplSheep extends FancySheep {
 
     public ExplSheep(Player owner) {
         super(SheepType.EXPLOSIVE, owner);
-        speed=1.0;
+        //speed=1.0;
     }
 
     @Override
@@ -32,8 +32,8 @@ public class ExplSheep extends FancySheep {
     }
 
     @Override
-    public void spawnLaunchParticle(Location shLoc){
-        for (int i = 0; i < 3; i++) owner.spawnParticle(Particle.FLAME, shLoc.clone().add((Math.random() - 0.5) * 0.3,(Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3), 5, 0.01, 0.01, 0.01, 0.01);
+    public void spawnLaunchParticle(Location shLoc){//NOT FOR JUST THE OWNER, SPAWN FOR ALL
+        for (int i = 0; i < 3; i++) shLoc.getWorld().spawnParticle(Particle.FLAME, shLoc.clone().add((Math.random() - 0.5) * 0.3,(Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3), 5, 0.01, 0.01, 0.01, 0.01);
     }
 
     @Override
@@ -43,22 +43,12 @@ public class ExplSheep extends FancySheep {
     }
 
     @Override
-    public void explode(Location loc){
-        loc = owner.getLocation();
-        final World world = loc.getWorld();
-        final Vector dir = loc.getDirection().normalize();
-        var fLoc = loc.add(dir.multiply(1.5));
-        fLoc.setY(loc.getY()+1.8);
-        Collection<Entity> hits = world.getNearbyEntities(sheep.getBoundingBox()); //Get entity collisions
-        final var nmsSh = ((CraftEntity) sheep).getHandle(); //We check block collisions via NMS
+    public void explode(){
         final Location shLoc = sheep.getLocation();
-        if(nmsSh.horizontalCollision || nmsSh.verticalCollision || hits.size() != 1 && !hits.contains(owner)) { //We reg a hit here.
-            sheep.remove();
-            shLoc.createExplosion(sheep,3F, false);
-            world.spawnParticle(Particle.EXPLOSION, shLoc, 1);
-            world.playSound(shLoc, Sound.ENTITY_GENERIC_EXPLODE, 4F,0.7F); //In MC pitch is random betw: 0.56-0.84
-        }
-        sheep.setVelocity(dir.multiply(speed));
+        sheep.remove();
+        shLoc.createExplosion(sheep,4F, false);
+        //world.spawnParticle(Particle.EXPLOSION, shLoc, 1); //NOT NEEDED SEE EVENT CANCEL OR NOT?
+        //world.playSound(shLoc, Sound.ENTITY_GENERIC_EXPLODE, 4F,0.7F); //In MC pitch is random betw: 0.56-0.84
     }
 
     @Override

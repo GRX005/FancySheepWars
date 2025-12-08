@@ -55,19 +55,19 @@ public abstract class FancySheep {
         speed=1.0; //sheep default launch speed
         damage=4.0;
         radius=3.0;
-    }
+    }//Barany hang kiloveskor
 
 
     public void tick(Sheep sheep, int tick, Location loc){}
-    public void movement(){
-        Location loc = owner.getLocation();
-        World w = loc.getWorld();
-        final Vector dir = loc.getDirection().normalize();
-        var fLoc = loc.add(dir.multiply(1.5));
+    public void movement(boolean gravity) {
+        var loc = owner.getLocation().add(0, 1.8, 0);
+        var dir = loc.getDirection().normalize();
+        loc.add(dir.clone().multiply(1.5));//TODO make the effect better
+        owner.spawnParticle(Particle.SMOKE, loc, 3, 0.02, 0.02, 0.02, 0.005);
 //        final var sp = 1.0;
-        fLoc.setY(loc.getY() + 1.8);
-        w.spawn(fLoc, Sheep.class, sh -> {
-            sh.setVelocity(dir.multiply(speed)); //first kick
+        var wrld = loc.getWorld();
+        wrld.spawn(loc, Sheep.class, sh -> {
+            //sh.setVelocity(dir.clone().multiply(speed)); //first kick
             sheep = sh;
             customize(sh);
             sh.getPersistentDataContainer().set(Main.shKey, PersistentDataType.STRING, type.name());
@@ -75,34 +75,32 @@ public abstract class FancySheep {
             final var nmsSh = ((CraftEntity) sh).getHandle();
             final AtomicInteger timer = new AtomicInteger(0);
             Bukkit.getMobGoals().removeAllGoals(sh); //Instead of setAI false, so it can still move but it won't
-            owner.spawnParticle(Particle.SMOKE, loc, 3, 0.02, 0.02, 0.02, 0.005);
+
             Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
-                if (sh.isDead() || !sh.isValid()) {
-                    task.cancel();
-                    return;
-                }
                 int t = timer.getAndIncrement();
-                if(t > 100){
-                    sh.remove();
+                if (!sh.isValid() || t > 100) {
                     task.cancel();
+                    sh.remove();
                     return;
                 }
+
                 sh.setVelocity(dir.clone().multiply(speed)); //loop kick
-                Location shLoc = sh.getLocation();
+                var shLoc = sh.getLocation();
                 spawnLaunchParticle(shLoc);
                 tick(sh, t, shLoc);
-                Collection<Entity> hits = w.getNearbyEntities(sh.getBoundingBox(), e -> e instanceof Player && !e.equals(owner));
+
+                var hits = wrld.getNearbyEntities(sh.getBoundingBox(), e -> e instanceof Player && !e.equals(owner));
                 var hitBlock = nmsSh.horizontalCollision || nmsSh.verticalCollision;
-                var hitEntity = !hits.isEmpty();
-                if(hitBlock || hitEntity){
+
+                if(hitBlock || !hits.isEmpty()){
                     task.cancel();
-                    sh.setVelocity(new Vector(0, 0, 0));
-                    explode(shLoc.clone());
+                    sh.setVelocity(new Vector());
+                    explode();
                 }
             }, 0L, 1L);
         });
     }
-    public abstract void explode(Location loc);
+    public abstract void explode();
     public abstract void giveSheep(Player player);
     public abstract void spawnLaunchParticle(Location shLoc);
     public abstract void customize(Sheep sheep);

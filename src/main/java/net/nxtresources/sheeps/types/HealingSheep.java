@@ -48,35 +48,35 @@ public class HealingSheep extends FancySheep {
 
     @Override
     public void spawnLaunchParticle(Location shLoc){
-        for (int i = 0; i < 3; i++) owner.spawnParticle(Particle.HEART, shLoc.clone().add((Math.random() - 0.5) * 0.3,(Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3), 5, 0.01, 0.01, 0.01, 0.01);
+        for (int i = 0; i < 3; i++) sheep.getWorld().spawnParticle(Particle.HEART, shLoc.clone().add((Math.random() - 0.5) * 0.3,(Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3), 5, 0.01, 0.01, 0.01, 0.01);
     }
 
     @Override
-    public void explode(Location loc) {
+    public void explode() {
         ticksRun = 0;
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), expl ->{
             final int radiusPoints = 16;
-            if(ticksRun>=max) {
+            if(ticksRun>=max || sheep.isDead()) {
                 if (sheep != null && !sheep.isDead()) sheep.remove();
                 expl.cancel();
                 return;
             }
 
-            Location location;
-            if (sheep != null && sheep.isValid()) location = sheep.getLocation().clone();
-            else location = loc.clone();
-            final World w = location.getWorld();
+            var loc = sheep.getLocation();
+
+            //else location = loc.clone();
+            final World w = loc.getWorld();
             if(w==null){
                 expl.cancel();
                 return;
             }
-            w.spawnParticle(Particle.HEART, location, 2, 2, 2, 2, 1);
+            w.spawnParticle(Particle.HEART, loc, 2, 2, 2, 2, 1);
             if(ticksRun < max - happyVillager) {
                 for (int i = 0; i < radiusPoints; i++) {
                     var angle = 2 * Math.PI * i / radiusPoints;
-                    var x = location.getX() + radius * Math.cos(angle);
-                    var z = location.getZ() + radius * Math.sin(angle);
-                    var y = location.getY() + 0.1;
+                    var x = loc.getX() + radius * Math.cos(angle);
+                    var z = loc.getZ() + radius * Math.sin(angle);
+                    var y = loc.getY() + 0.1;
                     Location particleLoc = new Location(w, x, y, z);
                     w.spawnParticle(Particle.HAPPY_VILLAGER, particleLoc, 1, 0.0, 0.0, 0.0, 0.0);
                     w.spawnParticle(Particle.HAPPY_VILLAGER, particleLoc, 1, 0.0, 0.2, 0.0, 0.0);
@@ -84,12 +84,12 @@ public class HealingSheep extends FancySheep {
 
                 }
             }
-            for (Entity e : w.getNearbyEntities(location, radius, radius, radius)) {
+            for (Entity e : w.getNearbyEntities(loc, radius, radius, radius)) {
                 if (e instanceof Player player) {
                     var maxHp = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
                     var newHp = Math.min(player.getHealth() + 0.5, maxHp);
                     player.setHealth(newHp);
-                    player.spawnParticle(Particle.HEART, location, 3, 2, 2, 2, 1);
+                    player.spawnParticle(Particle.HEART, loc, 3, 2, 2, 2, 1);
                 }
             }
             ticksRun += 10;

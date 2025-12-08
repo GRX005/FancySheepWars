@@ -9,6 +9,7 @@ import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.FancySheep;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import static org.bukkit.Material.PLAYER_HEAD;
+
 public class InteractEvent implements Listener {
 
     @EventHandler
@@ -29,9 +32,25 @@ public class InteractEvent implements Listener {
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
 
-        if(!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
         if (item.getType() == Material.AIR) return;
         if(meta ==null || !meta.hasDisplayName()) return;
+
+        if (item.getType()==PLAYER_HEAD) {//Handle sheep here
+            var key = item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING);
+            SheepType type;
+            type = SheepType.valueOf(key);
+            FancySheep sheep = FancySheep.create(type, player);
+            sheep.movement(action.isRightClick());
+            player.playSound(
+                    player.getLocation(),
+                    Sound.ENTITY_SHEEP_AMBIENT, // or another sheep-related sound
+                    1.0f,                       // volume
+                    1.0f                        // pitch
+            );
+            return;
+        }
+
+        if(!(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) return;
 
         var pdc = meta.getPersistentDataContainer().get(Main.itemData, PersistentDataType.STRING);
         switch (item.getType()) {
@@ -90,13 +109,6 @@ public class InteractEvent implements Listener {
                     event.setCancelled(true);
                 }
             }
-            case PLAYER_HEAD -> {
-                var key = item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING);
-                SheepType type;
-                type = SheepType.valueOf(key);
-                FancySheep sheep = FancySheep.create(type, player);
-                sheep.movement();
-            }
             case WOODEN_AXE -> {
                 if ("MapSelector".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
@@ -115,7 +127,7 @@ public class InteractEvent implements Listener {
                     event.setCancelled(true);
                 }
             }
-
+//TODO Make based on team arena
             case RED_CONCRETE -> {
                 if("SetRedSheep".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
