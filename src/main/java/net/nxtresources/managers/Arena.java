@@ -8,6 +8,7 @@ import net.nxtresources.enums.SheepType;
 import net.nxtresources.enums.TeamType;
 import net.nxtresources.managers.scoreboard.Board;
 import net.nxtresources.managers.scoreboard.BoardMgr;
+import net.nxtresources.utils.MsgCache;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -144,8 +145,10 @@ public class Arena{
     }
 
     public void end() {
-        teams.forEach(e->//SetupMgr.tpToLobby(f);
-                e.tPlayers.forEach(ItemMgr::lobbyItems));
+        teams.forEach(e-> e.tPlayers.forEach(p -> {
+            ItemMgr.lobbyItems(p);
+            LobbyMgr.tpMainLobby(p);
+        }));
         teams.clear();
         prog=0;
         //Prog ==0 and status != waiting -> Arena is restoring.
@@ -181,6 +184,13 @@ public class Arena{
             this.name = name;
             this.size = size;
         }
+    }
+
+    public void tpWaitingLobby(Player player, String name){
+        Arena arena = ArenaMgr.getByName(name);
+        if(arena == null) return;
+        Location location = arena.getWaitingLobby();
+        player.teleportAsync(location);
     }
 
     public void setWaitingLobby(Location loc) {

@@ -1,138 +1,141 @@
 package net.nxtresources.managers;
 
 import net.nxtresources.Main;
+import net.nxtresources.enums.BoardType;
+import net.nxtresources.enums.SetupStep;
 import net.nxtresources.enums.TeamType;
+import net.nxtresources.managers.scoreboard.Board;
+import net.nxtresources.managers.scoreboard.BoardMgr;
+import net.nxtresources.utils.MsgCache;
+import net.nxtresources.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static net.nxtresources.managers.ItemMgr.*;
 
 public class SetupMgr {
-    public static final Map<UUID, String> playerSetupArena = new HashMap<>();
-    public static final Set<Arena> temporaryArenas = new HashSet<>();
-    public static final Map<UUID, Arena.Temp> tempdata = new HashMap<>();
-    private static String lobby;
 
+    public static final Map<UUID, SessionData> sessions = new HashMap<>();
 
-    public static int startSetup(Player player, String name, int size, boolean isTemporary){
-        if(isInSetup(player))
-            return 1;
-        Arena arena;
-        if(isTemporary){
-            arena = new Arena(name,size);
-            temporaryArenas.add(arena);
-            tempdata.put(player.getUniqueId(), new Arena.Temp(name, size));
+    public static class SessionData {
+
+        public final UUID uuid;
+        public final String arenaName;
+        public final Arena.Temp temp;
+        public SetupStep step;
+
+        public SessionData(Player player, String arenaName, int arenaSize){
+
+            this.uuid = player.getUniqueId();
+            this.arenaName = arenaName;
+            this.temp = new Arena.Temp(arenaName, arenaSize);
+            this.step = SetupStep.MAP_REGION;
         }
-        playerSetupArena.put(player.getUniqueId(), name);
-        player.getInventory().clear();
-        player.getInventory().setItem(0, setwaitinglobby);
-        //player.getInventory().setItem(7, saveAndExit);
-        player.getInventory().setItem(8, leaveSetup);
-        return 0;
+
     }
-//TODO Ne lehessen az arena teruleten kivul szarokat lerakni. WaitingLobby autodetect? Elobb keljen kijelolni az arena teruletet es utana a tobbit
-    public static void finishSetup(Player player, boolean succ){
-        player.sendMessage("Finishing setup...");
-        String name = playerSetupArena.remove(player.getUniqueId());
-        Arena.Temp tempData = tempdata.remove(player.getUniqueId());
-        if(name == null ||tempData==null)
-            return;
-        if(succ) {
-            Arena arena = new Arena(tempData.name, tempData.size);
-            if(tempData.waitingLobby!=null)
-                arena.setWaitingLobby(tempData.waitingLobby);
-            if(tempData.teamSpawns!=null)
-                for (Map.Entry<String, Location> entry : tempData.teamSpawns.entrySet())
-                    arena.setTeamSpawn(TeamType.valueOf(entry.getKey()), entry.getValue());
-            if(tempData.pos1 != null && tempData.pos2 != null) {
-                arena.setPos1(tempData.pos1);
-                arena.setPos2(tempData.pos2);
-                arena.setWaitingPos1(tempData.waitingPos1);
-                arena.setWaitingPos2(tempData.waitingPos2);
-                arena.wName =tempData.pos1.getWorld().getName();
-            }
-            if (tempData.redSheepSpawns != null && !tempData.redSheepSpawns.isEmpty())
-                arena.setRedSheepSpawns(tempData.redSheepSpawns);
-            if (tempData.blueSheepSpawns != null && !tempData.blueSheepSpawns.isEmpty())
-                arena.setBlueSheepSpawns(tempData.blueSheepSpawns);
+
+    public int start(Player player, String name, int size, boolean isTemporary){
+        UUID uuid = player.getUniqueId();
+        if(sessions.containsKey(uuid)) return 1; //is in setup
+
+        if(isTemporary) {
+            BoardMgr.setBoard(player, new Board(BoardType.SETUP));
+            SessionData session = new SessionData(player, name, size);
+            sessions.put(uuid, session);
+            player.getInventory().clear();
+            player.getInventory().setItem(0, selectorTool);
+            player.getInventory().setItem(8, leaveSetup);
+            player.getInventory().setItem(7, saveAndExit);
+        }
+        return 0; //temp arena succ. created
+    }
+
+    public static void finish(Player player, boolean success){
+        UUID uuid = player.getUniqueId();
+        SessionData session = sessions.remove(uuid);
+        Arena.Temp tempData = session.temp;
+        Arena arena = new Arena(tempData.name, tempData.size);
+        if(success){
+            arena.setWaitingLobby(tempData.waitingLobby);
+            arena.setPos1(tempData.pos1);
+            arena.setPos2(tempData.pos2);
+            arena.setWaitingPos1(tempData.waitingPos1);
+            arena.setWaitingPos2(tempData.waitingPos2);
+            arena.wName =tempData.pos1.getWorld().getName();
+            arena.setRedSheepSpawns(tempData.redSheepSpawns);
+            arena.setBlueSheepSpawns(tempData.blueSheepSpawns);
+            for (Map.Entry<String, Location> entry : tempData.teamSpawns.entrySet())
+                arena.setTeamSpawn(TeamType.valueOf(entry.getKey()), entry.getValue());
             ArenaMgr.arenas.add(arena);
             ArenaMgr.saveArena(arena);
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
-
             WorldMgr.getInst().saveAsync(tempData.pos1.getWorld(),arena.name,arena.pos1,arena.pos2);
+            BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
+            //for draw dust removing
+            cancelDrawTask(Utils.drawDustTaskMAP, uuid);
+            cancelDrawTask(Utils.drawDustTaskWL, uuid);
         } else{
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
-            temporaryArenas.removeIf(a -> a.name.equals(name));
+            BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
+            //for draw dust removing
+            cancelDrawTask(Utils.drawDustTaskMAP, uuid);
+            cancelDrawTask(Utils.drawDustTaskWL, uuid);
         }
     }
 
-    //
-    //ARENA
-    //
+    public void giveForNext(Player player, SetupStep step){
+        player.getInventory().clear();
+        switch (step){
+            case MAP_REGION -> player.getInventory().setItem(0, selectorTool);
+            case LOBBY_REGION -> player.getInventory().setItem(0, waitingSelectorTool);
+            case LOBBY_SPAWN -> player.getInventory().setItem(0, setwaitinglobby);
+            case RED_TEAM_SPAWN -> player.getInventory().setItem(0, red);
+            case BLUE_TEAM_SPAWN -> player.getInventory().setItem(0, blue);
+            case SHEEP_SPAWNS ->{
+                player.getInventory().setItem(0, setRedSheep);
+                player.getInventory().setItem(1, setBlueSheep);
+            }
+        }
+        player.getInventory().setItem(7, saveAndExit);
+        player.getInventory().setItem(8, leaveSetup);
+    }
 
-    public static void setWaitingLobby(Player player) {
-        Location loc = player.getLocation();
-        if(!isInSetup(player))
-            return;
-        Arena.Temp tempData = tempdata.get(player.getUniqueId());
-        if(tempData!=null) {
-            player.getInventory().clear();
-            player.getInventory().setItem(0, red);
-            player.getInventory().setItem(1, blue);
-            player.getInventory().setItem(2, selectorTool);
-            player.getInventory().setItem(3, waitingSelectorTool);
-            //player.getInventory().setItem(4, setsheep);
-            //player.getInventory().setItem(7, saveAndExit);
-            player.getInventory().setItem(8, leaveSetup);
-            tempData.waitingLobby = loc;
+    public void checkStep(Player player){
+
+        UUID uuid = player.getUniqueId();
+        SessionData session = sessions.get(uuid);
+        SetupStep step = session.step;
+
+        boolean done = switch (step) {
+            case MAP_REGION -> session.temp.pos1 != null && session.temp.pos2 != null;
+            case LOBBY_REGION -> session.temp.waitingPos1 != null && session.temp.waitingPos2 != null;
+            case LOBBY_SPAWN -> session.temp.waitingLobby != null;
+            case RED_TEAM_SPAWN -> session.temp.teamSpawns.containsKey("RED");
+            case BLUE_TEAM_SPAWN -> session.temp.teamSpawns.containsKey("BLUE");
+            case SHEEP_SPAWNS -> !session.temp.redSheepSpawns.isEmpty() && !session.temp.blueSheepSpawns.isEmpty();
+        };
+        if(!done)return;
+        SetupStep next = step.next();
+        if(next!=null) {
+            session.step = next;
+            giveForNext(player, next);
+            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.NextStep").replace("%step%", MsgCache.get(next.getStepName()))));
         }
     }
 
-    public static void getWaitingLobby(Player player, String name){
-        Arena arena = ArenaMgr.getByName(name);
-
-        if(arena == null)
-            return;
-        Location location = arena.getWaitingLobby();
-        player.teleportAsync(location);
+    public static void cancelDrawTask(Map<UUID, BukkitTask> drawTask, UUID uuid) {
+        BukkitTask bukkitTask = drawTask.remove(uuid);
+        if(bukkitTask!=null) bukkitTask.cancel();
     }
 
-    //
-    //LOBBY
-    //
-
-    //TODO: Add to new setupmgr
-//    public static void loadMainLobby(){
-//        if(Main.lobbyConfig.contains("lobby"))
-//            lobby = String.valueOf(LocationMgr.get(Main.lobbyConfig.getString("lobby")));
-//    }
-//    public static void setMainLobby(Player player) {
-//        Location location = player.getLocation();
-//        Main.lobbyConfig.set("lobby", LocationMgr.set(location));
-//        setLobby(location);
-//        Main.saveLobbyConfig();
-//    }
-
-//    public static void tpToLobby(Player player) {
-//        Location location = getLobby();
-//        if(location==null)
-//            return;
-//        player.teleportAsync(location);
-//    }
-    public static void setLobby(Location loc) {
-        lobby = LocationMgr.set(loc);
-    }
-    public static Location getLobby() {
-        return LocationMgr.get(lobby);
-    }
-    public static String getSetupArena(Player player) {
-        return playerSetupArena.get(player.getUniqueId());
-    }
     public static boolean isInSetup(Player player) {
-        return playerSetupArena.containsKey(player.getUniqueId());
+        return sessions.containsKey(player.getUniqueId());
     }
 }

@@ -77,7 +77,7 @@ public class Board extends BaseBoard{
                     .replace("%arena_status%", status)
                     .replace("%players_size%", String.valueOf(arena.lobbyPlayers.size()));
         }
-        var session = SetupMgrNew.sessions.get(player.getUniqueId());
+        var session = SetupMgr.sessions.get(player.getUniqueId());
         if(session!=null) {
             Arena.Temp temp = session.temp;
 

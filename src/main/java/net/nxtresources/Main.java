@@ -18,7 +18,7 @@ import java.util.Objects;
 public final class Main extends JavaPlugin {
 
     private static Main plugin;
-    public static SetupMgrNew setupManager;
+    public static SetupMgr setupManager;
     private ConfigMgr configMgr;
 
     public static final Gson gson =new Gson();
@@ -37,6 +37,7 @@ public final class Main extends JavaPlugin {
         ArenaMgr.loadAllArenas();
         DataMgr.load();
         //SetupMgr.loadMainLobby();
+        LobbyMgr.loadMainLobby();
         MsgCache.load();
         // Plugin startup logic
     }
@@ -49,7 +50,7 @@ public final class Main extends JavaPlugin {
     }
 
     private void initialize() {
-        setupManager = new SetupMgrNew();
+        setupManager = new SetupMgr();
         configMgr = new ConfigMgr(this);
     }
 
@@ -84,7 +85,7 @@ public final class Main extends JavaPlugin {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(str);
     }
 
-    public static SetupMgrNew getSetupMgr(){
+    public static SetupMgr getSetupMgr(){
         return setupManager;
     }
 }

@@ -4,7 +4,7 @@ import net.nxtresources.Main;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.ItemMgr;
-import net.nxtresources.managers.SetupMgrNew;
+import net.nxtresources.managers.SetupMgr;
 import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.FancySheep;
 import net.nxtresources.utils.Utils;
@@ -66,7 +66,7 @@ public class InteractEvent implements Listener {
             }
             case DARK_OAK_DOOR -> {
                 if ("SetWaitingLobby".equals(pdc)) {
-                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.waitingLobby = player.getLocation();
                     Main.getSetupMgr().checkStep(player);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setWaitingLobby").replace("%arena_name%", session.arenaName)));
@@ -86,7 +86,7 @@ public class InteractEvent implements Listener {
                     return;
                 }
                 if("LeaveSetup".equals(pdc)){
-                    SetupMgrNew.finish(player, false);
+                    SetupMgr.finish(player, false);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.LeaveSetup")));
                 }
             }
@@ -96,8 +96,8 @@ public class InteractEvent implements Listener {
                     return;
                 }
                 if ("SaveAndExit".equals(pdc)) {
-                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
-                    SetupMgrNew.finish(player, true);
+                    var session = SetupMgr.sessions.get(player.getUniqueId());
+                    SetupMgr.finish(player, true);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.ArenaCreated").replace("%arena_name%", session.arenaName)));
                     event.setCancelled(true);
                 }
@@ -108,7 +108,7 @@ public class InteractEvent implements Listener {
                     return;
                 }
                 if ("TeamSelector_Blue".equals(pdc)) {
-                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.teamSpawns.put("BLUE", player.getLocation());
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("BLUE"))));
                     Main.getSetupMgr().checkStep(player);
@@ -121,7 +121,7 @@ public class InteractEvent implements Listener {
                     return;
                 }
                 if ("TeamSelector_Red".equals(pdc)) {
-                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.teamSpawns.put("RED", player.getLocation());
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("RED"))));
                     Main.getSetupMgr().checkStep(player);
@@ -135,7 +135,7 @@ public class InteractEvent implements Listener {
                 }
                 if ("MapSelector".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
-                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
                     Location loc = player.getLocation();
 
@@ -172,7 +172,7 @@ public class InteractEvent implements Listener {
                 }
                 if("SetRedSheep".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
-                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
                     Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
                     temp.redSheepSpawns.add(playerLoc);
@@ -188,7 +188,7 @@ public class InteractEvent implements Listener {
                 }
                 if("SetBlueSheep".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
-                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
                     Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
                     temp.blueSheepSpawns.add(playerLoc);
@@ -204,7 +204,7 @@ public class InteractEvent implements Listener {
                 }
                 if ("WaitingLobbySelector".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
-                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
+                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
                     Location loc = player.getLocation();
 

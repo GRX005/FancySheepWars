@@ -5,6 +5,7 @@ import net.nxtresources.enums.ArenaStatus;
 import net.nxtresources.enums.BoardType;
 import net.nxtresources.managers.scoreboard.Board;
 import net.nxtresources.managers.scoreboard.BoardMgr;
+import net.nxtresources.utils.MsgCache;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class ArenaMgr {
             return 5;
 
         a.lobbyPlayers.add(player);
-        SetupMgr.getWaitingLobby(player, arena);
+        a.tpWaitingLobby(player, arena);
         BoardMgr.setBoard(player, new Board(BoardType.WAITING)); //show a waiting board
         if(a.size==a.lobbyPlayers.size())
             a.countdownTask();
@@ -54,16 +55,24 @@ public class ArenaMgr {
         for(Arena a : arenas) { //Beepitett if check az alabb definialt func-ban
             if (a.lobbyPlayers.contains(p)) {
                 a.lobbyPlayers.remove(p);
-                //SetupMgr.tpToLobby(p); //TODO: write the new lobby mgr in the 'new setup mgr'
                 BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
+                if(LobbyMgr.getLobbyLocation() == null){
+                    p.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
+                    return;
+                }
+                LobbyMgr.tpMainLobby(p);
                 return;
             }
             for(Arena.Team t : a.teams) {
                 t.tPlayers.forEach(pl->{
                     if(p==pl) {
                         t.tPlayers.remove(pl);
-                        //SetupMgr.tpToLobby(pl);
                         BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
+                        if(LobbyMgr.getLobbyLocation() == null){
+                            p.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
+                            return;
+                        }
+                        LobbyMgr.tpMainLobby(p);
                     }
                 });
             }

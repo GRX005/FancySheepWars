@@ -14,6 +14,7 @@ Invalid-argument: '%prefix% &cInvalid argument!'
 Usage: '%prefix% &fUsage: &a%usage%'
 SetMainLobby: '%prefix% &aMainLobby has been set successfully!'
 GetMainLobby: '%prefix% &aYou have been teleported to the MainLobby!'
+MainLobbyNotSet: '%prefix% &cMain Lobby not set!'
 IngameOnly: 'Ingame only!' #ConsoleCommandSender output
 
 Help:

@@ -66,17 +66,15 @@ public class CMDHandler implements CommandExecutor {
                         return false;
                     }
                 }
-                for (Arena a : SetupMgr.temporaryArenas) {
-                    if (a.name.equalsIgnoreCase(name)) {
-                        sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadyInProgress")));
-                        return false;
-                    }
+                if(SetupMgr.isInSetup(player)){
+                    sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadyInProgress")));
+                    return false;
+
                 }
-                SetupMgrNew setup = new SetupMgrNew();
+                SetupMgr setup = new SetupMgr();
                 switch (setup.start(player, name, size, true)) {
                     case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.CreateTemp").replace("%arena_name%", name)));
-                    case 1 -> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
-                    case 2 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadySettingUp")));
+                    case 1 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadySettingUp")));
                 }
                 return false;
             }
@@ -152,17 +150,20 @@ public class CMDHandler implements CommandExecutor {
 
             }
 
-//            case "setlobby" -> {
-//                SetupMgr.setMainLobby(player);
-//                sender.sendMessage(Main.color(MsgCache.get("SetMainLobby")));
-//                return true;
-//            }
-//            case "lobby" -> {
-//                SetupMgr.tpToLobby(player);
-//                sender.sendMessage(Main.color(MsgCache.get("GetMainLobby")));
-//                return true;
-//            }
-
+            case "setlobby" -> {
+                LobbyMgr.setMainLobby(player);
+                sender.sendMessage(Main.color(MsgCache.get("SetMainLobby")));
+                return true;
+            }
+            case "lobby" -> {
+                if(LobbyMgr.getLobbyLocation() ==null){
+                    player.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
+                    return true;
+                }
+                LobbyMgr.tpMainLobby(player);
+                sender.sendMessage(Main.color(MsgCache.get("GetMainLobby")));
+                return true;
+            }
             case "rl","reload" -> {
                 if(!player.hasPermission("fancysheepwars.reload") && !player.hasPermission("fancysheepwars.admin")){
                     sender.sendMessage(Main.color(MsgCache.get("No-Permission").replace("%prefix%", prefix)));
