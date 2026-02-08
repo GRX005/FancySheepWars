@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
 }
 
 paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.getMOJANG_PRODUCTION()
@@ -56,10 +56,10 @@ tasks.withType(JavaCompile).configureEach {
 
 processResources {
     def props = [version: version]
-    inputs.properties props
-    filteringCharset 'UTF-8'
+    inputs.properties(props)
+    filteringCharset = 'UTF-8'
     filesMatching('plugin.yml') {
-        expand props
+        expand(props)
     }
 }
 
