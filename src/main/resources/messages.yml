@@ -75,6 +75,10 @@ Arena:
     Setup: '%prefix% &aYou are currently setting up the &2%arena_name% &aarena!'
     LeaveSetup: '%prefix% &aYou have exited setup mode.'
     ArenaCreated: '%prefix% &aArena successfully created and saved! &8(&2%arena_name%&8)'
+    WaitingLobbyRegionSelectorPOS1: '%prefix% &aWaiting lobby pos1 region set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
+    WaitingLobbyRegionSelectorPOS2: '%prefix% &aWaiting lobby pos2 region set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
+    MapRegionSelectorPOS1: '%prefix% &aMap region pos1 set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
+    MapRegionSelectorPOS2: '%prefix% &aMap region pos2 set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
     NextStep: '%prefix% &aStep completed! Next: &2%step%'
     Steps:
       MapRegion: '&eMap region'

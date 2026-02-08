@@ -7,12 +7,9 @@ import net.nxtresources.managers.ItemMgr;
 import net.nxtresources.managers.SetupMgrNew;
 import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.FancySheep;
-import net.nxtresources.utils.CooldownCalc;
+import net.nxtresources.utils.Utils;
 import net.nxtresources.utils.MsgCache;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,8 +19,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.bukkit.Material.PLAYER_HEAD;
@@ -94,7 +91,7 @@ public class InteractEvent implements Listener {
                 }
             }
             case EMERALD_BLOCK -> {
-                if (CooldownCalc.clickTick(player)) {
+                if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -106,7 +103,7 @@ public class InteractEvent implements Listener {
                 }
             }
             case BLUE_WOOL -> {
-                if (CooldownCalc.clickTick(player)) {
+                if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -119,7 +116,7 @@ public class InteractEvent implements Listener {
                 }
             }
             case RED_WOOL -> {
-                if (CooldownCalc.clickTick(player)) {
+                if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -132,7 +129,7 @@ public class InteractEvent implements Listener {
                 }
             }
             case WOODEN_AXE -> {
-                if (CooldownCalc.clickTick(player)) {
+                if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -144,10 +141,24 @@ public class InteractEvent implements Listener {
 
                     if (temp.pos1 == null) {
                         temp.pos1 = loc;
-                        player.sendMessage("Arena pos1 beállítva! loc: " + loc);
+                        player.sendMessage(Main.color(MsgCache.get("Arena.Setup.MapRegionSelectorPOS1")
+                                .replace("%x%", String.format("%.2f", player.getX()))
+                                .replace("%y%", String.format("%.2f", player.getY()))
+                                .replace("%z%", String.format("%.2f", player.getZ()))
+                        ));
                     } else {
                         temp.pos2 = loc;
-                        player.sendMessage("Arena pos2 beállítva! loc: " + loc);
+                        player.sendMessage(Main.color(MsgCache.get("Arena.Setup.MapRegionSelectorPOS2")
+                                .replace("%x%", String.format("%.2f", player.getX()))
+                                .replace("%y%", String.format("%.2f", player.getY()))
+                                .replace("%z%", String.format("%.2f", player.getZ()))
+                        ));
+                        BukkitTask drawDustTaskMap = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> Utils.drawDust(
+                                temp.pos1, temp.pos2,
+                                Color.RED, Color.PURPLE,
+                                Math.min(temp.pos1.getY(), temp.pos2.getY()),
+                                Math.max(temp.pos1.getY(), temp.pos2.getY())), 0L, 10L);
+                        Utils.drawDustTaskMAP.put(player.getUniqueId(), drawDustTaskMap);
                     }
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -155,7 +166,7 @@ public class InteractEvent implements Listener {
             }
 //TODO Make based on team arena
             case RED_CONCRETE -> {
-                if (CooldownCalc.clickTick(player)) {
+                if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -171,7 +182,7 @@ public class InteractEvent implements Listener {
             }
 
             case BLUE_CONCRETE -> {
-                if (CooldownCalc.clickTick(player)) {
+                if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -187,7 +198,7 @@ public class InteractEvent implements Listener {
             }
 
             case GOLDEN_AXE -> {
-                if (CooldownCalc.clickTick(player)) {
+                if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -199,10 +210,24 @@ public class InteractEvent implements Listener {
 
                     if (temp.waitingPos1 == null && temp.waitingPos2 == null) {
                         temp.waitingPos1 = loc;
-                        player.sendMessage("Waiting pos1 beállítva! loc: " + loc);
+                        player.sendMessage(Main.color(MsgCache.get("Arena.Setup.WaitingLobbyRegionSelectorPOS1")
+                                .replace("%x%", String.format("%.2f", player.getX()))
+                                .replace("%y%", String.format("%.2f", player.getY()))
+                                .replace("%z%", String.format("%.2f", player.getZ()))
+                        ));
                     } else {
                         temp.waitingPos2 = loc;
-                        player.sendMessage("Waiting pos2 beállítva! loc: " + loc);
+                        player.sendMessage(Main.color(MsgCache.get("Arena.Setup.WaitingLobbyRegionSelectorPOS2")
+                                .replace("%x%", String.format("%.2f", player.getX()))
+                                .replace("%y%", String.format("%.2f", player.getY()))
+                                .replace("%z%", String.format("%.2f", player.getZ()))
+                        ));
+                        BukkitTask drawDustTaskWL = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> Utils.drawDust(
+                                temp.waitingPos1, temp.waitingPos2,
+                                Color.ORANGE, Color.YELLOW,
+                                Math.min(temp.waitingPos1.getY(), temp.waitingPos2.getY()),
+                                Math.max(temp.waitingPos1.getY(), temp.waitingPos2.getY())), 0L, 10L);
+                        Utils.drawDustTaskWL.put(player.getUniqueId(), drawDustTaskWL);
                     }
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);

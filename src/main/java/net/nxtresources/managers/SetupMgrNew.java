@@ -7,8 +7,10 @@ import net.nxtresources.enums.TeamType;
 import net.nxtresources.managers.scoreboard.Board;
 import net.nxtresources.managers.scoreboard.BoardMgr;
 import net.nxtresources.utils.MsgCache;
+import net.nxtresources.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,10 +77,16 @@ public class SetupMgrNew {
             ItemMgr.lobbyItems(player);
             WorldMgr.getInst().saveAsync(tempData.pos1.getWorld(),arena.name,arena.pos1,arena.pos2);
             BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
+            //for draw dust removing
+            cancelDrawTask(Utils.drawDustTaskMAP, uuid);
+            cancelDrawTask(Utils.drawDustTaskWL, uuid);
         } else{
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
             BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
+            //for draw dust removing
+            cancelDrawTask(Utils.drawDustTaskMAP, uuid);
+            cancelDrawTask(Utils.drawDustTaskWL, uuid);
         }
     }
 
@@ -120,6 +128,11 @@ public class SetupMgrNew {
             giveForNext(player, next);
             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.NextStep").replace("%step%", MsgCache.get(next.getStepName()))));
         }
+    }
+
+    public static void cancelDrawTask(Map<UUID, BukkitTask> drawTask, UUID uuid) {
+        BukkitTask bukkitTask = drawTask.remove(uuid);
+        if(bukkitTask!=null) bukkitTask.cancel();
     }
 
     public static boolean isInSetup(Player player) {
