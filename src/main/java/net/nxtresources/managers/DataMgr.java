@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import net.nxtresources.Main;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,14 +29,18 @@ public class DataMgr {
 
     public static void save() {
         for (Map.Entry<UUID, Map<String, Integer>> entry : stats.entrySet())
-            Main.dataConfig.set("players." + entry.getKey().toString(), gson.toJson(entry.getValue()));
-        Main.saveDataConfig();
+            ConfigMgr.dataConfig.set("players." + entry.getKey().toString(), gson.toJson(entry.getValue()));
+        try{
+            ConfigMgr.dataConfig.save(ConfigMgr.dataFile);
+        }catch (RuntimeException | IOException exception){
+            throw new RuntimeException(exception);
+        }
     }
 
     public static void load() {
-        if (Main.dataConfig.contains("players")) {
-            for (String uuidStr : Objects.requireNonNull(Main.dataConfig.getConfigurationSection("players")).getKeys(false)) {
-                String json = Main.dataConfig.getString("players." + uuidStr);
+        if (ConfigMgr.dataConfig.contains("players")) {
+            for (String uuidStr : Objects.requireNonNull(ConfigMgr.dataConfig.getConfigurationSection("players")).getKeys(false)) {
+                String json = ConfigMgr.dataConfig.getString("players." + uuidStr);
                 try {
                     UUID uuid = UUID.fromString(uuidStr);
                     Type type = new TypeToken<Map<String, Integer>>(){}.getType();

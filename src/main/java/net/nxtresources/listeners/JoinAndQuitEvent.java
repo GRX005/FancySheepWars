@@ -22,7 +22,7 @@ public class JoinAndQuitEvent implements Listener {
         DataMgr.get(event.getPlayer());
         player.getInventory().clear();
         ItemMgr.lobbyItems(player);
-        SetupMgr.tpToLobby(player);
+        //SetupMgr.tpToLobby(player);
         BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
 
         FancySheep healing = FancySheep.create(SheepType.HEALING, player);

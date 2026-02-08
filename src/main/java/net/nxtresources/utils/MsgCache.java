@@ -1,6 +1,6 @@
-package net.nxtresources.managers;
+package net.nxtresources.utils;
 
-import net.nxtresources.Main;
+import net.nxtresources.managers.ConfigMgr;
 
 import java.util.*;
 
@@ -11,17 +11,17 @@ public class MsgCache {
     public static void load(){
         msg = new HashMap<>();
         msgList = new HashMap<>();
-        String prefix = Objects.requireNonNullElse(Main.messagesConfig.getString("Prefix"), "§8[§ePrefix§8] ");
-        for (String key : Main.messagesConfig.getKeys(true)) {
-            if (Main.messagesConfig.isString(key)) {
-                String msgStr = Main.messagesConfig.getString(key);
+        String prefix = Objects.requireNonNullElse(ConfigMgr.messagesConfig.getString("Prefix"), "§8[§ePrefix§8] ");
+        for (String key : ConfigMgr.messagesConfig.getKeys(true)) {
+            if (ConfigMgr.messagesConfig.isString(key)) {
+                String msgStr = ConfigMgr.messagesConfig.getString(key);
                 if (msgStr != null) {
                     msgStr = msgStr.replace("%prefix%", prefix);
                     msg.put(key, msgStr);
                 }
             }
-            if (Main.messagesConfig.isList(key)) {
-                List<String> rawList = Main.messagesConfig.getStringList(key);
+            if (ConfigMgr.messagesConfig.isList(key)) {
+                List<String> rawList = ConfigMgr.messagesConfig.getStringList(key);
                 List<String> replacedList = new ArrayList<>();
                 for (String s : rawList)
                     replacedList.add(s.replace("%prefix%", prefix));

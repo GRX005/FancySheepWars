@@ -7,6 +7,8 @@ import net.nxtresources.managers.ItemMgr;
 import net.nxtresources.managers.SetupMgrNew;
 import net.nxtresources.menus.ArenaSelectorGui;
 import net.nxtresources.sheeps.FancySheep;
+import net.nxtresources.utils.CooldownCalc;
+import net.nxtresources.utils.MsgCache;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -21,9 +23,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.bukkit.Material.PLAYER_HEAD;
 
 public class InteractEvent implements Listener {
+
+    Map<String, String> formattedList = Map.of(
+            "RED", "Red",
+            "BLUE", "Blue"
+    );
 
     @EventHandler
     public void openStatusMenu(PlayerInteractEvent event) {
@@ -59,21 +69,20 @@ public class InteractEvent implements Listener {
             }
             case DARK_OAK_DOOR -> {
                 if ("SetWaitingLobby".equals(pdc)) {
-                    //String name = SetupMgr.getSetupArena(player);
                     var session = SetupMgrNew.sessions.get(player.getUniqueId());
                     session.temp.waitingLobby = player.getLocation();
                     Main.getSetupMgr().checkStep(player);
-                    player.sendMessage("§aVárakozó lobby beállítva! (§2" + session.arenaName + "§a)");
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setWaitingLobby").replace("%arena_name%", session.arenaName)));
                     event.setCancelled(true);
                 }
             }
             case BARRIER -> {
                 if("LeaveArena".equals(pdc)){
                     if (!ArenaMgr.isInArena(player)) {
-                        player.sendMessage("Nem vagy arenaban.");
+                        player.sendMessage(Main.color(MsgCache.get("Arena.NotInAnArena")));
                         return;
                     }
-                    player.sendMessage("§cKiléptél az arénából.");
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Leave")));
                     player.getInventory().clear();
                     ItemMgr.lobbyItems(player);
                     ArenaMgr.leave(player);
@@ -81,35 +90,52 @@ public class InteractEvent implements Listener {
                 }
                 if("LeaveSetup".equals(pdc)){
                     SetupMgrNew.finish(player, false);
-                    player.sendMessage("§cKiléptél a setup módból!");
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Setup.LeaveSetup")));
                 }
             }
             case EMERALD_BLOCK -> {
+                if (CooldownCalc.clickTick(player)) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if ("SaveAndExit".equals(pdc)) {
+                    var session = SetupMgrNew.sessions.get(player.getUniqueId());
                     SetupMgrNew.finish(player, true);
-                    player.sendMessage("§aAréna sikeresen létrehozva és mentve!");
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Setup.ArenaCreated").replace("%arena_name%", session.arenaName)));
                     event.setCancelled(true);
                 }
             }
             case BLUE_WOOL -> {
+                if (CooldownCalc.clickTick(player)) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if ("TeamSelector_Blue".equals(pdc)) {
                     var session = SetupMgrNew.sessions.get(player.getUniqueId());
                     session.temp.teamSpawns.put("BLUE", player.getLocation());
-                    player.sendMessage("§9Kék §fcsapat beállítva!");
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("BLUE"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
                 }
             }
             case RED_WOOL -> {
+                if (CooldownCalc.clickTick(player)) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if ("TeamSelector_Red".equals(pdc)) {
                     var session = SetupMgrNew.sessions.get(player.getUniqueId());
                     session.temp.teamSpawns.put("RED", player.getLocation());
-                    player.sendMessage("§cPiros §fcsapat beállítva!");
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("RED"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
                 }
             }
             case WOODEN_AXE -> {
+                if (CooldownCalc.clickTick(player)) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if ("MapSelector".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
                     var session = SetupMgrNew.sessions.get(player.getUniqueId());
@@ -129,40 +155,42 @@ public class InteractEvent implements Listener {
             }
 //TODO Make based on team arena
             case RED_CONCRETE -> {
+                if (CooldownCalc.clickTick(player)) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if("SetRedSheep".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
                     var session = SetupMgrNew.sessions.get(player.getUniqueId());
                     var temp = session.temp;
-                    Block block = event.getClickedBlock();
-                    if (block == null) {
-                        player.sendMessage("Blockra kell kattintanod!");
-                        return;
-                    }
-                    Location loc = block.getLocation().add(0.5, 1, 0.5);
-                    temp.redSheepSpawns.add(loc);
-                    player.sendMessage("§cPiros csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
+                    Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
+                    temp.redSheepSpawns.add(playerLoc);
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setSheepSpawn").replace("%team%", MsgCache.get("Arena.Teams.Red"))));
                     event.setCancelled(true);
                 }
             }
 
             case BLUE_CONCRETE -> {
+                if (CooldownCalc.clickTick(player)) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if("SetBlueSheep".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
                     var session = SetupMgrNew.sessions.get(player.getUniqueId());
                     var temp = session.temp;
-                    Block block = event.getClickedBlock();
-                    if (block == null) {
-                        player.sendMessage("Blockra kell kattintanod!");
-                        return;
-                    }
-                    Location loc = block.getLocation().add(0.5, 1, 0.5);
-                    temp.blueSheepSpawns.add(loc);
-                    player.sendMessage("§9Kék csapat barany spawn loc beallitva: " + (int)loc.getX() + "," + (int)loc.getY() + "," + (int)loc.getZ());
+                    Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
+                    temp.blueSheepSpawns.add(playerLoc);
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setSheepSpawn").replace("%team%", MsgCache.get("Arena.Teams.Blue"))));
                     event.setCancelled(true);
                 }
             }
 
             case GOLDEN_AXE -> {
+                if (CooldownCalc.clickTick(player)) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if ("WaitingLobbySelector".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
                     var session = SetupMgrNew.sessions.get(player.getUniqueId());

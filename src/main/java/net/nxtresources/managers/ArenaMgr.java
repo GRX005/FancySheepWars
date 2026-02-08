@@ -54,7 +54,7 @@ public class ArenaMgr {
         for(Arena a : arenas) { //Beepitett if check az alabb definialt func-ban
             if (a.lobbyPlayers.contains(p)) {
                 a.lobbyPlayers.remove(p);
-                SetupMgr.tpToLobby(p);
+                //SetupMgr.tpToLobby(p); //TODO: write the new lobby mgr in the 'new setup mgr'
                 BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
                 return;
             }
@@ -62,7 +62,7 @@ public class ArenaMgr {
                 t.tPlayers.forEach(pl->{
                     if(p==pl) {
                         t.tPlayers.remove(pl);
-                        SetupMgr.tpToLobby(pl);
+                        //SetupMgr.tpToLobby(pl);
                         BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
                     }
                 });
@@ -92,8 +92,12 @@ public class ArenaMgr {
             if(!a.lobbyPlayers.isEmpty() || !a.teams.isEmpty())
                 return 2;
             arenas.remove(a);
-            Main.arenaConfig.set("arenas." + ar, null);
-            Main.saveArenaConfig();
+            ConfigMgr.arenaConfig.set("arenas." + ar, null);
+            try {
+                ConfigMgr.arenaConfig.save(ConfigMgr.arenaFile);
+            }catch (Exception exception){
+                throw new RuntimeException(exception);
+            }
             return 0;
         }
         return 1;
@@ -102,12 +106,16 @@ public class ArenaMgr {
 
     public static void saveArena(Arena arena) {
         String json = gson.toJson(arena);
-        Main.arenaConfig.set("arenas." + arena.name, json);
-        Main.saveArenaConfig();
+        ConfigMgr.arenaConfig.set("arenas." + arena.name, json);
+        try {
+            ConfigMgr.arenaConfig.save(ConfigMgr.arenaFile);
+        }catch (Exception exception){
+            throw new RuntimeException(exception);
+        }
     }
 
     public static void loadAllArenas() {
-        FileConfiguration config = Main.arenaConfig;
+        FileConfiguration config = ConfigMgr.arenaConfig;
 
         if (config.contains("arenas")) {
             arenas.clear();

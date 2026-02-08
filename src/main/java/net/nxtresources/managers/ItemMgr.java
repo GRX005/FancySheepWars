@@ -1,7 +1,8 @@
 package net.nxtresources.managers;
 
-import net.nxtresources.ItemBuilder;
+import net.nxtresources.utils.ItemBuilder;
 import net.nxtresources.Main;
+import net.nxtresources.utils.MsgCache;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
