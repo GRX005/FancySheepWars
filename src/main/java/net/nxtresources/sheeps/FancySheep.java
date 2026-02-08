@@ -55,8 +55,8 @@ public abstract class FancySheep {
         speed=1.0; //sheep default launch speed
         damage=4.0;
         radius=3.0;
-    }//Barany hang kiloveskor
-
+    }
+//TODO Read papper particle docs, use ParticleBuilder for explosion and other effects
 
     public void tick(Sheep sheep, int tick, Location loc){}
     public void movement(boolean gravity) {

@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockVector;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static net.nxtresources.enums.TeamType.BLUE;
 import static net.nxtresources.enums.TeamType.RED;
@@ -28,12 +29,8 @@ public class Arena{
     private final Set<String> REDsheepSpawns = new HashSet<>();
     private final Set<String> BLUEsheepSpawns = new HashSet<>();
     //Csak innen lehet hozzaadni, 1 helyen.
-    private transient volatile long prog = 0;
+    public transient volatile long prog = 0;
     private BukkitTask dTask;
-
-    public long getProg(){
-        return prog;
-    }
 
     public String name;
     public int size;
@@ -69,19 +66,29 @@ public class Arena{
             }
         };
     }
+//    @SuppressWarnings("NonAtomicOperationOnVolatileField")
+//    private BukkitRunnable arenaTask() {
+//        return new BukkitRunnable() {
+//            @Override
+//            public void run() {
+//                prog++;
+//                if (prog== 3600L || !sufficientPlayers()) {
+//                    Bukkit.getScheduler().runTask(Main.getInstance(), Arena.this::end);
+//                    this.cancel();
+//                }
+//            }
+//        };
+//    }
 
-    private BukkitRunnable arenaTask() {
-        return new BukkitRunnable() {
-            @Override
-            public void run() {
-                //noinspection NonAtomicOperationOnVolatileField (Csak 1 helyen szabad modositani)
-                prog++;
-                if (prog== 3600L || !sufficientPlayers()) {
-                    end();
-                    this.cancel();
-                }
+    @SuppressWarnings("NonAtomicOperationOnVolatileField")
+    private void arenaTask() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), t->{
+            prog++;
+            if (prog== 36L || !sufficientPlayers()) {
+                Bukkit.getScheduler().runTask(Main.getInstance(), Arena.this::end);
+                t.cancel();
             }
-        };
+        },0,20);
     }
 
     private BukkitRunnable dropTask() {
@@ -144,7 +151,7 @@ public class Arena{
             WorldMgr.getInst().rmLobby(Bukkit.getWorld(wName),waitingPos1,waitingPos2);
             lobbyPlayers.clear();
             dTask=dropTask().runTaskTimer(Main.getInstance(), 20L, 200L);
-            arenaTask().runTaskTimerAsynchronously(Main.getInstance(),0,20);
+            arenaTask();
         } catch (Exception e) {
             Bukkit.broadcast(Component.text("Hiba tortent (valszeg dög levente hibajabol)"));
             System.out.println("Exception: "+e);
@@ -167,7 +174,7 @@ public class Arena{
             dTask.cancel();
             dTask=null;
         }
-        Bukkit.getScheduler().runTask(Main.getInstance(),()-> SheepMgr.rmSheeps(wrld));
+        SheepMgr.rmSheeps(wrld);
     }
 //2 teams in 1 arena
     public static final class Team {
