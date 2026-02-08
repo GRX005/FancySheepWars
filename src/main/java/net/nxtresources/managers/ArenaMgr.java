@@ -45,7 +45,7 @@ public class ArenaMgr {
         SetupMgr.getWaitingLobby(player, arena);
         BoardMgr.setBoard(player, new Board(BoardType.WAITING)); //show a waiting board
         if(a.size==a.lobbyPlayers.size())
-            a.countdownTask().runTaskTimerAsynchronously(Main.getInstance(),0L,20L);
+            a.countdownTask();
 
         return 0;
     }

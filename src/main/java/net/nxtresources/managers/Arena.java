@@ -16,7 +16,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockVector;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static net.nxtresources.enums.TeamType.BLUE;
 import static net.nxtresources.enums.TeamType.RED;
@@ -48,43 +47,28 @@ public class Arena{
         this.stat = ArenaStatus.WAITING;
     }
 //Countdown till start
-    public BukkitRunnable countdownTask() {
+    public void countdownTask() {
         stat = ArenaStatus.STARTING;
         toPr = 5;
-        return new BukkitRunnable(){
-            @Override
-            public void run() {
-                toPr--;
-                for (Player p : lobbyPlayers)
-                    p.sendMessage("Az arena indul ennyi mulva: "+toPr);
 
-                if(toPr==0) {//Itt indul az arena.
-                    stat = ArenaStatus.STARTED;
-                    Bukkit.getScheduler().runTask(Main.getInstance(), Arena.this::start);
-                    this.cancel();
-                }
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(),t->{
+            toPr--;
+            for (Player p : lobbyPlayers)
+                p.sendMessage("Az arena indul ennyi mulva: "+toPr);
+
+            if(toPr==0) {//Itt indul az arena.
+                stat = ArenaStatus.STARTED;
+                Bukkit.getScheduler().runTask(Main.getInstance(), Arena.this::start);
+                t.cancel();
             }
-        };
+        },0L,20L);
     }
-//    @SuppressWarnings("NonAtomicOperationOnVolatileField")
-//    private BukkitRunnable arenaTask() {
-//        return new BukkitRunnable() {
-//            @Override
-//            public void run() {
-//                prog++;
-//                if (prog== 3600L || !sufficientPlayers()) {
-//                    Bukkit.getScheduler().runTask(Main.getInstance(), Arena.this::end);
-//                    this.cancel();
-//                }
-//            }
-//        };
-//    }
 
     @SuppressWarnings("NonAtomicOperationOnVolatileField")
     private void arenaTask() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), t->{
             prog++;
-            if (prog== 36L || !sufficientPlayers()) {
+            if (prog== 3600L || !sufficientPlayers()) {
                 Bukkit.getScheduler().runTask(Main.getInstance(), Arena.this::end);
                 t.cancel();
             }
@@ -160,10 +144,8 @@ public class Arena{
     }
 
     public void end() {
-        teams.forEach(e->e.tPlayers.forEach(f->{
-            //SetupMgr.tpToLobby(f);
-            ItemMgr.lobbyItems(f);
-        }));
+        teams.forEach(e->//SetupMgr.tpToLobby(f);
+                e.tPlayers.forEach(ItemMgr::lobbyItems));
         teams.clear();
         prog=0;
         //Prog ==0 and status != waiting -> Arena is restoring.
