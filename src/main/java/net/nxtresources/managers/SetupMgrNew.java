@@ -1,11 +1,12 @@
 package net.nxtresources.managers;
 
-import net.kyori.adventure.text.Component;
+import net.nxtresources.Main;
 import net.nxtresources.enums.BoardType;
 import net.nxtresources.enums.SetupStep;
 import net.nxtresources.enums.TeamType;
 import net.nxtresources.managers.scoreboard.Board;
 import net.nxtresources.managers.scoreboard.BoardMgr;
+import net.nxtresources.utils.MsgCache;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -117,7 +118,7 @@ public class SetupMgrNew {
         if(next!=null) {
             session.step = next;
             giveForNext(player, next);
-            player.sendMessage(Component.text("Step completed! Next: " + next.name()));
+            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.NextStep").replace("%step%", MsgCache.get(next.getStepName()))));
         }
     }
 

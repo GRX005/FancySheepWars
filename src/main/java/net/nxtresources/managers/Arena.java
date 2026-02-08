@@ -161,7 +161,7 @@ public class Arena{
 
     public void end() {
         teams.forEach(e->e.tPlayers.forEach(f->{
-            SetupMgr.tpToLobby(f);
+            //SetupMgr.tpToLobby(f);
             ItemMgr.lobbyItems(f);
         }));
         teams.clear();

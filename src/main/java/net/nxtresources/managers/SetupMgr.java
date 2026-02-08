@@ -105,23 +105,24 @@ public class SetupMgr {
     //LOBBY
     //
 
-    public static void loadMainLobby(){
-        if(Main.lobbyConfig.contains("lobby"))
-            lobby = String.valueOf(LocationMgr.get(Main.lobbyConfig.getString("lobby")));
-    }
-    public static void setMainLobby(Player player) {
-        Location location = player.getLocation();
-        Main.lobbyConfig.set("lobby", LocationMgr.set(location));
-        setLobby(location);
-        Main.saveLobbyConfig();
-    }
+    //TODO: Add to new setupmgr
+//    public static void loadMainLobby(){
+//        if(Main.lobbyConfig.contains("lobby"))
+//            lobby = String.valueOf(LocationMgr.get(Main.lobbyConfig.getString("lobby")));
+//    }
+//    public static void setMainLobby(Player player) {
+//        Location location = player.getLocation();
+//        Main.lobbyConfig.set("lobby", LocationMgr.set(location));
+//        setLobby(location);
+//        Main.saveLobbyConfig();
+//    }
 
-    public static void tpToLobby(Player player) {
-        Location location = getLobby();
-        if(location==null)
-            return;
-        player.teleportAsync(location);
-    }
+//    public static void tpToLobby(Player player) {
+//        Location location = getLobby();
+//        if(location==null)
+//            return;
+//        player.teleportAsync(location);
+//    }
     public static void setLobby(Location loc) {
         lobby = LocationMgr.set(loc);
     }

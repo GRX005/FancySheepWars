@@ -7,34 +7,19 @@ import net.nxtresources.commands.CMDHandler;
 import net.nxtresources.listeners.*;
 import net.nxtresources.managers.*;
 import net.nxtresources.menus.ArenaSelectorGui;
+import net.nxtresources.utils.MsgCache;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
-import java.util.logging.Level;
 
 public final class Main extends JavaPlugin {
 
     private static Main plugin;
     public static SetupMgrNew setupManager;
-
-    public static FileConfiguration arenaConfig;
-    public static File arenaFile;
-
-    public static FileConfiguration messagesConfig;
-    public static File messagesFile;
-
-    public static FileConfiguration lobbyConfig;
-    public static File lobbyFile;
-
-    public static FileConfiguration dataConfig;
-    public static File dataFile;
+    private ConfigMgr configMgr;
 
     public static final Gson gson =new Gson();
     public static NamespacedKey shKey, sheepKickupKey, itemData;
@@ -46,12 +31,12 @@ public final class Main extends JavaPlugin {
         sheepKickupKey = new NamespacedKey(plugin, "PickupSheepData");
         itemData = new NamespacedKey(plugin, "ItemData");
         initialize();
-        loadFiles();
+        configMgr.loadFiles();
         registerCommands();
         registerListeners();
         ArenaMgr.loadAllArenas();
         DataMgr.load();
-        SetupMgr.loadMainLobby();
+        //SetupMgr.loadMainLobby();
         MsgCache.load();
         // Plugin startup logic
     }
@@ -59,78 +44,19 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         saveConfig();
-        saveMessagesConfig();
-        saveArenaConfig();
-        saveLobbyConfig();
-        saveDataConfig();
-
+        configMgr.saveAllConfig();
         // Plugin shutdown logic
     }
 
     private void initialize() {
         setupManager = new SetupMgrNew();
-
-    }
-
-    private void loadFiles() {
-        arenaConfig = loadConfig("arenas.yml");
-        messagesConfig = loadConfig("messages.yml");
-        lobbyConfig = loadConfig("lobby.yml");
-        dataConfig = loadConfig("data.yml");
-    }
-
-    private YamlConfiguration loadConfig(String fileName) {
-        File file = new File(getDataFolder(), fileName);
-        if (!file.exists()) {
-            saveResource(fileName, false);
-            getLogger().log(Level.INFO, fileName + " created!");
-        }
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        switch (fileName) {
-            case "lobby.yml" -> lobbyFile = file;
-            case "arenas.yml" -> arenaFile = file;
-            case "messages.yml" -> messagesFile = file;
-            case "data.yml" -> dataFile = file;
-        }
-        getLogger().log(Level.INFO, fileName + " loaded!");
-        return config;
+        configMgr = new ConfigMgr(this);
     }
 
     public void reload() {
         reloadConfig();
-        loadFiles();
+        configMgr.loadFiles();
         MsgCache.load();
-    }
-
-    public static void saveArenaConfig() {
-        try {
-            arenaConfig.save(arenaFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void saveMessagesConfig() {
-        try {
-            messagesConfig.save(messagesFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void saveLobbyConfig() {
-        try{
-            lobbyConfig.save(lobbyFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static void saveDataConfig(){
-        try{
-            dataConfig.save(dataFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void registerCommands() {

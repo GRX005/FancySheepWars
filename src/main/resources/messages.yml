@@ -14,13 +14,31 @@ Invalid-argument: '%prefix% &cInvalid argument!'
 Usage: '%prefix% &fUsage: &a%usage%'
 SetMainLobby: '%prefix% &aMainLobby has been set successfully!'
 GetMainLobby: '%prefix% &aYou have been teleported to the MainLobby!'
+IngameOnly: 'Ingame only!' #ConsoleCommandSender output
 
+Help:
+  Player:
+    - '&aHelp for players:'
+    - '&c<&m-------------------&c>'
+    - ' &e/sheepwars join &8<&eArenaName&8> - &7Join an arena by its name.'
+    - ' &e/sheepwars leave - &7Leave the Arena.'
+    - '&c<&m-------------------&c>'
+  Admin:
+    - '&aHelp for admins:'
+    - '&c<&m-------------------&c>'
+    - ' &e/sheepwars create &8<&eArenaName&8> <&eSize(Pairs only)&8> - &7 Create a new arena.'
+    - ' &e/sheepwars delete &8<&eArenaName&8> - &7Delete an arena by its name.'
+    - ' &e/sheepwars list &8- &7List the arenas.'
+    - ' &e/sheepwars join &8<&eArenaName&8> - &7Join an arena by its name.'
+    - ' &e/sheepwars leave - &7Leave the Arena.'
+    - '&c<&m-------------------&c>'
+    -
 Arena:
   Join: '%prefix% &aYou have joined the &2%arena_name% &aarena!'
   Leave: '%prefix% &eYou have left the arena!'
   List: '%prefix% &fArenas: &a%arenas%'
-  Delete: '%prefix% &cYou have deleted the &4%arena_name% &crena!'
-  Create: '%prefix% &aYou have created the &2%arena_name% &aarena!'
+  Delete: '%prefix% &cYou have deleted the &4%arena_name% &carena!'
+  CreateTemp: '%prefix% &aYou have created the temp &2%arena_name% &aarena!'
   Arenas: '%prefix% &fAvailable arenas:'
   NoSuchArena: '%prefix% &cNo such arena!'
   ArenaIsFull: '%prefix% &cThe arena is full!'
@@ -32,11 +50,16 @@ Arena:
   CanPositive: '%prefix% &cCan positive number only!'
   ItAlreadyExists: '%prefix% &cAn arena with this name already exists!'
   PlayersInside: '%prefix% &cYou cant delete this arena while players are inside.'
+  NoCreatedArena: '%prefix% &cNo arenas yet.'
 
   #ARENA STATUS
   WAITING: '&eWaiting'
   STARTING: '&aStarting'
   STARTED: '&cStarted'
+
+  Teams:
+    Red: '&cRed'
+    Blue: '&9Blue'
 
   #ICONS
   Icons:
@@ -50,6 +73,16 @@ Arena:
     AlreadyInProgress: '%prefix% &cSomeone is already setting up this arena!'
     AlreadySettingUp: '%prefix% &cYou are already setting up this arena!'
     Setup: '%prefix% &aYou are currently setting up the &2%arena_name% &aarena!'
+    LeaveSetup: '%prefix% &aYou have exited setup mode.'
+    ArenaCreated: '%prefix% &aArena successfully created and saved! &8(&2%arena_name%&8)'
+    NextStep: '%prefix% &aStep completed! Next: &2%step%'
+    Steps:
+      MapRegion: '&eMap region'
+      LobbyRegion: '&eLobby region'
+      LobbySpawn: '&eLobby spawn'
+      RedTeamSpawn: '&eRed team spawn'
+      BlueTeamSpawn: '&eBlue team spawn'
+      SheepsSpawns: '&eSheepsSpawns'
 
 Guis:
   ArenaSelector:

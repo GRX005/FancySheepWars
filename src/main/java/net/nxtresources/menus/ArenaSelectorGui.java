@@ -1,11 +1,11 @@
 package net.nxtresources.menus;
 
 import net.kyori.adventure.text.Component;
-import net.nxtresources.ItemBuilder;
+import net.nxtresources.utils.ItemBuilder;
 import net.nxtresources.Main;
 import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
-import net.nxtresources.managers.MsgCache;
+import net.nxtresources.utils.MsgCache;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -23,8 +23,11 @@ import static net.nxtresources.managers.ItemMgr.leaveArena;
 public class ArenaSelectorGui implements Listener {
 
     public static void open(Player player) {
+
         int size = ((ArenaMgr.arenas.size() / 9) + 1) * 9;
         Inventory inv = Bukkit.createInventory(null, size, Main.color(MsgCache.get("Guis.ArenaSelector.title")));
+
+        if(inv.getContents() == null) return;
 
         for (Arena a : ArenaMgr.arenas) {
             var status = MsgCache.get(a.stat.getConfig());
@@ -48,8 +51,17 @@ public class ArenaSelectorGui implements Listener {
                     .build();
             inv.addItem(arena);
         }
+        if(isInventoryEmpty(inv)){
+            player.sendMessage(Main.color(MsgCache.get("Arena.NoCreatedArena")));
+            return;
+        }
         player.openInventory(inv);
 
+    }
+
+    private static boolean isInventoryEmpty(Inventory inv) {
+        for (ItemStack it : inv.getContents()) if (it != null && it.getType() != Material.AIR) return false;
+        return true;
     }
 
     @EventHandler
@@ -63,21 +75,21 @@ public class ArenaSelectorGui implements Listener {
         NamespacedKey namespacedKey = new NamespacedKey(Main.getInstance(), "arena_name");
         String name = meta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING);
         if(name ==null){
-            player.sendMessage("§cNem sikerült csatlakozni az arénához!");
+            player.sendMessage("§cFailed to join arena! Err: a.name=null");
             player.closeInventory();
             return;
         }
         switch (ArenaMgr.join(name, player)) {
             case 0 -> {
-                player.sendMessage("Csatlakoztál a következő arénához: " + name + "!");
+                player.sendMessage(Main.color(MsgCache.get("Arena.Join").replace("%arena_name%", name)));
                 player.getInventory().clear();
                 player.getInventory().setItem(8, leaveArena);
-                }
+            }
 
-            case 1-> player.sendMessage("Nem findoltam az arénát.");
-            case 2-> player.sendMessage("Mar arenaban vagy.");
-            case 3-> player.sendMessage("Az arena tele.");
-            case 4-> player.sendMessage("Az arena mar elindult.");
+            case 1-> player.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
+            case 2-> player.sendMessage(Main.color(MsgCache.get("Arena.AlreadyInArena")));
+            case 3-> player.sendMessage(Main.color(MsgCache.get("Arena.ArenaIsFull")));
+            case 4-> player.sendMessage(Main.color(MsgCache.get("Arena.ArenaStarted")));
             case 5-> player.sendMessage("Waitinglobby=null");
             default -> player.sendMessage("random hiba");
         }

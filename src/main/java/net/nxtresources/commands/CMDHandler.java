@@ -2,50 +2,46 @@ package net.nxtresources.commands;
 
 import net.nxtresources.Main;
 import net.nxtresources.managers.*;
+import net.nxtresources.utils.MsgCache;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 public class CMDHandler implements CommandExecutor {
 
-    String prefix = Main.messagesConfig.getString("Prefix");
+    String prefix = ConfigMgr.messagesConfig.getString("Prefix");
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String @NotNull [] args) {
         if(!(sender instanceof Player player)) {
-            sender.sendMessage("Ingame only!");
+            sender.sendMessage(Main.color(MsgCache.get("IngameOnly")));
             return false;
         }
-        if(!(sender.hasPermission("fancysheepwars.use"))) {
-            sender.sendMessage(Main.color(
-                    MsgCache.get("No-Permission").replace("%prefix%", prefix)
-            ));
-            return false;
-        }
-        if(args.length == 0){
-            if(!(player.hasPermission("fancysheepwars.use"))){
-                sender.sendMessage("Player help: ");
-                sender.sendMessage("/sheepwars join");
-                sender.sendMessage("/sheepwars leave");
 
+        if(args.length == 0){
+            if(!(player.hasPermission("fancysheepwars.admin"))){
+                List<String> playerHelp = MsgCache.getList("Help.Player");
+                for(String line : playerHelp) player.sendMessage(Main.color(line));
             } else {
-            sender.sendMessage("fancy sheepwars help: ");
-            sender.sendMessage("/sheepwars create <name> ");
-            sender.sendMessage("/sheepwars delete <name> ");
-            sender.sendMessage("/sheepwars list");
-            sender.sendMessage("/sheepwars join <name> ");
-            sender.sendMessage("/sheepwars leave ");
+                List<String> adminHelp = MsgCache.getList("Help.Admin");
+                for(String line : adminHelp) player.sendMessage(Main.color(line));
             }
             return false;
         }
         switch (args[0].toLowerCase()) {
             case "c","create" ->{
+                if(!player.hasPermission("fancysheepwars.create") && !player.hasPermission("fancysheepwars.admin")){
+                    sender.sendMessage(Main.color(MsgCache.get("No-Permission").replace("%prefix%", prefix)));
+                    return true;
+                }
+
                 if(args.length< 3){
-                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%", "/sheepwars create <name> <size(Pairs only)>")));
+                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%", "/sheepwars create <ArenaName> <size(Pairs only)>")));
                     return false;
                 }
                 String name =args[1];
@@ -57,7 +53,7 @@ public class CMDHandler implements CommandExecutor {
                     return false;
                 }
                 if(size%2!=0) {
-                    sender.sendMessage(Main.color(MsgCache.get("Arena.ParisOnly")));
+                    sender.sendMessage(Main.color(MsgCache.get("Arena.PairsOnly")));
                     return false;
                 }
                 if(size<1) {
@@ -78,15 +74,19 @@ public class CMDHandler implements CommandExecutor {
                 }
                 SetupMgrNew setup = new SetupMgrNew();
                 switch (setup.start(player, name, size, true)) {
-                    case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Create").replace("%arena_name%", name)));
+                    case 0 -> sender.sendMessage(Main.color(MsgCache.get("Arena.CreateTemp").replace("%arena_name%", name)));
                     case 1 -> sender.sendMessage(Main.color(MsgCache.get("Arena.NoSuchArena")));
                     case 2 -> sender.sendMessage(Main.color(MsgCache.get("Arena.Setup.AlreadySettingUp")));
                 }
                 return false;
             }
             case "d","delete" ->{
+                if(!player.hasPermission("fancysheepwars.delete") && !player.hasPermission("fancysheepwars.admin")){
+                    sender.sendMessage(Main.color(MsgCache.get("No-Permission").replace("%prefix%", prefix)));
+                    return true;
+                }
                 if(args.length< 2){
-                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%", "/sheepwars delete <name>")));
+                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%", "/sheepwars delete <ArenaName>")));
                     return false;
                 }
                 String name =args[1];
@@ -101,6 +101,14 @@ public class CMDHandler implements CommandExecutor {
                 return false;
             }
             case "l","list" -> {
+                if(!player.hasPermission("fancysheepwars.list") && !player.hasPermission("fancysheepwars.admin")){
+                    sender.sendMessage(Main.color(MsgCache.get("No-Permission").replace("%prefix%", prefix)));
+                    return true;
+                }
+                if(ArenaMgr.arenas.isEmpty()){
+                    player.sendMessage(Main.color(MsgCache.get("Arena.NoCreatedArena")));
+                    return true;
+                }
                 sender.sendMessage(Main.color(MsgCache.get("Arena.Arenas")));
                 ArenaMgr.arenas.forEach(a->{
                     sender.sendMessage("§6Arena name: §e"+a.name+"§6, Size: §e"+ a.size+"§6, LobbyPlayers: §e"+a.lobbyPlayers +"§6, Status: §e"+ a.stat+"§6 Prog: "+a.prog +"§6 Teams: " );
@@ -114,7 +122,7 @@ public class CMDHandler implements CommandExecutor {
 
             case "join","j" -> {
                 if(args.length <2){
-                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%","/sheepwars join <name>")));
+                    sender.sendMessage(Main.color(MsgCache.get("Usage").replace("%usage%","/sheepwars join <ArenaName>")));
                     return false;
                 }
                 String name = args[1];
@@ -144,21 +152,21 @@ public class CMDHandler implements CommandExecutor {
 
             }
 
-            case "setlobby" -> {
-                SetupMgr.setMainLobby(player);
-                sender.sendMessage(Main.color(MsgCache.get("SetMainLobby")));
-                return true;
-            }
-            case "lobby" -> {
-                SetupMgr.tpToLobby(player);
-                sender.sendMessage(Main.color(MsgCache.get("GetMainLobby")));
-                return true;
-            }
+//            case "setlobby" -> {
+//                SetupMgr.setMainLobby(player);
+//                sender.sendMessage(Main.color(MsgCache.get("SetMainLobby")));
+//                return true;
+//            }
+//            case "lobby" -> {
+//                SetupMgr.tpToLobby(player);
+//                sender.sendMessage(Main.color(MsgCache.get("GetMainLobby")));
+//                return true;
+//            }
 
             case "rl","reload" -> {
-                if (!sender.hasPermission("sheepwars.*") && !sender.hasPermission("sheepwars.reload")) {
-                    sender.sendMessage(Main.color(MsgCache.get("No-Permission")));
-                    return false;
+                if(!player.hasPermission("fancysheepwars.reload") && !player.hasPermission("fancysheepwars.admin")){
+                    sender.sendMessage(Main.color(MsgCache.get("No-Permission").replace("%prefix%", prefix)));
+                    return true;
                 }
                 if(args.length < 2) {
                     sender.sendMessage(Main.color(MsgCache.get("Reloading")));
