@@ -76,18 +76,15 @@ public class SetupMgr {
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
             WorldMgr.getInst().saveAsync(tempData.pos1.getWorld(),arena.name,arena.pos1,arena.pos2);
-            BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
             //for draw dust removing
-            cancelDrawTask(Utils.drawDustTaskMAP, uuid);
-            cancelDrawTask(Utils.drawDustTaskWL, uuid);
         } else{
             player.getInventory().clear();
             ItemMgr.lobbyItems(player);
-            BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
             //for draw dust removing
-            cancelDrawTask(Utils.drawDustTaskMAP, uuid);
-            cancelDrawTask(Utils.drawDustTaskWL, uuid);
         }
+        BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
+        cancelDrawTask(Utils.drawDustTaskMAP, uuid);
+        cancelDrawTask(Utils.drawDustTaskWL, uuid);
     }
 
     public void giveForNext(Player player, SetupStep step){
