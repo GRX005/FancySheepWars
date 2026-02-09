@@ -28,61 +28,19 @@ public class ExplSheep extends FancySheep {
     }
 
     @Override
-    public void spawnLaunchParticle(Location shLoc){
+    public void spawnLaunchParticle(Location shLoc) {
         World world = shLoc.getWorld();
-        if (world == null) return;
 
-        Vector velocity = sheep.getVelocity();
+        Vector vel = sheep.getVelocity();
+        if (vel.lengthSquared() < 0.001) return;
 
-        // Normalize the velocity to get the direction the sheep is moving,
-        // then invert it so we offset particles BEHIND the sheep
-        if (velocity.lengthSquared() < 0.001) return; // not moving, skip
+        Vector dir = vel.clone().normalize();
+        Vector back = dir.clone().multiply(-1.0).subtract(vel);
+        Location tail = shLoc.clone().add(back.getX(), 0.3 + back.getY(), back.getZ());
 
-        Vector direction = velocity.clone().normalize();
-
-        // Offset the particle origin to the center-back of the sheep
-        // Sheep are ~0.9 blocks long; offset ~0.5 blocks backward from center
-        double behindOffset = 0.5;
-        Location trailOrigin = shLoc.clone().add(
-                -direction.getX() * behindOffset,
-                0.3, // slightly above ground level (sheep center height)
-                -direction.getZ() * behindOffset
-        );
-
-        // Main flame trail - small cluster behind the sheep
-        world.spawnParticle(
-                Particle.FLAME,
-                trailOrigin,
-                3,              // 3 particles per tick — enough to look full, still cheap
-                0.15, 0.15, 0.15, // slight random spread for natural look
-                0.02            // very low extra speed so they linger in place
-        );
-
-        // Smaller smoke accent for depth — sits slightly further behind
-        Location smokeOrigin = shLoc.clone().add(
-                -direction.getX() * (behindOffset + 0.3),
-                0.3,
-                -direction.getZ() * (behindOffset + 0.3)
-        );
-
-        world.spawnParticle(
-                Particle.SMOKE,
-                smokeOrigin,
-                2,
-                0.1, 0.1, 0.1,
-                0.01
-        );
-
-        // Occasional small lava drip for extra flair (every few ticks)
-        if (sheep.getTicksLived() % 3 == 0) {
-            world.spawnParticle(
-                    Particle.LAVA,
-                    trailOrigin,
-                    1,
-                    0.1, 0.1, 0.1,
-                    0
-            );
-        }
+        world.spawnParticle(Particle.FLAME, tail, 3, 0.15, 0.15, 0.15, 0.02);
+        world.spawnParticle(Particle.SMOKE, tail.clone().add(dir.clone().multiply(-0.4)), 2, 0.1, 0.1, 0.1, 0.01);
+        if (sheep.getTicksLived() % 3 == 0) world.spawnParticle(Particle.LAVA, tail, 1, 0.1, 0.1, 0.1, 0);
     }
 
     @Override
