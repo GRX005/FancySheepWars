@@ -1,7 +1,6 @@
 package net.nxtresources.managers;
 
 import com.google.common.reflect.TypeToken;
-import net.nxtresources.Main;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;

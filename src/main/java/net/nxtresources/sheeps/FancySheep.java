@@ -7,16 +7,11 @@ import net.nxtresources.sheeps.types.HealingSheep;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
-
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class FancySheep {
 
@@ -41,7 +36,6 @@ public abstract class FancySheep {
         this.type = type;
         this.owner=owner;
         init();
-
     }
 
     public static FancySheep create(SheepType type, Player owner) {
@@ -58,41 +52,39 @@ public abstract class FancySheep {
     }
 //TODO Read papper particle docs, use ParticleBuilder for explosion and other effects
 
-    public void tick(Sheep sheep, int tick, Location loc){}
     public void movement(boolean gravity) {
         var loc = owner.getLocation().add(0, 1.8, 0);
-        var dir = loc.getDirection().normalize();
-        loc.add(dir.clone().multiply(1.5));//TODO make the effect better
-        owner.spawnParticle(Particle.SMOKE, loc, 3, 0.02, 0.02, 0.02, 0.005);
-//        final var sp = 1.0;
+        var vel = loc.getDirection().multiply(speed); // Pre-calculate velocity
+        loc.add(vel.clone().multiply(1.5 / speed));
+
         var wrld = loc.getWorld();
+        wrld.spawnParticle(Particle.SMOKE, loc, 3, 0.02, 0.02, 0.02, 0.005);
+
         wrld.spawn(loc, Sheep.class, sh -> {
             //sh.setVelocity(dir.clone().multiply(speed)); //first kick
             sheep = sh;
-            customize(sh);
+            customize();
             sh.getPersistentDataContainer().set(Main.shKey, PersistentDataType.STRING, type.name());
             //Location shLoc = sh.getLocation();
             final var nmsSh = ((CraftEntity) sh).getHandle();
-            final AtomicInteger timer = new AtomicInteger(0);
-            Bukkit.getMobGoals().removeAllGoals(sh); //Instead of setAI false, so it can still move but it won't
+            final int[] t = {0};
+            //Bukkit.getMobGoals().removeAllGoals(sh); //Instead of setAI false, so it can still move but it won't
+            sh.setAware(false);
 
             Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
-                int t = timer.getAndIncrement();
-                if (!sh.isValid() || t > 100) {
+                //int t = timer.getAndIncrement();
+                if (!sh.isValid() || ++t[0] > 100) {
                     task.cancel();
                     sh.remove();
                     return;
                 }
 
-                sh.setVelocity(dir.clone().multiply(speed)); //loop kick
+                sh.setVelocity(vel); //loop kick
                 var shLoc = sh.getLocation();
                 spawnLaunchParticle(shLoc);
-                tick(sh, t, shLoc);
+                tick(t[0], shLoc);
 
-                var hits = wrld.getNearbyEntities(sh.getBoundingBox(), e -> e instanceof Player && !e.equals(owner));
-                var hitBlock = nmsSh.horizontalCollision || nmsSh.verticalCollision;
-
-                if(hitBlock || !hits.isEmpty()){
+                if(nmsSh.horizontalCollision || nmsSh.verticalCollision || !wrld.getNearbyEntities(sh.getBoundingBox(), e -> e instanceof Player p && !p.equals(owner)).isEmpty()){
                     task.cancel();
                     sh.setVelocity(new Vector());
                     explode();
@@ -100,8 +92,11 @@ public abstract class FancySheep {
             }, 0L, 1L);
         });
     }
+
     public abstract void explode();
     public abstract void giveSheep(Player player);
     public abstract void spawnLaunchParticle(Location shLoc);
-    public abstract void customize(Sheep sheep);
+    public abstract void customize();
+
+    public void tick(int tick, Location loc) {}
 }
