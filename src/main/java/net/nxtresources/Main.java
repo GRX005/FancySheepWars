@@ -74,6 +74,7 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(new ExplodeEvent(), this);
         pm.registerEvents(new SheepEvent(), this);
         pm.registerEvents(new SheepDmg(), this);
+        pm.registerEvents(new ClickEvent(), this);
 
     }
 
