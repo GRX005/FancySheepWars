@@ -44,8 +44,7 @@ public class InteractEvent implements Listener {
 
         if (item.getType()==PLAYER_HEAD) {//Handle sheep here
             var key = item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING);
-            SheepType type;
-            type = SheepType.valueOf(key);
+            SheepType type = SheepType.valueOf(key);
             FancySheep sheep = FancySheep.create(type, player);
             sheep.movement(action.isRightClick());
             player.playSound(
@@ -54,6 +53,7 @@ public class InteractEvent implements Listener {
                     1.0f,                       // volume
                     1.0f                        // pitch
             );
+            event.setCancelled(true);
             return;
         }
 

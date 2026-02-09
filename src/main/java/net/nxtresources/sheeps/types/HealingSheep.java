@@ -16,15 +16,12 @@ import static net.nxtresources.managers.ItemMgr.healingSheep;
 
 public class HealingSheep extends FancySheep {
 
-    final Player owner;
     int max = 200;
     int happyVillager = 45;
     int ticksRun = 0;
+    int radius = 5;
     public HealingSheep(Player owner) {
         super(SheepType.HEALING, owner);
-        this.owner=owner;
-        damage=0;
-        radius=5;
     }
 
     @Override
@@ -35,12 +32,10 @@ public class HealingSheep extends FancySheep {
 
     @Override
     public void customize(){
+        super.customize();
         //Location loc = sheep.getLocation();
-        sheep.setGravity(true);
         sheep.setColor(DyeColor.PINK);
         sheep.customName(Component.text("Healing Sheep", NamedTextColor.LIGHT_PURPLE));
-        sheep.setCustomNameVisible(true); //Name visible all the time, not just when entity in aim
-
         //owner.spawnParticle(Particle.FLAME, loc.clone().add((Math.random() - 0.5) * 0.3,(Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3), 5, 0.01, 0.01, 0.01, 0.01);
 
     }

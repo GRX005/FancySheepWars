@@ -26,16 +26,13 @@ public abstract class FancySheep {
     * */
 
     public SheepType type;
-    public double speed;
-    public double damage;
-    public double radius; //barany hatotavolsaga
+    public double speed = 1.0;
     public Player owner;
     public Sheep sheep;
 
     public FancySheep(SheepType type, Player owner){
         this.type = type;
         this.owner=owner;
-        init();
     }
 
     public static FancySheep create(SheepType type, Player owner) {
@@ -45,11 +42,6 @@ public abstract class FancySheep {
         };
     }
 
-    private void init(){
-        speed=1.0; //sheep default launch speed
-        damage=4.0;
-        radius=3.0;
-    }
 //TODO Read papper particle docs, use ParticleBuilder for explosion and other effects
 
     public void movement(boolean gravity) {
@@ -68,8 +60,6 @@ public abstract class FancySheep {
             //Location shLoc = sh.getLocation();
             final var nmsSh = ((CraftEntity) sh).getHandle();
             final int[] t = {0};
-            //Bukkit.getMobGoals().removeAllGoals(sh); //Instead of setAI false, so it can still move but it won't
-            sh.setAware(false);
 
             Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
                 //int t = timer.getAndIncrement();
@@ -96,7 +86,10 @@ public abstract class FancySheep {
     public abstract void explode();
     public abstract void giveSheep(Player player);
     public abstract void spawnLaunchParticle(Location shLoc);
-    public abstract void customize();
+    public void customize() {
+        sheep.setAware(false); //Instead of setAI false, so it can still move but it won't
+        sheep.setCustomNameVisible(true); //Name visible all the time, not just when entity in aim
+    }
 
     public void tick(int tick, Location loc) {}
 }
