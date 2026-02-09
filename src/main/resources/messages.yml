@@ -14,7 +14,7 @@ Invalid-argument: '%prefix% &cInvalid argument!'
 Usage: '%prefix% &fUsage: &a%usage%'
 SetMainLobby: '%prefix% &aMainLobby has been set successfully!'
 GetMainLobby: '%prefix% &aYou have been teleported to the MainLobby!'
-MainLobbyNotSet: '%prefix% &cMain Lobby not set!'
+MainLobbyNotSet: '%prefix% &cMain Lobby is not set! Please use this command: &4/sheepwars setlobby'
 IngameOnly: 'Ingame only!' #ConsoleCommandSender output
 
 Help:
@@ -54,8 +54,8 @@ Arena:
   NoCreatedArena: '%prefix% &cNo arenas yet.'
 
   #ARENA STATUS
-  WAITING: '&eWaiting'
-  STARTING: '&aStarting'
+  WAITING: '&eWaiting...'
+  STARTING: '&aStarting...'
   STARTED: '&cStarted'
 
   Teams:
