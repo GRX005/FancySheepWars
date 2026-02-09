@@ -9,7 +9,6 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
 
 import java.util.Objects;
 
@@ -35,7 +34,7 @@ public class HealingSheep extends FancySheep {
 
 
     @Override
-    public void customize(Sheep sheep){
+    public void customize(){
         //Location loc = sheep.getLocation();
         sheep.setGravity(true);
         sheep.setColor(DyeColor.PINK);

@@ -4,19 +4,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.sheeps.FancySheep;
-import org.bukkit.*;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.entity.Entity;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
-import org.bukkit.util.Vector;
-
-import java.util.Collection;
 
 import static net.nxtresources.managers.ItemMgr.explSheep;
 
 public class ExplSheep extends FancySheep {
-
 
     public ExplSheep(Player owner) {
         super(SheepType.EXPLOSIVE, owner);
@@ -24,7 +19,7 @@ public class ExplSheep extends FancySheep {
     }
 
     @Override
-    public void customize(Sheep sheep){
+    public void customize(){
         sheep.setGravity(true);
         sheep.setColor(DyeColor.RED);
         sheep.customName(Component.text("Explosive Sheep", NamedTextColor.RED));
@@ -37,16 +32,15 @@ public class ExplSheep extends FancySheep {
     }
 
     @Override
-    public void tick(Sheep sheep, int tick, Location location){
+    public void tick(int tick, Location location){
         DyeColor dc = sheep.getColor();
         if (tick > 0 && tick % 20 == 0) sheep.setColor(dc == DyeColor.RED ? DyeColor.WHITE : DyeColor.RED); //TODO: gyorsulas
     }
 
     @Override
     public void explode(){
-        final Location shLoc = sheep.getLocation();
         sheep.remove();
-        shLoc.createExplosion(sheep,4F, false);
+        sheep.getLocation().createExplosion(sheep,4F, false);
         //world.spawnParticle(Particle.EXPLOSION, shLoc, 1); //NOT NEEDED SEE EVENT CANCEL OR NOT?
         //world.playSound(shLoc, Sound.ENTITY_GENERIC_EXPLODE, 4F,0.7F); //In MC pitch is random betw: 0.56-0.84
     }

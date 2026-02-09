@@ -8,7 +8,6 @@ import net.nxtresources.enums.SheepType;
 import net.nxtresources.enums.TeamType;
 import net.nxtresources.managers.scoreboard.Board;
 import net.nxtresources.managers.scoreboard.BoardMgr;
-import net.nxtresources.utils.MsgCache;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

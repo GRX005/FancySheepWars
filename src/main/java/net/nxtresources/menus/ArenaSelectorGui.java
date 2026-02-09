@@ -1,10 +1,10 @@
 package net.nxtresources.menus;
 
 import net.kyori.adventure.text.Component;
-import net.nxtresources.utils.ItemBuilder;
 import net.nxtresources.Main;
 import net.nxtresources.managers.Arena;
 import net.nxtresources.managers.ArenaMgr;
+import net.nxtresources.utils.ItemBuilder;
 import net.nxtresources.utils.MsgCache;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -26,8 +26,6 @@ public class ArenaSelectorGui implements Listener {
 
         int size = ((ArenaMgr.arenas.size() / 9) + 1) * 9;
         Inventory inv = Bukkit.createInventory(null, size, Main.color(MsgCache.get("Guis.ArenaSelector.title")));
-
-        if(inv.getContents() == null) return;
 
         for (Arena a : ArenaMgr.arenas) {
             var status = MsgCache.get(a.stat.getConfig());
