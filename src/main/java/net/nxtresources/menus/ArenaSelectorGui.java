@@ -88,7 +88,7 @@ public class ArenaSelectorGui implements Listener {
             case 2-> player.sendMessage(Main.color(MsgCache.get("Arena.AlreadyInArena")));
             case 3-> player.sendMessage(Main.color(MsgCache.get("Arena.ArenaIsFull")));
             case 4-> player.sendMessage(Main.color(MsgCache.get("Arena.ArenaStarted")));
-            case 5-> player.sendMessage("Waitinglobby=null");
+            case 5-> player.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
             default -> player.sendMessage("random hiba");
         }
         player.closeInventory();

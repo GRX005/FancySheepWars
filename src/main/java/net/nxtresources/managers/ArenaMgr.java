@@ -38,16 +38,13 @@ public class ArenaMgr {
             return 3;
         if(a.stat == ArenaStatus.STARTED)
             return 4;
-        Location lobbyLoc = a.getWaitingLobby();
-        if(lobbyLoc==null || lobbyLoc.getWorld() ==null)
+        if(LobbyMgr.getLobbyLocation() ==null)
             return 5;
-
         a.lobbyPlayers.add(player);
         a.tpWaitingLobby(player, arena);
         BoardMgr.setBoard(player, new Board(BoardType.WAITING)); //show a waiting board
         if(a.size==a.lobbyPlayers.size())
             a.countdownTask();
-
         return 0;
     }
 

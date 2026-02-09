@@ -134,7 +134,7 @@ public class CMDHandler implements CommandExecutor {
                     case 2-> sender.sendMessage(Main.color(MsgCache.get("Arena.AlreadyInArena")));
                     case 3-> sender.sendMessage(Main.color(MsgCache.get("Arena.ArenaIsFull")));
                     case 4-> sender.sendMessage(Main.color(MsgCache.get("Arena.ArenaStarted")));
-                    case 5-> sender.sendMessage("Waitinglobby=null");
+                    case 5-> player.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
                 }
                 return false;
 
