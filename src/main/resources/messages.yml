@@ -81,6 +81,8 @@ Arena:
     MapRegionSelectorPOS1: '%prefix% &aMap region pos1 set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
     MapRegionSelectorPOS2: '%prefix% &aMap region pos2 set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
     NextStep: '%prefix% &aStep completed! Next: &2%step%'
+    InsideOnly: '%prefix% &cOnly found in the MAP REGION!'
+    StepsNotComplete: '%prefix% &cSetup steps is not completed! Please check steps.'
     Steps:
       MapRegion: '&eMap region'
       LobbyRegion: '&eLobby region'

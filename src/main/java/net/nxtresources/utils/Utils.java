@@ -63,4 +63,15 @@ public class Utils {
             world.spawnParticle(Particle.DUST_COLOR_TRANSITION, maxX, y, maxZ, 1, 0, 0, 0, 0, dust);
         }
     }
+
+    public static boolean isInsideRegion(Location loc, Location pos1, Location pos2) {
+        double minX = Math.min(pos1.getX(), pos2.getX());
+        double maxX = Math.max(pos1.getX(), pos2.getX());
+        double minY = Math.min(pos1.getY(), pos2.getY());
+        double maxY = Math.max(pos1.getY(), pos2.getY());
+        double minZ = Math.min(pos1.getZ(), pos2.getZ());
+        double maxZ = Math.max(pos1.getZ(), pos2.getZ());
+
+        return !(loc.getX() >= minX) || !(loc.getX() <= maxX) || !(loc.getY() >= minY) || !(loc.getY() <= maxY) || !(loc.getZ() >= minZ) || !(loc.getZ() <= maxZ);
+    }
 }

@@ -1,6 +1,7 @@
 package net.nxtresources.listeners;
 
 import net.nxtresources.Main;
+import net.nxtresources.enums.SetupStep;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.managers.ArenaMgr;
 import net.nxtresources.managers.ItemMgr;
@@ -68,6 +69,13 @@ public class InteractEvent implements Listener {
                 if ("SetWaitingLobby".equals(pdc)) {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.waitingLobby = player.getLocation();
+                    if(session.step != SetupStep.MAP_REGION){
+                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                     Main.getSetupMgr().checkStep(player);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setWaitingLobby").replace("%arena_name%", session.arenaName)));
                     event.setCancelled(true);
@@ -91,12 +99,16 @@ public class InteractEvent implements Listener {
                 }
             }
             case EMERALD_BLOCK -> {
+                var session = SetupMgr.sessions.get(player.getUniqueId());
                 if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;
                 }
+                if(!SetupMgr.isSetupComplete(session.temp)){
+                    player.sendMessage(Main.color(MsgCache.get("Arena.Setup.StepsNotComplete")));
+                    return;
+                }
                 if ("SaveAndExit".equals(pdc)) {
-                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     SetupMgr.finish(player, true);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.ArenaCreated").replace("%arena_name%", session.arenaName)));
                     event.setCancelled(true);
@@ -110,6 +122,13 @@ public class InteractEvent implements Listener {
                 if ("TeamSelector_Blue".equals(pdc)) {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.teamSpawns.put("BLUE", player.getLocation());
+                    if(session.step != SetupStep.MAP_REGION){
+                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("BLUE"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -123,6 +142,13 @@ public class InteractEvent implements Listener {
                 if ("TeamSelector_Red".equals(pdc)) {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.teamSpawns.put("RED", player.getLocation());
+                    if(session.step != SetupStep.MAP_REGION){
+                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("RED"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -133,9 +159,9 @@ public class InteractEvent implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+                var session = SetupMgr.sessions.get(player.getUniqueId());
                 if ("MapSelector".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
-                    var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
                     Location loc = player.getLocation();
 
@@ -174,6 +200,13 @@ public class InteractEvent implements Listener {
                     if (event.getHand() != EquipmentSlot.HAND) return;
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
+                    if(session.step != SetupStep.MAP_REGION){
+                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                     Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
                     temp.redSheepSpawns.add(playerLoc);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setSheepSpawn").replace("%team%", MsgCache.get("Arena.Teams.Red"))));
@@ -190,6 +223,13 @@ public class InteractEvent implements Listener {
                     if (event.getHand() != EquipmentSlot.HAND) return;
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
+                    if(session.step != SetupStep.MAP_REGION){
+                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                     Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
                     temp.blueSheepSpawns.add(playerLoc);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setSheepSpawn").replace("%team%", MsgCache.get("Arena.Teams.Blue"))));
@@ -208,6 +248,13 @@ public class InteractEvent implements Listener {
                     var temp = session.temp;
                     Location loc = player.getLocation();
 
+                    if(session.step != SetupStep.MAP_REGION){
+                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            return;
+                        }
+                    }
+
                     if (temp.waitingPos1 == null && temp.waitingPos2 == null) {
                         temp.waitingPos1 = loc;
                         player.sendMessage(Main.color(MsgCache.get("Arena.Setup.WaitingLobbyRegionSelectorPOS1")
@@ -217,6 +264,14 @@ public class InteractEvent implements Listener {
                         ));
                     } else {
                         temp.waitingPos2 = loc;
+
+                        if(session.step != SetupStep.MAP_REGION){
+                            if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                                player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                                return;
+                            }
+                        }
+
                         player.sendMessage(Main.color(MsgCache.get("Arena.Setup.WaitingLobbyRegionSelectorPOS2")
                                 .replace("%x%", String.format("%.2f", player.getX()))
                                 .replace("%y%", String.format("%.2f", player.getY()))

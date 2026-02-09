@@ -135,4 +135,15 @@ public class SetupMgr {
     public static boolean isInSetup(Player player) {
         return sessions.containsKey(player.getUniqueId());
     }
+
+    public static boolean isSetupComplete(Arena.Temp t) {
+        return t.pos1 != null && t.pos2 != null
+                && t.waitingPos1 != null && t.waitingPos2 != null
+                && t.waitingLobby != null
+                && t.teamSpawns.containsKey("RED")
+                && t.teamSpawns.containsKey("BLUE")
+                && !t.redSheepSpawns.isEmpty()
+                && !t.blueSheepSpawns.isEmpty();
+    }
+
 }
