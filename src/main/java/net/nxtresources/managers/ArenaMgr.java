@@ -6,7 +6,6 @@ import net.nxtresources.enums.BoardType;
 import net.nxtresources.managers.scoreboard.Board;
 import net.nxtresources.managers.scoreboard.BoardMgr;
 import net.nxtresources.utils.MsgCache;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 

@@ -1,13 +1,13 @@
 package net.nxtresources.managers;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.nxtresources.Main;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.sheeps.FancySheep;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -19,74 +19,64 @@ import java.util.List;
 
 public class SheepMgr {
 
+    private static final double ORBIT_R = 0.02;
+    private static final double ROT_SPEED = Math.toRadians(5); // ~0.08727 rad/tick
+    private static final double BOB_SPEED = 0.1;
+    private static final double BOB_AMP = 0.2;
+    private static final double PICKUP_R = 0.7;
+    private static final double PICKUP_R_SQ = PICKUP_R * PICKUP_R;
+
     public static void spawnSheep(Location loc, SheepType type) {
-        Collection<Entity> nearby = loc.getWorld().getNearbyEntities(loc, 0.5, 1.0, 0.5);
+        var w = loc.getWorld();
+        Collection<Entity> nearby = w.getNearbyEntities(loc, 0.5, 1.0, 0.5);
         for (Entity e : nearby) {
             PersistentDataContainer data = e.getPersistentDataContainer();
-            if (data.has(Main.sheepKickupKey, PersistentDataType.BYTE)) return;
+            if (data.has(Main.sheepKickupKey, PersistentDataType.STRING)) return;
         }
 
-        Sheep sheep = (Sheep) loc.getWorld().spawnEntity(loc, EntityType.SHEEP);
-        sheep.setAI(false);
-        sheep.setGravity(false);
-        sheep.setCustomNameVisible(true);
-        sheep.setBaby();
-        sheep.setAgeLock(true);
-        //customizeSheep(sheep);
+        Sheep sheep = w.spawn(loc, Sheep.class, s -> {
+            s.setAI(false);
+            s.setGravity(false);
+            s.setCustomNameVisible(true);
+            s.setBaby();
+            s.setAgeLock(true);
+            s.setColor(type.dyeColor());
+            s.customName(type.displayName());
+            s.getPersistentDataContainer()
+                    .set(Main.sheepKickupKey, PersistentDataType.STRING, type.name());
+        });
 
-        switch (type){
-            case EXPLOSIVE -> {
-                sheep.setColor(DyeColor.RED);
-                sheep.customName(Component.text("Explosive Sheep", NamedTextColor.RED));
-            }
-            case HEALING -> {
-                sheep.setColor(DyeColor.PINK);
-                sheep.customName(Component.text("Healing Sheep", NamedTextColor.LIGHT_PURPLE));
-            }
-        }
+//        final double radius = 0.02; /* minimalism radiusz kell a szaggatás elkerulese erdekeben */
+//        final Location center = sheep.getLocation().clone();
+//        final double[]floating={0};
+//        final double[] speed= {0};
 
-        PersistentDataContainer data = sheep.getPersistentDataContainer();
-        data.set(Main.sheepKickupKey, PersistentDataType.STRING, type.name());
-
-        final double radius = 0.02; /* minimalism radiusz kell a szaggatás elkerulese erdekeben */
-        final Location center = sheep.getLocation().clone();
-        final double[]floating={0};
-        final double[] speed= {0};
-
+        final double cx = loc.getX(), cy = loc.getY() + BOB_AMP, cz = loc.getZ();
+        final double[] state = {0, 0};
+        final Location nl = new Location(w,0,0,0);
         /*SHEEP ROTATING*/
-        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), updateTask -> {
-            if(!sheep.isValid() || sheep.isDead()){
-                updateTask.cancel();
+        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
+            if (!sheep.isValid()) {
+                task.cancel();
                 return;
             }
-            var x = center.getX() + radius * Math.cos(speed[0]);
-            var z = center.getZ() + radius * Math.sin(speed[0]);
-            //floating
-            var baseY = center.getY() + 0.2;
-            var y = baseY + Math.sin(floating[0]) * 0.2;
-            Location newLoc = new Location(center.getWorld(), x, y, z);
-            newLoc.setYaw((float) Math.toDegrees(-speed[0] + Math.PI));
-            sheep.teleport(newLoc);
-            speed[0] += Math.toRadians(5); /* forgási sebesség */
-            floating[0] += 0.1; /* fel-le sebesség */
 
-            //pickup sheep
-            Collection<Entity> nearbyEntities = sheep.getWorld().getNearbyEntities(sheep.getBoundingBox().expand(0.2, 0.5, 0.2));
-            for (Entity e : nearbyEntities) {
-                if (e instanceof Player player) {
-                    PersistentDataContainer sheepData = sheep.getPersistentDataContainer();
-                    String typeName = sheepData.get(Main.sheepKickupKey, PersistentDataType.STRING);
+            double angle = (state[0] += ROT_SPEED);
+            double bob = (state[1] += BOB_SPEED);
 
-                    SheepType pickupType;
-                    pickupType= SheepType.valueOf(typeName);
+            nl.set(cx + ORBIT_R * Math.cos(angle),
+                    cy + Math.sin(bob) * BOB_AMP,
+                    cz + ORBIT_R * Math.sin(angle));
+            nl.setYaw((float) Math.toDegrees(-angle + Math.PI));
+            sheep.teleport(nl);
 
-                    //player.getInventory().addItem(explSheep);
-                    FancySheep fancy = FancySheep.create(pickupType, player);
-                    fancy.giveSheep(player);
-                    sheep.getWorld().playSound(sheep.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
-                    updateTask.cancel(); //stop animation
+            for (Player p : w.getPlayers()) {
+                if (p.getLocation().distanceSquared(nl) < PICKUP_R_SQ) {
+                    FancySheep.create(type, p).giveSheep(p);
+                    w.playSound(nl, Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
                     sheep.remove();
-                    break;
+                    task.cancel();
+                    return;
                 }
             }
         }, 0L, 1L);

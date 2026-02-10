@@ -1,7 +1,5 @@
 package net.nxtresources.sheeps.types;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.sheeps.FancySheep;
 import org.bukkit.DyeColor;
@@ -20,12 +18,12 @@ public class ExplSheep extends FancySheep {
         //speed=1.0;
     }
 
-    @Override
-    public void customize() {
-        super.customize();
-        sheep.setColor(DyeColor.RED);
-        sheep.customName(Component.text("Explosive Sheep", NamedTextColor.RED));
-    }
+//    @Override
+//    public void customize() {
+//        super.customize();
+//        sheep.setColor(DyeColor.RED);
+//        sheep.customName(Component.text("Explosive Sheep", NamedTextColor.RED));
+//    }
 
     @Override
     public void spawnLaunchParticle(Location shLoc) {

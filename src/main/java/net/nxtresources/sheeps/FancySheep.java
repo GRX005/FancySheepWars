@@ -89,6 +89,8 @@ public abstract class FancySheep {
     public void customize() {
         sheep.setAware(false); //Instead of setAI false, so it can still move but it won't
         sheep.setCustomNameVisible(true); //Name visible all the time, not just when entity in aim
+        sheep.setColor(type.dyeColor());
+        sheep.customName(type.displayName());
     }
 
     public void tick(int tick, Location loc) {}

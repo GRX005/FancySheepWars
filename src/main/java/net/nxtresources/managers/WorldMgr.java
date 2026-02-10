@@ -34,7 +34,7 @@ public final class WorldMgr {
     private static final Path ARENA_DIR = Path.of("plugins", "FancySheepWars", "Arenas");
 
     // Packed block: x(26 bits) | y(16 bits) | z(26 bits) stored as long, plus palette id
-    private record BlockEntry(int x, int y, int z, int paletteId) {}
+    private record BlockEntry(int x, int y, int z, int paletteId) {} //TODO TEST WITH CHUNK UNLOADED
 
     // ─── SAVE ────────────────────────────────────────────────────────────
 

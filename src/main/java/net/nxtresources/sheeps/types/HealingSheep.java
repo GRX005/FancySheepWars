@@ -1,11 +1,12 @@
 package net.nxtresources.sheeps.types;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.nxtresources.Main;
 import net.nxtresources.enums.SheepType;
 import net.nxtresources.sheeps.FancySheep;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,17 +28,6 @@ public class HealingSheep extends FancySheep {
     @Override
     public void giveSheep(Player player){
         player.getInventory().addItem(healingSheep);
-    }
-
-
-    @Override
-    public void customize(){
-        super.customize();
-        //Location loc = sheep.getLocation();
-        sheep.setColor(DyeColor.PINK);
-        sheep.customName(Component.text("Healing Sheep", NamedTextColor.LIGHT_PURPLE));
-        //owner.spawnParticle(Particle.FLAME, loc.clone().add((Math.random() - 0.5) * 0.3,(Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3), 5, 0.01, 0.01, 0.01, 0.01);
-
     }
 
     @Override
