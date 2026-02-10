@@ -71,7 +71,12 @@ public class InteractEvent implements Listener {
                     session.temp.waitingLobby = player.getLocation();
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
-                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
+                            event.setCancelled(true);
+                            return;
+                        }
+                        if(Utils.isInsideRegion(player.getLocation(), session.temp.waitingPos1, session.temp.waitingPos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "WAITING_LOBBY_REGION")));
                             event.setCancelled(true);
                             return;
                         }
@@ -124,7 +129,7 @@ public class InteractEvent implements Listener {
                     session.temp.teamSpawns.put("BLUE", player.getLocation());
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
-                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
                         }
@@ -144,7 +149,7 @@ public class InteractEvent implements Listener {
                     session.temp.teamSpawns.put("RED", player.getLocation());
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
-                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
                         }
@@ -202,7 +207,7 @@ public class InteractEvent implements Listener {
                     var temp = session.temp;
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
-                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
                         }
@@ -225,7 +230,7 @@ public class InteractEvent implements Listener {
                     var temp = session.temp;
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
-                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
                         }
@@ -250,7 +255,7 @@ public class InteractEvent implements Listener {
 
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
-                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             return;
                         }
                     }

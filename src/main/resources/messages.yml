@@ -68,7 +68,7 @@ Arena:
     PIPE: '&a✔'
 
   Setup:
-    setWaitingLobby: '%prefix% &aYou have set the waiting lobby! &8(&2%arena_name%&8)'
+    setWaitingLobby: '%prefix% &aYou have set the waiting lobby spawn location! &8(&2%arena_name%&8)'
     setTeamSpawn: '%prefix% &aSpawn point set! &8(&2%team%&8)'
     setSheepSpawn: '%prefix% &aYou have set the sheep spawn location! &8(&a%team%&8)'
     AlreadyInProgress: '%prefix% &cSomeone is already setting up this arena!'
@@ -81,7 +81,7 @@ Arena:
     MapRegionSelectorPOS1: '%prefix% &aMap region pos1 set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
     MapRegionSelectorPOS2: '%prefix% &aMap region pos2 set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
     NextStep: '%prefix% &aStep completed! Next: &2%step%'
-    InsideOnly: '%prefix% &cOnly found in the MAP REGION!'
+    InsideOnly: '%prefix% &cOnly found in the %step%!'
     StepsNotComplete: '%prefix% &cSetup steps is not completed! Please check steps.'
     Steps:
       MapRegion: '&eMap region'
@@ -123,8 +123,8 @@ Items:
     name: '&aSave and leave setup mode'
     lore: '&e&nClick to save and leave setup mode'
   SetWaitingLobby:
-    name: '&aSet waiting lobby'
-    lore: '&e&nClick to set'
+    name: '&aSet waiting lobby spawn'
+    lore: '&e&nClick to set players spawn location'
   SetSheep:
     name: '&cSet sheeps'
     lore: '&eYou can use this to select where should sheep spawn'
