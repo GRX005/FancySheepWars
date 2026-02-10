@@ -2,6 +2,7 @@ package net.nxtresources.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,6 +32,8 @@ public class ExplodeEvent implements Listener {
     public void onEntityExplode(EntityExplodeEvent e) {
 //        e.blockList().forEach(Block::breakNaturally); //TODO Make only for sheep
 //        e.setCancelled(true);
+        if(e.getEntityType()!= EntityType.SHEEP)
+            return;
         Vector explCenter = e.getLocation().toVector();
         for (Block block : e.blockList()) {
 //            if (REMOVABLE_TYPES.contains(block.getType())) {
