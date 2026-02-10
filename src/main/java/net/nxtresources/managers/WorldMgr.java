@@ -29,7 +29,7 @@ public final class WorldMgr {
     private static final WorldMgr inst = new WorldMgr();
     public static WorldMgr getInst() { return inst; }
 
-    private static final long MAGIC = 0x4172656E61444200L;
+    private static final long MAGIC = 0x4172656E61444200L; //"ArenaDB"
     private static final byte VERSION = 1;
     private static final Path ARENA_DIR = Path.of("plugins", "FancySheepWars", "Arenas");
 
@@ -61,13 +61,11 @@ public final class WorldMgr {
                 globalPalette.defaultReturnValue(-1);
 
                 record RawBlock(int x, int y, int z, String state) {}
-                var tB = System.currentTimeMillis();
                 try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
                     List<Future<List<RawBlock>>> futures = new ArrayList<>(snapshots.size());
 
                     for (ChunkSnapshot snap : snapshots) {
                         futures.add(executor.submit(() -> {
-                            var t = System.currentTimeMillis();
                             int cx = snap.getX() << 4, cz = snap.getZ() << 4;
                             int sx = Math.max(minX, cx),     ex = Math.min(maxX, cx + 15);
                             int sz = Math.max(minZ, cz),     ez = Math.min(maxZ, cz + 15);
@@ -80,7 +78,6 @@ public final class WorldMgr {
                                         if (!bd.getMaterial().isAir())
                                             out.add(new RawBlock(x, y, z, bd.getAsString()));
                                     }
-                            System.out.println("ChunkTime: "+(System.currentTimeMillis()-t));
                             return out;
                         }));
                     }
@@ -92,7 +89,6 @@ public final class WorldMgr {
                     allRaw.sort(Comparator.comparingInt(RawBlock::x)
                             .thenComparingInt(RawBlock::y)
                             .thenComparingInt(RawBlock::z));
-                    System.out.println("FullChunkTime: " +(System.currentTimeMillis()-tB));
 
                     // Build palette and final entries
                     List<BlockEntry> entries = new ArrayList<>(allRaw.size());
@@ -187,8 +183,7 @@ public final class WorldMgr {
                 // Place blocks on main thread, time-sliced
                 final long BUDGET_NS = 3_000_000L;
                 final int[] idx = {0};
-                final long startMs = System.currentTimeMillis();
-
+                var t = System.currentTimeMillis();
                 Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
                     long tickStart = System.nanoTime();
                     while (idx[0] < toPlace.size()) {
@@ -197,7 +192,7 @@ public final class WorldMgr {
                         wrld.getBlockAt(pb.x, pb.y, pb.z).setBlockData(pb.data, false);
                     }
                     task.cancel();
-                    Main.getInstance().getLogger().info("Arena " + arName + " loaded in " + (System.currentTimeMillis() - startMs) + "ms");
+                    Main.getInstance().getLogger().info(arName + " loaded in " + (System.currentTimeMillis() - t) + "ms");
                 }, 0L, 1L);
 
             } catch (Exception e) {
