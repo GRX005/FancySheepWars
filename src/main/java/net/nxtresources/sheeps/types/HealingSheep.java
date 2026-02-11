@@ -65,7 +65,7 @@ public class HealingSheep extends FancySheep {
     public void removeSh() {
         sheep.remove();
     }
-
+//TODO SEE ABOUT ASYNC
     @Override
     public void explode() {
         ticksRun = 0;
@@ -89,38 +89,59 @@ public class HealingSheep extends FancySheep {
             double angle1 = (tick % 40) / 40.0 * 2 * Math.PI;
             double angle2 = angle1 + Math.PI; // opposite side for symmetry
             for (double a : new double[]{angle1, angle2}) {
-                world.spawnParticle(Particle.HAPPY_VILLAGER,
-                        loc.clone().add(Math.cos(a) * radius, 0.2, Math.sin(a) * radius),
-                        1, 0.1, 0.05, 0.1, 0);
+                Particle.HAPPY_VILLAGER.builder()
+                        .location(loc.clone().add(Math.cos(a) * radius, 0.2, Math.sin(a) * radius))
+                        .count(1)
+                        .offset(0.1, 0.05, 0.1)
+                        .extra(0)
+                        .force(true)
+                        .spawn();
             }
 
             // Gentle upward particles scattered inside the ring
             if (tick % 3 == 0) {
                 double r = Math.random() * radius;
                 double a = Math.random() * 2 * Math.PI;
-                world.spawnParticle(Particle.COMPOSTER,
-                        loc.clone().add(Math.cos(a) * r, 0.1, Math.sin(a) * r),
-                        1, 0, 0, 0, 0.04);
+                Particle.COMPOSTER.builder()
+                        .location(loc.clone().add(Math.cos(a) * r, 0.1, Math.sin(a) * r))
+                        .count(1)
+                        .extra(0.04)
+                        .force(true)
+                        .spawn();
             }
 
             // Rising hearts inside the aura
             if (tick % 10 == 0) {
                 double r = Math.random() * (radius * 0.6);
                 double a = Math.random() * 2 * Math.PI;
-                world.spawnParticle(Particle.HEART,
-                        loc.clone().add(Math.cos(a) * r, 0.5, Math.sin(a) * r),
-                        1, 0, 0, 0, 0);
+                Particle.HEART.builder()
+                        .location(loc.clone().add(Math.cos(a) * r, 0.5, Math.sin(a) * r))
+                        .count(1)
+                        .extra(0)
+                        .force(true)
+                        .spawn();
             }
 
             // Soft glow at the sheep (center beacon)
-            world.spawnParticle(Particle.END_ROD, loc.clone().add(0, 0.8, 0), 1, 0.15, 0.3, 0.15, 0.005);
-            for (Entity e : world.getNearbyEntities(loc, radius, radius, radius)) {
-                if (e instanceof Player player) {
-                    var maxHp = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
-                    var newHp = Math.min(player.getHealth() + 0.5, maxHp);
-                    player.setHealth(newHp);
-                    player.spawnParticle(Particle.HEART, loc, 3, 2, 2, 2, 1);
-                }
+            Particle.END_ROD.builder()
+                    .location(loc.clone().add(0, 0.8, 0))
+                    .count(1)
+                    .offset(0.15, 0.3, 0.15)
+                    .extra(0.005)
+                    .force(true)
+                    .spawn();
+            for (Player player : world.getNearbyPlayers(loc, radius, radius, radius)) {
+                var maxHp = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
+                var newHp = Math.min(player.getHealth() + 0.5, maxHp);
+                player.setHealth(newHp);
+                Particle.HEART.builder()
+                        .location(loc)
+                        .count(3)
+                        .offset(2, 2, 2)
+                        .extra(1)
+                        .receivers(player)
+                        .force(true)
+                        .spawn();
             }
             ticksRun += 10;
         }, 0L, 1L);

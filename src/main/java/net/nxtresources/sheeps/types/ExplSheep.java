@@ -80,7 +80,7 @@ public class ExplSheep extends FancySheep {
     }
 
     @Override
-    public void explode(){
+    public void explode() {
         sheep.remove();
         sheep.getLocation().createExplosion(sheep,4F, false);
         //world.spawnParticle(Particle.EXPLOSION, shLoc, 1); //NOT NEEDED SEE EVENT CANCEL OR NOT?
