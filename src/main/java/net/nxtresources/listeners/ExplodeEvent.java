@@ -68,6 +68,7 @@ public class ExplodeEvent implements Listener {
         }
         // Clear the block list so the server doesn't try to break them (since we just did)
         e.blockList().clear();
+        e.setCancelled(true);
     }
 
 }
