@@ -46,11 +46,6 @@ public class SheepMgr {
                     .set(Main.sheepKickupKey, PersistentDataType.STRING, type.name());
         });
 
-//        final double radius = 0.02; /* minimalism radiusz kell a szaggatás elkerulese erdekeben */
-//        final Location center = sheep.getLocation().clone();
-//        final double[]floating={0};
-//        final double[] speed= {0};
-
         final double cx = loc.getX(), cy = loc.getY() + BOB_AMP, cz = loc.getZ();
         final double[] state = {0, 0};
         final Location nl = new Location(w,0,0,0);
@@ -89,7 +84,6 @@ public class SheepMgr {
             //etc
         }
     }
-
 
     public static List<Location> getFreeSheepSpawns(Collection<Location> locations) {
         List<Location> free = new ArrayList<>();
