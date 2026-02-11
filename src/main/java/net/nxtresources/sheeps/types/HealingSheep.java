@@ -35,9 +35,30 @@ public class HealingSheep extends FancySheep {
         Vector back = dir.clone().multiply(-1.0).subtract(shVel);
         Location tail = shLoc.clone().add(back.getX(), 0.3 + back.getY(), back.getZ());
 
-        shWrld.spawnParticle(Particle.HAPPY_VILLAGER, tail, 4, 0.15, 0.15, 0.15, 0.02);
-        shWrld.spawnParticle(Particle.HEART, tail.clone().add(dir.clone().multiply(-0.4)), 1, 0.2, 0.2, 0.2, 0);
-        if (sheep.getTicksLived() % 4 == 0) shWrld.spawnParticle(Particle.END_ROD, tail, 1, 0.1, 0.1, 0.1, 0.01);
+        Particle.HAPPY_VILLAGER.builder()
+                .location(tail)
+                .count(4)
+                .offset(0.15, 0.15, 0.15)
+                .extra(0.02)
+                .force(true)
+                .spawn();
+
+        Particle.HEART.builder()
+                .location(tail.clone().add(dir.clone().multiply(-0.4)))
+                .count(1)
+                .offset(0.2, 0.2, 0.2)
+                .extra(0)
+                .force(true)
+                .spawn();
+
+        if (sheep.getTicksLived() % 4 == 0)
+            Particle.END_ROD.builder()
+                    .location(tail)
+                    .count(1)
+                    .offset(0.1, 0.1, 0.1)
+                    .extra(0.01)
+                    .force(true)
+                    .spawn();
     }
 
     @Override

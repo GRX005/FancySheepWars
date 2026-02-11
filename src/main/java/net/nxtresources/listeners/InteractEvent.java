@@ -20,7 +20,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Map;
 
@@ -70,12 +69,12 @@ public class InteractEvent implements Listener {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.waitingLobby = player.getLocation();
                     if(session.step != SetupStep.MAP_REGION){
-                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                        if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
                         }
-                        if(Utils.isInsideRegion(player.getLocation(), session.temp.waitingPos1, session.temp.waitingPos2)) {
+                        if(Utils.isOutsideRegion(player.getLocation(), session.temp.waitingPos1, session.temp.waitingPos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "WAITING_LOBBY_REGION")));
                             event.setCancelled(true);
                             return;
@@ -128,7 +127,7 @@ public class InteractEvent implements Listener {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.teamSpawns.put("BLUE", player.getLocation());
                     if(session.step != SetupStep.MAP_REGION){
-                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                        if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
@@ -148,7 +147,7 @@ public class InteractEvent implements Listener {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     session.temp.teamSpawns.put("RED", player.getLocation());
                     if(session.step != SetupStep.MAP_REGION){
-                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                        if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
@@ -205,7 +204,7 @@ public class InteractEvent implements Listener {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
                     if(session.step != SetupStep.MAP_REGION){
-                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                        if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
@@ -228,7 +227,7 @@ public class InteractEvent implements Listener {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     var temp = session.temp;
                     if(session.step != SetupStep.MAP_REGION){
-                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                        if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             event.setCancelled(true);
                             return;
@@ -253,7 +252,7 @@ public class InteractEvent implements Listener {
                     Location loc = player.getLocation();
 
                     if(session.step != SetupStep.MAP_REGION){
-                        if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                        if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
                             return;
                         }
@@ -270,7 +269,7 @@ public class InteractEvent implements Listener {
                         temp.waitingPos2 = loc;
 
                         if(session.step != SetupStep.MAP_REGION){
-                            if(Utils.isInsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
+                            if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                                 player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly")));
                                 return;
                             }

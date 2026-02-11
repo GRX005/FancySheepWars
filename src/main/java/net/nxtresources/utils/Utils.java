@@ -7,72 +7,70 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Utils {
 
     private static final Map<UUID, Integer> lastTick = new HashMap<>();
     private static final Multimap<UUID, BukkitTask> drawDustTasks = ArrayListMultimap.create();
 
-    public static boolean clickTick(Player player){
-        Integer last = lastTick.get(player.getUniqueId());
-        if (last != null && last == Bukkit.getCurrentTick()) return true;
-        lastTick.put(player.getUniqueId(), Bukkit.getCurrentTick());
-        return false;
+    public static boolean clickTick(Player player) {
+        var cTick = Bukkit.getCurrentTick();
+        Integer last = lastTick.put(player.getUniqueId(),cTick);
+        return last != null && last == cTick;
     }
 
-    public static void drawDust(Location location1, Location location2, Color color1, Color color2, double yMin, double yMax, UUID pUUID){
-        var ta = Bukkit.getScheduler().runTaskTimer(Main.getInstance(),()-> {
-            World world = location1.getWorld();
+    public static void drawDust(Location location1, Location location2, Color color1, Color color2, double yMin, double yMax, UUID pUUID) {
+        final double minX = Math.min(location1.getX(), location2.getX());
+        final double maxX = Math.max(location1.getX(), location2.getX());
+        final double actualMinY = Math.min(yMin, yMax);
+        final double actualMaxY = Math.max(yMin, yMax);
+        final double minZ = Math.min(location1.getZ(), location2.getZ());
+        final double maxZ = Math.max(location1.getZ(), location2.getZ());
 
-            double minX = Math.min(location1.getX(), location2.getX());
-            double maxX = Math.max(location1.getX(), location2.getX());
-            double minY = Math.min(yMin, yMax);
-            double maxY = Math.max(yMin, yMax);
-            double minZ = Math.min(location1.getZ(), location2.getZ());
-            double maxZ = Math.max(location1.getZ(), location2.getZ());
-            double particleSpacing = 0.30f;
+        final Particle.DustTransition dustData = new Particle.DustTransition(color1, color2, 1.5f);
+        final double spacing = 0.30;
+        var dust = Particle.DUST_COLOR_TRANSITION.builder()
+                .count(1)
+                .offset(0, 0, 0)
+                .extra(0)
+                .data(dustData)
+                .force(true);
+        var wrld = location1.getWorld();
 
-            Particle.DustTransition dust = new Particle.DustTransition(color1, color2, 1.5f);
-
-            //Lower frame
-            for (double x = minX; x <= maxX; x += particleSpacing) {
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, x, minY, minZ, 1, 0, 0, 0, 0, dust);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, x, minY, maxZ, 1, 0, 0, 0, 0, dust);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> {
+            // Reusable builder to minimize object allocation per particle
+            // Horizontal Frame: Bottom (minY) and Top (maxY)
+            for (double x = minX; x <= maxX; x += spacing) {
+                dust.location(wrld, x, actualMinY, minZ).spawn();
+                dust.location(wrld, x, actualMinY, maxZ).spawn();
+                dust.location(wrld, x, actualMaxY, minZ).spawn();
+                dust.location(wrld, x, actualMaxY, maxZ).spawn();
             }
-            for (double z = minZ; z <= maxZ; z += particleSpacing) {
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, minX, minY, z, 1, 0, 0, 0, 0, dust);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, maxX, minY, z, 1, 0, 0, 0, 0, dust);
-            }
-
-            //Upper frame
-            for (double x = minX; x <= maxX; x += particleSpacing) {
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, x, maxY, minZ, 1, 0, 0, 0, 0, dust);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, x, maxY, maxZ, 1, 0, 0, 0, 0, dust);
-            }
-            for (double z = minZ; z <= maxZ; z += particleSpacing) {
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, minX, maxY, z, 1, 0, 0, 0, 0, dust);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, maxX, maxY, z, 1, 0, 0, 0, 0, dust);
+            for (double z = minZ; z <= maxZ; z += spacing) {
+                dust.location(wrld, minX, actualMinY, z).spawn();
+                dust.location(wrld, maxX, actualMinY, z).spawn();
+                dust.location(wrld, minX, actualMaxY, z).spawn();
+                dust.location(wrld, maxX, actualMaxY, z).spawn();
             }
 
-            //Vertical strips
-            for (double y = minY; y <= maxY; y += particleSpacing) {
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, minX, y, minZ, 1, 0, 0, 0, 0, dust);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, minX, y, maxZ, 1, 0, 0, 0, 0, dust);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, maxX, y, minZ, 1, 0, 0, 0, 0, dust);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, maxX, y, maxZ, 1, 0, 0, 0, 0, dust);
+            // Vertical Pillars: Four corners
+            for (double y = actualMinY; y <= actualMaxY; y += spacing) {
+                dust.location(wrld, minX, y, minZ).spawn();
+                dust.location(wrld, minX, y, maxZ).spawn();
+                dust.location(wrld, maxX, y, minZ).spawn();
+                dust.location(wrld, maxX, y, maxZ).spawn();
             }
-        },0,10);
-        drawDustTasks.put(pUUID,ta);
+        }, 0L, 10L);
+
+        drawDustTasks.put(pUUID, task);
     }
 
     public static void endTasks(UUID pID) {
         drawDustTasks.removeAll(pID).forEach(BukkitTask::cancel);
     }
 
-    public static boolean isInsideRegion(Location loc, Location pos1, Location pos2) {
+    public static boolean isOutsideRegion(Location loc, Location pos1, Location pos2) {
         double minX = Math.min(pos1.getX(), pos2.getX());
         double maxX = Math.max(pos1.getX(), pos2.getX());
         double minY = Math.min(pos1.getY(), pos2.getY());
