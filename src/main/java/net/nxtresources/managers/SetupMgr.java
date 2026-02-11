@@ -10,7 +10,6 @@ import net.nxtresources.utils.MsgCache;
 import net.nxtresources.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,8 +82,7 @@ public class SetupMgr {
             //for draw dust removing
         }
         BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
-        cancelDrawTask(Utils.drawDustTaskMAP, uuid);
-        cancelDrawTask(Utils.drawDustTaskWL, uuid);
+        Utils.endTasks(uuid);
     }
 
     public void giveForNext(Player player, SetupStep step){
@@ -125,11 +123,6 @@ public class SetupMgr {
             giveForNext(player, next);
             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.NextStep").replace("%step%", MsgCache.get(next.getStepName()))));
         }
-    }
-
-    public static void cancelDrawTask(Map<UUID, BukkitTask> drawTask, UUID uuid) {
-        BukkitTask bukkitTask = drawTask.remove(uuid);
-        if(bukkitTask!=null) bukkitTask.cancel();
     }
 
     public static boolean isInSetup(Player player) {

@@ -7,6 +7,7 @@ import net.nxtresources.sheeps.types.HealingSheep;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
@@ -44,7 +45,7 @@ public abstract class FancySheep {
 
 //TODO Read papper particle docs, use ParticleBuilder for explosion and other effects
 
-    public void movement(boolean gravity) {
+    public void shoot(boolean gravity) {
         var loc = owner.getLocation().add(0, 1.8, 0);
         var vel = loc.getDirection().multiply(speed); // Pre-calculate velocity
         loc.add(vel.clone().multiply(1.5 / speed));
@@ -63,15 +64,16 @@ public abstract class FancySheep {
 
             Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task -> {
                 //int t = timer.getAndIncrement();
-                if (!sh.isValid() || ++t[0] > 100) {
+                if (!sh.isValid() || ++t[0] > 80) {
                     task.cancel();
-                    sh.remove();
+                    removeSh();
                     return;
                 }
 
                 sh.setVelocity(vel); //loop kick
                 var shLoc = sh.getLocation();
-                spawnLaunchParticle(shLoc);
+
+                trail(shLoc, shLoc.getWorld(), sheep.getVelocity());
                 tick(t[0], shLoc);
 
                 if(nmsSh.horizontalCollision || nmsSh.verticalCollision || !wrld.getNearbyEntities(sh.getBoundingBox(), e -> e instanceof Player p && !p.equals(owner)).isEmpty()){
@@ -84,14 +86,16 @@ public abstract class FancySheep {
     }
 
     public abstract void explode();
-    public abstract void giveSheep(Player player);
-    public abstract void spawnLaunchParticle(Location shLoc);
+    public abstract void give();
+    public abstract void trail(Location shLoc, World shWrld, Vector shVel);
     public void customize() {
         sheep.setAware(false); //Instead of setAI false, so it can still move but it won't
         sheep.setCustomNameVisible(true); //Name visible all the time, not just when entity in aim
         sheep.setColor(type.dyeColor());
         sheep.customName(type.displayName());
     }
-
+//Like a TNT, ticking before exploding.
     public void tick(int tick, Location loc) {}
+
+    public abstract void removeSh();
 }

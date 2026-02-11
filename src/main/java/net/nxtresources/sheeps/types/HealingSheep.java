@@ -19,32 +19,30 @@ import static net.nxtresources.managers.ItemMgr.healingSheep;
 public class HealingSheep extends FancySheep {
 
     int max = 2000;
-    int happyVillager = 45;
     int ticksRun = 0;
-    int radius = 5;
     public HealingSheep(Player owner) {
         super(SheepType.HEALING, owner);
     }
 
     @Override
-    public void giveSheep(Player player){
-        player.getInventory().addItem(healingSheep);
+    public void give(){
+        owner.getInventory().addItem(healingSheep);
     }
 
     @Override
-    public void spawnLaunchParticle(Location shLoc){
-        World world = shLoc.getWorld();
-        if (world == null) return;
-
-        Vector vel = sheep.getVelocity();
-
-        Vector dir = vel.clone().normalize();
-        Vector back = dir.clone().multiply(-1.0).subtract(vel);
+    public void trail(Location shLoc, World shWrld, Vector shVel){
+        Vector dir = shVel.clone().normalize();
+        Vector back = dir.clone().multiply(-1.0).subtract(shVel);
         Location tail = shLoc.clone().add(back.getX(), 0.3 + back.getY(), back.getZ());
 
-        world.spawnParticle(Particle.HAPPY_VILLAGER, tail, 4, 0.15, 0.15, 0.15, 0.02);
-        world.spawnParticle(Particle.HEART, tail.clone().add(dir.clone().multiply(-0.4)), 1, 0.2, 0.2, 0.2, 0);
-        if (sheep.getTicksLived() % 4 == 0) world.spawnParticle(Particle.END_ROD, tail, 1, 0.1, 0.1, 0.1, 0.01);
+        shWrld.spawnParticle(Particle.HAPPY_VILLAGER, tail, 4, 0.15, 0.15, 0.15, 0.02);
+        shWrld.spawnParticle(Particle.HEART, tail.clone().add(dir.clone().multiply(-0.4)), 1, 0.2, 0.2, 0.2, 0);
+        if (sheep.getTicksLived() % 4 == 0) shWrld.spawnParticle(Particle.END_ROD, tail, 1, 0.1, 0.1, 0.1, 0.01);
+    }
+
+    @Override
+    public void removeSh() {
+        sheep.remove();
     }
 
     @Override
@@ -52,7 +50,8 @@ public class HealingSheep extends FancySheep {
         ticksRun = 0;
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), expl ->{
             if(ticksRun>=max || sheep.isDead()) {
-                if (sheep != null && !sheep.isDead()) sheep.remove();
+                if (!sheep.isDead())
+                    sheep.remove();
                 expl.cancel();
                 return;
             }

@@ -47,7 +47,7 @@ public class InteractEvent implements Listener {
             var key = item.getItemMeta().getPersistentDataContainer().get(Main.shKey, PersistentDataType.STRING);
             SheepType type = SheepType.valueOf(key);
             FancySheep sheep = FancySheep.create(type, player);
-            sheep.movement(action.isRightClick());
+            sheep.shoot(action.isRightClick());
             player.playSound(
                     player.getLocation(),
                     Sound.ENTITY_SHEEP_AMBIENT, // or another sheep-related sound
@@ -184,12 +184,11 @@ public class InteractEvent implements Listener {
                                 .replace("%y%", String.format("%.2f", player.getY()))
                                 .replace("%z%", String.format("%.2f", player.getZ()))
                         ));
-                        BukkitTask drawDustTaskMap = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> Utils.drawDust(
+                        Utils.drawDust(
                                 temp.pos1, temp.pos2,
                                 Color.RED, Color.PURPLE,
                                 Math.min(temp.pos1.getY(), temp.pos2.getY()),
-                                Math.max(temp.pos1.getY(), temp.pos2.getY())), 0L, 10L);
-                        Utils.drawDustTaskMAP.put(player.getUniqueId(), drawDustTaskMap);
+                                Math.max(temp.pos1.getY(), temp.pos2.getY()), player.getUniqueId());
                     }
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -282,12 +281,11 @@ public class InteractEvent implements Listener {
                                 .replace("%y%", String.format("%.2f", player.getY()))
                                 .replace("%z%", String.format("%.2f", player.getZ()))
                         ));
-                        BukkitTask drawDustTaskWL = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> Utils.drawDust(
+                        Utils.drawDust(
                                 temp.waitingPos1, temp.waitingPos2,
                                 Color.ORANGE, Color.YELLOW,
                                 Math.min(temp.waitingPos1.getY(), temp.waitingPos2.getY()),
-                                Math.max(temp.waitingPos1.getY(), temp.waitingPos2.getY())), 0L, 10L);
-                        Utils.drawDustTaskWL.put(player.getUniqueId(), drawDustTaskWL);
+                                Math.max(temp.waitingPos1.getY(), temp.waitingPos2.getY()), player.getUniqueId());
                     }
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);

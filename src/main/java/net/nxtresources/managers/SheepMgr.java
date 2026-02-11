@@ -65,14 +65,13 @@ public class SheepMgr {
             nl.setYaw((float) Math.toDegrees(-angle + Math.PI));
             sheep.teleport(nl);
 
-            for (Player p : w.getPlayers()) {
-                if (p.getLocation().distanceSquared(nl) < PICKUP_R_SQ) {
-                    FancySheep.create(type, p).giveSheep(p);
-                    w.playSound(nl, Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
-                    sheep.remove();
-                    task.cancel();
-                    return;
-                }
+            for (Player player : nl.getNearbyPlayers(1.0)) {
+                FancySheep fancy = FancySheep.create(type, player);
+                fancy.give();
+                sheep.getWorld().playSound(sheep.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
+                task.cancel();
+                sheep.remove();
+                break;
             }
         }, 0L, 1L);
     }

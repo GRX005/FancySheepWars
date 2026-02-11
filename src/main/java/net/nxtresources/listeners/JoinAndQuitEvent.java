@@ -27,10 +27,10 @@ public class JoinAndQuitEvent implements Listener {
         BoardMgr.setBoard(player, new Board(BoardType.LOBBY));
 
         FancySheep healing = FancySheep.create(SheepType.HEALING, player);
-        healing.giveSheep(player);
+        healing.give();
 
         FancySheep explosive = FancySheep.create(SheepType.EXPLOSIVE, player);
-        explosive.giveSheep(player);
+        explosive.give();
 
         if(LobbyMgr.getLobbyLocation() ==null){
             player.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
