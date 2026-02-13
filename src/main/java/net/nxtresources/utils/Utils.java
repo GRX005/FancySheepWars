@@ -31,8 +31,6 @@ public class Utils {
         final Particle.DustTransition dustData = new Particle.DustTransition(color1, color2, 1.5f);
         final double spacing = 0.30;
         var dust = Particle.DUST_COLOR_TRANSITION.builder()
-                .count(1)
-                .offset(0, 0, 0)
                 .extra(0)
                 .data(dustData)
                 .force(true);
@@ -61,7 +59,7 @@ public class Utils {
                 dust.location(wrld, maxX, y, minZ).spawn();
                 dust.location(wrld, maxX, y, maxZ).spawn();
             }
-        }, 0L, 10L);
+        }, 0L, 5L);
 
         drawDustTasks.put(pUUID, task);
     }
