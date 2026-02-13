@@ -49,8 +49,7 @@ public class ArenaMgr {
 
     public static void leave(Player p) {
         for(Arena a : arenas) { //Beepitett if check az alabb definialt func-ban
-            if (a.lobbyPlayers.contains(p)) {
-                a.lobbyPlayers.remove(p);
+            if (a.lobbyPlayers.remove(p)) {
                 BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
                 if(LobbyMgr.getLobbyLocation() == null){
                     p.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
@@ -60,17 +59,14 @@ public class ArenaMgr {
                 return;
             }
             for(Arena.Team t : a.teams) {
-                t.tPlayers.forEach(pl->{
-                    if(p==pl) {
-                        t.tPlayers.remove(pl);
-                        BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
-                        if(LobbyMgr.getLobbyLocation() == null){
-                            p.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
-                            return;
-                        }
-                        LobbyMgr.tpMainLobby(p);
+                if(t.tPlayers.remove(p)) {
+                    BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
+                    if(LobbyMgr.getLobbyLocation() == null){
+                        p.sendMessage(Main.color(MsgCache.get("MainLobbyNotSet")));
+                        return;
                     }
-                });
+                    LobbyMgr.tpMainLobby(p);
+                }
             }
         }
     }
@@ -127,7 +123,7 @@ public class ArenaMgr {
             List<String> loadedArenas = new ArrayList<>();
             for (String key : Objects.requireNonNull(config.getConfigurationSection("arenas")).getKeys(false)) {
                 String json = config.getString("arenas." + key);
-                Arena arena = gson.fromJson(json, Arena.class);
+                Arena arena = Objects.requireNonNull(gson.fromJson(json, Arena.class));
                 arena.lobbyPlayers = new HashSet<>();
                 arena.teams = new HashSet<>();
                 arena.stat=ArenaStatus.WAITING;
