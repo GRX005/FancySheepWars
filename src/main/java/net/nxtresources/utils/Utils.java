@@ -37,7 +37,7 @@ public class Utils {
                 .force(true);
         var wrld = location1.getWorld();
 
-        BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> {
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
             // Reusable builder to minimize object allocation per particle
             // Horizontal Frame: Bottom (minY) and Top (maxY)
             for (double x = minX; x <= maxX; x += spacing) {
