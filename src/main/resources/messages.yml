@@ -81,7 +81,7 @@ Arena:
     MapRegionSelectorPOS1: '%prefix% &aMap region pos1 set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
     MapRegionSelectorPOS2: '%prefix% &aMap region pos2 set! Location: X: &2%x% &aY: &2%y% &aZ: &2%z%'
     NextStep: '%prefix% &aStep completed! Next: &2%step%'
-    InsideOnly: '%prefix% &cOnly found in the %step%!'
+    InsideOnly: '%prefix% &cOnly available in the %step% region!'
     StepsNotComplete: '%prefix% &cSetup steps is not completed! Please check steps.'
     Steps:
       MapRegion: '&eMap region'
@@ -107,33 +107,43 @@ Items:
     lore:
   LeaveArena:
     name: '&cLeave arena'
-    lore: '&e&nClick to leave this arena'
+    lore:
+      - '&e&nClick to leave this arena'
   #SETUP
   TeamSelector:
     RED:
       name: '&c&lRED &fTeam'
-    lore: '&e&nClick to leave this arena'
+    lore:
+      - '&e&nClick to leave this arena'
     BLUE:
       name: '&9&lBLUE &fTeam'
-      lore: '&e&nClick to set the team spawn'
+      lore:
+        - '&e&nClick to set the team spawn'
   LeaveSetup:
     name: '&cLeave setup mode'
-    lore: '&e&nClick to leave setup mode'
+    lore:
+      - '&e&nClick to leave setup mode'
   SaveAndExit:
     name: '&aSave and leave setup mode'
-    lore: '&e&nClick to save and leave setup mode'
+    lore:
+      - '&e&nClick to save and leave setup mode'
   SetWaitingLobby:
     name: '&aSet waiting lobby spawn'
-    lore: '&e&nClick to set players spawn location'
+    lore:
+      - '&e&nClick to set players spawn location'
   SetSheep:
-    name: '&cSet sheeps'
-    lore: '&eYou can use this to select where should sheep spawn'
+    name: '&eSet sheeps'
+    lore:
+      - '&eYou can use this to select where should sheep spawn'
+      - '&e&nClick to set sheeps spawn location'
   WaitingLobbySelector:
     name: '&aWaiting lobby selector'
-    lore: '&eYou can use this to select the area of the &a&nWaiting lobby'
+    lore:
+      - '&eYou can use this to select the area of the &a&nWaiting lobby'
   MapSelector:
     name: '&aMap selector'
-    lore: '&eYou can use this to select the area of the Map'
+    lore:
+      - '&eYou can use this to select the area of the Map'
   #SHEEPS
   Sheeps:
     Explosive:
@@ -199,8 +209,8 @@ Scoreboards:
       - '&c1. &7Map region: %map_region%'
       - '&c2. &7Lobby region: %lobby_region%'
       - '&c3. &7Lobby spawn: %lobby_spawn%'
-      - '&c4. &7Red team spawn: %red_team%'
-      - '&c5. &7Blue team spawn: %blue_team%'
+      - '&c4. &7Red team spawn: %red_team% &8(&a%current_red%&8/&a%max_size%&8)'
+      - '&c5. &7Blue team spawn: %blue_team% &8(&a%current_blue%&8/&a%max_size%&8)'
       - '&c6. &7Red sheep spawn: %red_sheep%'
       - '&c7. &7Blue sheep spawn: %blue_sheep%'
       - ''

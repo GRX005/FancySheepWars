@@ -13,6 +13,7 @@ public class Utils {
 
     private static final Map<UUID, Integer> lastTick = new HashMap<>();
     private static final Multimap<UUID, BukkitTask> drawDustTasks = ArrayListMultimap.create();
+    private static final Multimap<UUID, BukkitTask> drawPointTasks = ArrayListMultimap.create();
 
     public static boolean clickTick(Player player) {
         var cTick = Bukkit.getCurrentTick();
@@ -64,8 +65,20 @@ public class Utils {
         drawDustTasks.put(pUUID, task);
     }
 
+    public static void drawPoint(Location location, Color color1, Color color2, UUID uuid){
+        BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> Particle.DUST_COLOR_TRANSITION.builder()
+                .location(location)
+                .count(1)
+                .extra(0)
+                .colorTransition(color1, color2)
+                .force(true)
+                .spawn(), 0L, 5L);
+        drawPointTasks.put(uuid, task);
+    }
+
     public static void endTasks(UUID pID) {
-        drawDustTasks.removeAll(pID).forEach(BukkitTask::cancel);
+        drawDustTasks.removeAll(pID).forEach(BukkitTask::cancel); //for border
+        drawPointTasks.removeAll(pID).forEach(BukkitTask::cancel); //for points
     }
 
     public static boolean isOutsideRegion(Location loc, Location pos1, Location pos2) {

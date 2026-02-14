@@ -24,9 +24,10 @@ public class Arena{
 
     public transient Set<Player> lobbyPlayers = new HashSet<>();
     public transient Set<Team> teams = new HashSet<>();
-    private final Map<TeamType, String> teamSpawns = new HashMap<>();
     private final Set<String> REDsheepSpawns = new HashSet<>();
     private final Set<String> BLUEsheepSpawns = new HashSet<>();
+    private final Set<String> REDteamSpawns = new HashSet<>();
+    private final Set<String> BLUEteamSpawns = new HashSet<>();
     //Csak innen lehet hozzaadni, 1 helyen.
     public transient volatile long prog = 0;
     private BukkitTask dTask;
@@ -122,15 +123,19 @@ public class Arena{
             var blue = new ArrayList<>(players.subList(0, mid));
             var red = new ArrayList<>(players.subList(mid, players.size()));
             teams.addAll(List.of(new Team(blue, BLUE), new Team(red, RED)));
+            var blueTeam = getBlueTeamSpawns().iterator();
+            var redTeam = getRedTeamSpawns().iterator();
 
-            blue.forEach(p ->{
-                p.teleportAsync(getTeamSpawn(BLUE));
-                BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
-            });
-            red.forEach(p -> {
-                p.teleportAsync(getTeamSpawn(RED));
-                BoardMgr.setBoard(p, new Board(BoardType.LOBBY));
-            });
+            for(var player : red){
+                if(!redTeam.hasNext()) redTeam = getBlueTeamSpawns().iterator();
+                player.teleportAsync(redTeam.next());
+                BoardMgr.setBoard(player, new Board(BoardType.INGAME));
+            }
+            for(var player : blue){
+                if(!blueTeam.hasNext()) blueTeam = getBlueTeamSpawns().iterator();
+                player.teleportAsync(blueTeam.next());
+                BoardMgr.setBoard(player, new Board(BoardType.INGAME));
+            }
 
             WorldMgr.getInst().rmLobby(Bukkit.getWorld(wName),waitingPos1,waitingPos2);
             lobbyPlayers.clear();
@@ -174,9 +179,13 @@ public class Arena{
     public static final class Temp {
         public String name;
         public int size;
-        public Map<String, Location> teamSpawns =new HashMap<>();
+
         public Set<Location> redSheepSpawns = new HashSet<>();
         public Set<Location> blueSheepSpawns = new HashSet<>();
+
+        public Set<Location> redTeamSpawns = new HashSet<>();
+        public Set<Location> blueTeamSpawns = new HashSet<>();
+
         public Location pos1, pos2, waitingLobby, waitingPos1, waitingPos2;
 
         public Temp(String name, int size) {
@@ -184,6 +193,19 @@ public class Arena{
             this.size = size;
         }
     }
+
+    /*
+     *FOR ARENA REGION
+     * */
+    public void setPos1(Location loc) {
+        this.pos1 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
+    }
+    public void setPos2(Location loc) {
+        this.pos2 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
+    }
+    /*
+     *FOR WAITING LOBBY REGION
+     * */
 
     public void tpWaitingLobby(Player player, String name){
         Arena arena = ArenaMgr.getByName(name);
@@ -198,20 +220,7 @@ public class Arena{
     public Location getWaitingLobby() {
         return LocationMgr.get(waitingLobbyLocation);
     }
-    public void setTeamSpawn(TeamType type, Location loc) {
-        teamSpawns.put(type, LocationMgr.set(loc));
-    }
-    public Location getTeamSpawn(TeamType type) {
-        return teamSpawns.get(type) == null ? null : LocationMgr.get(teamSpawns.get(type));
-    }
-    //for arena
-    public void setPos1(Location loc) {
-        this.pos1 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
-    }
-    public void setPos2(Location loc) {
-        this.pos2 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
-    }
-    //for waitinglobby
+
     public void setWaitingPos1(Location loc) {
         this.waitingPos1 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
     }
@@ -219,6 +228,7 @@ public class Arena{
         this.waitingPos2 = new BlockVector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
     }
     /*
+    *FOR SHEEPS
     * */
     public void setRedSheepSpawns(Set<Location> locs) {
         REDsheepSpawns.clear();
@@ -242,6 +252,35 @@ public class Arena{
     public Set<Location> getBlueSheepSpawns() {
         Set<Location> locs = new HashSet<>();
         for (String s : BLUEsheepSpawns)
+            locs.add(LocationMgr.get(s));
+        return locs;
+    }
+
+    /*
+     *FOR TEAMS
+     * */
+    public void setRedTeamSpawns(Set<Location> locs) {
+        REDteamSpawns.clear();
+        for (Location loc : locs)
+            REDteamSpawns.add(LocationMgr.set(loc));
+    }
+
+    public void setBlueTeamSpawns(Set<Location> locs) {
+        BLUEteamSpawns.clear();
+        for (Location loc : locs)
+            BLUEteamSpawns.add(LocationMgr.set(loc));
+    }
+
+    public Set<Location> getRedTeamSpawns() {
+        Set<Location> locs = new HashSet<>();
+        for (String s : REDteamSpawns)
+            locs.add(LocationMgr.get(s));
+        return locs;
+    }
+
+    public Set<Location> getBlueTeamSpawns() {
+        Set<Location> locs = new HashSet<>();
+        for (String s : BLUEteamSpawns)
             locs.add(LocationMgr.get(s));
         return locs;
     }

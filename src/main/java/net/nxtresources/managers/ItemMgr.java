@@ -1,5 +1,6 @@
 package net.nxtresources.managers;
 
+import net.kyori.adventure.text.Component;
 import net.nxtresources.Main;
 import net.nxtresources.utils.ItemBuilder;
 import net.nxtresources.utils.MsgCache;
@@ -7,7 +8,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ItemMgr {
+
+    private static final List<String> ssLore = MsgCache.getList("Items.SetSheep.lore");
+    private static final List<String> swLore = MsgCache.getList("Items.SetWaitingLobby.lore");
+    private static final List<String> msLore = MsgCache.getList("Items.MapSelector.lore");
+    private static final List<String> wlLore = MsgCache.getList("Items.WaitingLobbySelector.lore");
 
     public static void lobbyItems(Player player){
         ItemStack arenaselector = new ItemBuilder(Material.BOOK)
@@ -42,30 +50,30 @@ public class ItemMgr {
     public static ItemStack setwaitinglobby = new ItemBuilder(Material.DARK_OAK_DOOR)
             .setDisplayName(Main.color(MsgCache.get("Items.SetWaitingLobby.name")))
             .setAmount(1)
-            .setLore(Main.color(MsgCache.get("Items.SetWaitingLobby.lore")))
+            .setLore(swLore.stream().map(Main::color).toArray(Component[]::new))
             .setPD(Main.itemData, "SetWaitingLobby")
             .build();
     public static ItemStack selectorTool =new ItemBuilder(Material.WOODEN_AXE)
             .setDisplayName(Main.color(MsgCache.get("Items.MapSelector.name")))
             .setAmount(1)
-            .setLore(Main.color(MsgCache.get("Items.MapSelector.lore")))
+            .setLore(msLore.stream().map(Main::color).toArray(Component[]::new))
             .setPD(Main.itemData, "MapSelector")
             .build();
     public static ItemStack waitingSelectorTool=new ItemBuilder(Material.GOLDEN_AXE)
             .setDisplayName(Main.color(MsgCache.get("Items.WaitingLobbySelector.name")))
-            .setLore(Main.color(MsgCache.get("Items.WaitingLobbySelector.lore")))
+            .setLore(wlLore.stream().map(Main::color).toArray(Component[]::new))
             .setAmount(1)
             .setPD(Main.itemData, "WaitingLobbySelector")
             .build();
     public static ItemStack setRedSheep = new ItemBuilder(Material.RED_CONCRETE)
             .setDisplayName(Main.color(MsgCache.get("Items.SetSheep.name")))
-            .setLore(Main.color(MsgCache.get("Items.SetSheep.lore")))
+            .setLore(ssLore.stream().map(Main::color).toArray(Component[]::new))
             .setAmount(1)
             .setPD(Main.itemData, "SetRedSheep")
             .build();
     public static ItemStack setBlueSheep = new ItemBuilder(Material.BLUE_CONCRETE)
             .setDisplayName(Main.color(MsgCache.get("Items.SetSheep.name")))
-            .setLore(Main.color(MsgCache.get("Items.SetSheep.lore")))
+            .setLore(ssLore.stream().map(Main::color).toArray(Component[]::new))
             .setAmount(1)
             .setPD(Main.itemData, "SetBlueSheep")
             .build();

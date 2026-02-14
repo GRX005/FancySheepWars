@@ -5,8 +5,8 @@ public enum SetupStep {
     MAP_REGION("Arena.Setup.Steps.MapRegion"),
     LOBBY_REGION("Arena.Setup.Steps.LobbyRegion"),
     LOBBY_SPAWN("Arena.Setup.Steps.LobbySpawn"),
-    RED_TEAM_SPAWN("Arena.Setup.Steps.RedTeamSpawn"),
-    BLUE_TEAM_SPAWN("Arena.Setup.Steps.BlueTeamSpawn"),
+    RED_TEAM_SPAWNS("Arena.Setup.Steps.RedTeamSpawn"),
+    BLUE_TEAM_SPAWNS("Arena.Setup.Steps.BlueTeamSpawn"),
     SHEEP_SPAWNS("Arena.Setup.Steps.SheepsSpawns");
 
     final String nextName;

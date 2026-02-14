@@ -36,7 +36,6 @@ public final class Main extends JavaPlugin {
         registerListeners();
         ArenaMgr.loadAllArenas();
         DataMgr.load();
-        //SetupMgr.loadMainLobby();
         LobbyMgr.loadMainLobby();
         MsgCache.load();
         // Plugin startup logic

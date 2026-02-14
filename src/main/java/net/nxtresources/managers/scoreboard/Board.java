@@ -87,8 +87,8 @@ public class Board extends BaseBoard{
             var mapRegion = temp.pos1 != null && temp.pos2 != null;
             var lobbyRegion = temp.waitingPos1 != null && temp.waitingPos2 != null;
             var lobbySpawn = temp.waitingLobby != null;
-            var redTeam = temp.teamSpawns != null && temp.teamSpawns.containsKey("RED");
-            var blueTeam = temp.teamSpawns != null && temp.teamSpawns.containsKey("BLUE");
+            var redTeam = temp.redTeamSpawns !=null && temp.redTeamSpawns.size() >= temp.size / 2;
+            var blueTeam = temp.blueTeamSpawns !=null && temp.blueTeamSpawns.size() >= temp.size / 2;
             var redSheep = temp.redSheepSpawns != null && !temp.redSheepSpawns.isEmpty();
             var blueSheep = temp.blueSheepSpawns != null && !temp.blueSheepSpawns.isEmpty();
             boolean[] steps = {mapRegion, lobbyRegion, lobbySpawn, redTeam, blueTeam, redSheep, blueSheep};
@@ -96,6 +96,9 @@ public class Board extends BaseBoard{
             var finished = 0;
             for (boolean step : steps) if (step) finished++;
             var max = steps.length;
+            var maxSize = session.temp.size / 2;
+            var currentRed = session.temp.redTeamSpawns.size();
+            var currentBlue = session.temp.blueTeamSpawns.size();
 
             line = line
                     .replace("%map_region%", isDone(mapRegion))
@@ -106,7 +109,26 @@ public class Board extends BaseBoard{
                     .replace("%red_sheep%", isDone(redSheep))
                     .replace("%blue_sheep%", isDone(blueSheep))
                     .replace("%finished%", String.valueOf(finished))
-                    .replace("%max%", String.valueOf(max));
+                    .replace("%max%", String.valueOf(max))
+                    //for team spawn
+                    .replace("%current_red%", String.valueOf(currentRed))
+                    .replace("%current_blue%", String.valueOf(currentBlue))
+                    .replace("%max_size%", String.valueOf(maxSize));
+        } else{
+            line = line
+                    .replace("%map_region%", "...")
+                    .replace("%lobby_region%", "...")
+                    .replace("%lobby_spawn%", "...")
+                    .replace("%red_team%", "...")
+                    .replace("%blue_team%", "...")
+                    .replace("%red_sheep%", "...")
+                    .replace("%blue_sheep%", "...")
+                    .replace("%finished%", "...")
+                    .replace("%max%", "...")
+                    //for team spawn
+                    .replace("%current_red%", "...")
+                    .replace("%current_blue%", "...")
+                    .replace("%max_size%", "...");
         }
         return line;
     }

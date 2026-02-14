@@ -17,6 +17,7 @@ public class BoardMgr {
         UUID uuid = player.getUniqueId();
         boards.put(uuid, board);
         board.build(player);
+        Bukkit.getScheduler().runTask(Main.getInstance(), () -> board.update(player));
         startUpdater(board.getClass(), 20L);
     }
 
@@ -32,7 +33,7 @@ public class BoardMgr {
                 }
             }
         };
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), task, 0L, ticks);
+        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), task, 0L, ticks);
         updateTasks.put(type, task);
     }
 }

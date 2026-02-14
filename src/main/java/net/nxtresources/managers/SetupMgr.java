@@ -68,8 +68,8 @@ public class SetupMgr {
             arena.wName =tempData.pos1.getWorld().getName();
             arena.setRedSheepSpawns(tempData.redSheepSpawns);
             arena.setBlueSheepSpawns(tempData.blueSheepSpawns);
-            for (Map.Entry<String, Location> entry : tempData.teamSpawns.entrySet())
-                arena.setTeamSpawn(TeamType.valueOf(entry.getKey()), entry.getValue());
+            arena.setBlueTeamSpawns(tempData.blueTeamSpawns);
+            arena.setRedTeamSpawns(tempData.redTeamSpawns);
             ArenaMgr.arenas.add(arena);
             ArenaMgr.saveArena(arena);
             player.getInventory().clear();
@@ -91,8 +91,8 @@ public class SetupMgr {
             case MAP_REGION -> player.getInventory().setItem(0, selectorTool);
             case LOBBY_REGION -> player.getInventory().setItem(0, waitingSelectorTool);
             case LOBBY_SPAWN -> player.getInventory().setItem(0, setwaitinglobby);
-            case RED_TEAM_SPAWN -> player.getInventory().setItem(0, red);
-            case BLUE_TEAM_SPAWN -> player.getInventory().setItem(0, blue);
+            case RED_TEAM_SPAWNS -> player.getInventory().setItem(0, red);
+            case BLUE_TEAM_SPAWNS -> player.getInventory().setItem(0, blue);
             case SHEEP_SPAWNS ->{
                 player.getInventory().setItem(0, setRedSheep);
                 player.getInventory().setItem(1, setBlueSheep);
@@ -112,8 +112,8 @@ public class SetupMgr {
             case MAP_REGION -> session.temp.pos1 != null && session.temp.pos2 != null;
             case LOBBY_REGION -> session.temp.waitingPos1 != null && session.temp.waitingPos2 != null;
             case LOBBY_SPAWN -> session.temp.waitingLobby != null;
-            case RED_TEAM_SPAWN -> session.temp.teamSpawns.containsKey("RED");
-            case BLUE_TEAM_SPAWN -> session.temp.teamSpawns.containsKey("BLUE");
+            case RED_TEAM_SPAWNS -> session.temp.redTeamSpawns.size() >= session.temp.size / 2;
+            case BLUE_TEAM_SPAWNS -> session.temp.blueTeamSpawns.size() >= session.temp.size / 2;
             case SHEEP_SPAWNS -> !session.temp.redSheepSpawns.isEmpty() && !session.temp.blueSheepSpawns.isEmpty();
         };
         if(!done)return;
@@ -133,8 +133,8 @@ public class SetupMgr {
         return t.pos1 != null && t.pos2 != null
                 && t.waitingPos1 != null && t.waitingPos2 != null
                 && t.waitingLobby != null
-                && t.teamSpawns.containsKey("RED")
-                && t.teamSpawns.containsKey("BLUE")
+                && t.redTeamSpawns.size() >= t.size / 2
+                && t.blueTeamSpawns.size() >= t.size / 2
                 && !t.redSheepSpawns.isEmpty()
                 && !t.blueSheepSpawns.isEmpty();
     }

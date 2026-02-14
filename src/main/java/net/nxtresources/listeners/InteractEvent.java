@@ -80,8 +80,9 @@ public class InteractEvent implements Listener {
                             return;
                         }
                     }
-                    Main.getSetupMgr().checkStep(player);
+                    Utils.drawPoint(player.getLocation(), Color.ORANGE, Color.YELLOW, player.getUniqueId());
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setWaitingLobby").replace("%arena_name%", session.arenaName)));
+                    Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
                 }
             }
@@ -125,7 +126,8 @@ public class InteractEvent implements Listener {
                 }
                 if ("TeamSelector_Blue".equals(pdc)) {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
-                    session.temp.teamSpawns.put("BLUE", player.getLocation());
+                    Location playerLoc = player.getLocation().add(0.5, 0, 0.5);
+                    session.temp.blueTeamSpawns.add(playerLoc);
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
@@ -133,6 +135,7 @@ public class InteractEvent implements Listener {
                             return;
                         }
                     }
+                    Utils.drawPoint(player.getLocation(), Color.BLUE, Color.AQUA, player.getUniqueId());
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("BLUE"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -145,7 +148,8 @@ public class InteractEvent implements Listener {
                 }
                 if ("TeamSelector_Red".equals(pdc)) {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
-                    session.temp.teamSpawns.put("RED", player.getLocation());
+                    Location playerLoc = player.getLocation().add(0.5, 0, 0.5);
+                    session.temp.redTeamSpawns.add(playerLoc);
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
@@ -153,6 +157,7 @@ public class InteractEvent implements Listener {
                             return;
                         }
                     }
+                    Utils.drawPoint(player.getLocation(), Color.RED, Color.ORANGE, player.getUniqueId());
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("RED"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -183,6 +188,7 @@ public class InteractEvent implements Listener {
                                 .replace("%y%", String.format("%.2f", player.getY()))
                                 .replace("%z%", String.format("%.2f", player.getZ()))
                         ));
+                        Utils.drawPoint(temp.pos1, Color.RED, Color.PURPLE, player.getUniqueId());
                         Utils.drawDust(
                                 temp.pos1, temp.pos2,
                                 Color.RED, Color.PURPLE,
@@ -202,7 +208,6 @@ public class InteractEvent implements Listener {
                 if("SetRedSheep".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
                     var session = SetupMgr.sessions.get(player.getUniqueId());
-                    var temp = session.temp;
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
@@ -210,8 +215,9 @@ public class InteractEvent implements Listener {
                             return;
                         }
                     }
+                    Utils.drawPoint(player.getLocation(), Color.RED, Color.PURPLE, player.getUniqueId());
                     Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
-                    temp.redSheepSpawns.add(playerLoc);
+                    session.temp.redSheepSpawns.add(playerLoc);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setSheepSpawn").replace("%team%", MsgCache.get("Arena.Teams.Red"))));
                     event.setCancelled(true);
                 }
@@ -225,7 +231,6 @@ public class InteractEvent implements Listener {
                 if("SetBlueSheep".equals(pdc)) {
                     if (event.getHand() != EquipmentSlot.HAND) return;
                     var session = SetupMgr.sessions.get(player.getUniqueId());
-                    var temp = session.temp;
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
@@ -233,8 +238,9 @@ public class InteractEvent implements Listener {
                             return;
                         }
                     }
+                    Utils.drawPoint(player.getLocation(), Color.BLUE, Color.AQUA, player.getUniqueId());
                     Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
-                    temp.blueSheepSpawns.add(playerLoc);
+                    session.temp.blueSheepSpawns.add(playerLoc);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setSheepSpawn").replace("%team%", MsgCache.get("Arena.Teams.Blue"))));
                     event.setCancelled(true);
                 }
@@ -280,6 +286,7 @@ public class InteractEvent implements Listener {
                                 .replace("%y%", String.format("%.2f", player.getY()))
                                 .replace("%z%", String.format("%.2f", player.getZ()))
                         ));
+                        Utils.drawPoint(temp.waitingPos1, Color.ORANGE, Color.YELLOW, player.getUniqueId());
                         Utils.drawDust(
                                 temp.waitingPos1, temp.waitingPos2,
                                 Color.ORANGE, Color.YELLOW,

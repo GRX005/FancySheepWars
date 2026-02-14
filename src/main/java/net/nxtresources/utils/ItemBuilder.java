@@ -56,11 +56,6 @@ public class ItemBuilder {
         return this;
     }
 
-    /*public ItemBuilder setDataValue(short dataValue) {
-        is.setDurability(dataValue);
-        return this;
-    }*/
-
     public ItemStack build() {
         if(sm != null) {
             is.setItemMeta(sm);
