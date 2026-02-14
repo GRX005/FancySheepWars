@@ -83,6 +83,7 @@ Arena:
     NextStep: '%prefix% &aStep completed! Next: &2%step%'
     InsideOnly: '%prefix% &cOnly available in the %step% region!'
     StepsNotComplete: '%prefix% &cSetup steps is not completed! Please check steps.'
+    NotAvailableInWaitingLobby: '%prefix% &cNot available in the Waiting region!'
     Steps:
       MapRegion: '&eMap region'
       LobbyRegion: '&eLobby region'

@@ -134,8 +134,13 @@ public class InteractEvent implements Listener {
                             event.setCancelled(true);
                             return;
                         }
+                        if(!Utils.isOutsideRegion(player.getLocation(), session.temp.waitingPos1, session.temp.waitingPos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("NotAvailableInWaitingLobby")));
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
-                    Utils.drawPoint(player.getLocation(), Color.BLUE, Color.AQUA, player.getUniqueId());
+                    Utils.drawPoint(player.getLocation(), Color.fromRGB(120, 255, 120), Color.fromRGB(0, 140, 0), player.getUniqueId());
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("BLUE"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -156,8 +161,13 @@ public class InteractEvent implements Listener {
                             event.setCancelled(true);
                             return;
                         }
+                        if(!Utils.isOutsideRegion(player.getLocation(), session.temp.waitingPos1, session.temp.waitingPos2)) {
+                            player.sendMessage("aaaaaa");
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
-                    Utils.drawPoint(player.getLocation(), Color.RED, Color.ORANGE, player.getUniqueId());
+                    Utils.drawPoint(player.getLocation(), Color.fromRGB(120, 255, 120), Color.fromRGB(0, 140, 0), player.getUniqueId());
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("RED"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -214,6 +224,11 @@ public class InteractEvent implements Listener {
                             event.setCancelled(true);
                             return;
                         }
+                        if(!Utils.isOutsideRegion(player.getLocation(), session.temp.waitingPos1, session.temp.waitingPos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.NotAvailableInWaitingLobby")));
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
                     Utils.drawPoint(player.getLocation(), Color.RED, Color.PURPLE, player.getUniqueId());
                     Location playerLoc = player.getLocation().add(0.5, 1, 0.5);
@@ -234,6 +249,11 @@ public class InteractEvent implements Listener {
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
+                            event.setCancelled(true);
+                            return;
+                        }
+                        if(!Utils.isOutsideRegion(player.getLocation(), session.temp.waitingPos1, session.temp.waitingPos2)) {
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.NotAvailableInWaitingLobby")));
                             event.setCancelled(true);
                             return;
                         }
