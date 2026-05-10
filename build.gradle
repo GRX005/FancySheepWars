@@ -1,9 +1,8 @@
-import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "3.0.2"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
 }
 
 group = 'net.nxtresources'
@@ -22,10 +21,8 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("26.1.2.build.+")
 }
-
-paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.getMOJANG_PRODUCTION()
 
 //tasks {
     //runServer {
@@ -36,7 +33,7 @@ paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.getMOJANG_PR
     //}
 //}
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
