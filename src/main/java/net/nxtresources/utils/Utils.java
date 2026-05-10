@@ -37,7 +37,7 @@ public class Utils {
                 .data(dustData);
         var wrld = location1.getWorld();
 
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
+        BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> {
             // Reusable builder to minimize object allocation per particle
             // Horizontal Frame: Bottom (minY) and Top (maxY)
             for (double x = minX; x <= maxX; x += spacing) {
@@ -65,12 +65,9 @@ public class Utils {
         drawDustTasks.put(pUUID, task);
     }
 
-    public static void drawPoint(Location location, Color color1, Color color2, UUID uuid){
-        BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> Particle.DUST_COLOR_TRANSITION.builder()
-                .location(location)
-                .extra(0)
-                .colorTransition(color1, color2)
-                .spawn(), 0L, 5L);
+    public static void drawPoint(Location location, Color color1, Color color2, UUID uuid) {
+        var dust = Particle.DUST_COLOR_TRANSITION.builder().extra(0).colorTransition(color1, color2);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> dust.location(location).spawn(), 0L, 5L);
         drawPointTasks.put(uuid, task);
     }
 
