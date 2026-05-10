@@ -38,6 +38,7 @@ public final class Main extends JavaPlugin {
         DataMgr.load();
         LobbyMgr.loadMainLobby();
         MsgCache.load();
+        Objects.requireNonNull(Bukkit.getWorld("world")).setAutoSave(false); //TODO REMOVE
         // Plugin startup logic
     }
 

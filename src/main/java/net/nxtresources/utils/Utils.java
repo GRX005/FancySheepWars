@@ -33,8 +33,8 @@ public class Utils {
         final double spacing = 0.30;
         var dust = Particle.DUST_COLOR_TRANSITION.builder()
                 .extra(0)
-                .data(dustData)
-                .force(true);
+                //.force(false)
+                .data(dustData);
         var wrld = location1.getWorld();
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> {
@@ -60,7 +60,7 @@ public class Utils {
                 dust.location(wrld, maxX, y, minZ).spawn();
                 dust.location(wrld, maxX, y, maxZ).spawn();
             }
-        }, 0L, 5L);
+        }, 0L, 10L);
 
         drawDustTasks.put(pUUID, task);
     }
@@ -68,10 +68,8 @@ public class Utils {
     public static void drawPoint(Location location, Color color1, Color color2, UUID uuid){
         BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), () -> Particle.DUST_COLOR_TRANSITION.builder()
                 .location(location)
-                .count(1)
                 .extra(0)
                 .colorTransition(color1, color2)
-                .force(true)
                 .spawn(), 0L, 5L);
         drawPointTasks.put(uuid, task);
     }

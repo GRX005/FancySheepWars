@@ -33,30 +33,30 @@ public class ExplSheep extends FancySheep {
         Vector back = dir.clone().multiply(-1.0).subtract(shVel);
         Location tail = shLoc.clone().add(back.getX(), 0.3 + back.getY(), back.getZ());
 
-        Particle.FLAME.builder().location(tail).count(2).offset(0.15, 0.15, 0.15).extra(0.02).force(true).spawn();
+        Particle.FLAME.builder()
+                .location(tail)
+                .count(2)
+                .offset(0.15, 0.15, 0.15)
+                .extra(0.02)
+                .spawn();
         Particle.SMOKE.builder()
                 .location(tail.clone().add(dir.clone().multiply(-0.4)))
                 .count(2)
                 .offset(0.1, 0.1, 0.1)
                 .extra(0.01)
-                .force(true)
                 .spawn();
         if (sheep.getTicksLived() % 2 == 0)
             Particle.LAVA.builder()
                     .location(tail)
-                    .count(1)
                     .offset(0.05, 0.05, 0.05)
                     .extra(0)
-                    .force(true)
                     .spawn();
 
         if (sheep.getTicksLived() % 5 == 0)
             Particle.FIREWORK.builder()
                     .location(tail)
-                    .count(1)
                     .offset(0.1, 0.1, 0.1)
                     .extra(0.03)
-                    .force(true)
                     .spawn();
     }
 
@@ -88,7 +88,11 @@ public class ExplSheep extends FancySheep {
         var world = sheep.getWorld();
         var shLoc = sheep.getLocation();
         //world.spawnParticle(Particle.EXPLOSION, shLoc, 1, , 0);
-        Particle.EXPLOSION.builder().location(shLoc).count(3).offset(0.5, 0.5, 0.5).force(true).spawn();
+        Particle.EXPLOSION.builder()
+                .location(shLoc)
+                .count(3)
+                .offset(0.5, 0.5, 0.5)
+                .spawn();
                 //world.spawnParticle(Particle.EXPLOSION_EMITTER, shLoc, 1, 0, 0, 0, 0);
 
         // Fire burst outward
@@ -99,7 +103,6 @@ public class ExplSheep extends FancySheep {
                 .offset(0.3, 0.3, 0.3)
                 .count(40)
                 .extra(0.15)
-                .force(true)
                 .spawn();
 
 // Lava
@@ -108,7 +111,6 @@ public class ExplSheep extends FancySheep {
                 .offset(0.5, 0.5, 0.5)
                 .count(15)
                 .extra(0.00)
-                .force(true)
                 .spawn();
 
 // Smoke mushroom cloud — rises up
@@ -117,7 +119,6 @@ public class ExplSheep extends FancySheep {
                 .offset(0.6, 0.4, 0.6)
                 .count(45)
                 .extra(0.05)
-                .force(true)
                 .spawn();
 
         Particle.SMOKE.builder()
@@ -125,7 +126,6 @@ public class ExplSheep extends FancySheep {
                 .offset(1.0, 0.3, 1.0)
                 .count(40)
                 .extra(0.08)
-                .force(true)
                 .spawn();
 
 // Debris / sparks flying out
@@ -134,7 +134,6 @@ public class ExplSheep extends FancySheep {
                 .offset(0.2, 0.2, 0.2)
                 .count(20)
                 .extra(0.2)
-                .force(true)
                 .spawn();
 
 

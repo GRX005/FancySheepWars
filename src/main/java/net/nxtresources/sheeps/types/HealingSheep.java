@@ -39,24 +39,19 @@ public class HealingSheep extends FancySheep {
                 .count(4)
                 .offset(0.15, 0.15, 0.15)
                 .extra(0.02)
-                .force(true)
                 .spawn();
 
         Particle.HEART.builder()
                 .location(tail.clone().add(dir.clone().multiply(-0.4)))
-                .count(1)
                 .offset(0.2, 0.2, 0.2)
                 .extra(0)
-                .force(true)
                 .spawn();
 
         if (sheep.getTicksLived() % 4 == 0)
             Particle.END_ROD.builder()
                     .location(tail)
-                    .count(1)
                     .offset(0.1, 0.1, 0.1)
                     .extra(0.01)
-                    .force(true)
                     .spawn();
     }
 
@@ -67,7 +62,6 @@ public class HealingSheep extends FancySheep {
 //TODO SEE ABOUT ASYNC
     @Override
     public void explode() {
-        ticksRun = 0;
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), expl ->{
             if(ticksRun>=max || sheep.isDead()) {
                 if (!sheep.isDead())
@@ -90,10 +84,8 @@ public class HealingSheep extends FancySheep {
             for (double a : new double[]{angle1, angle2}) {
                 Particle.HAPPY_VILLAGER.builder()
                         .location(loc.clone().add(Math.cos(a) * radius, 0.2, Math.sin(a) * radius))
-                        .count(1)
                         .offset(0.1, 0.05, 0.1)
                         .extra(0)
-                        .force(true)
                         .spawn();
             }
 
@@ -103,9 +95,7 @@ public class HealingSheep extends FancySheep {
                 double a = Math.random() * 2 * Math.PI;
                 Particle.COMPOSTER.builder()
                         .location(loc.clone().add(Math.cos(a) * r, 0.1, Math.sin(a) * r))
-                        .count(1)
                         .extra(0.04)
-                        .force(true)
                         .spawn();
             }
 
@@ -115,19 +105,15 @@ public class HealingSheep extends FancySheep {
                 double a = Math.random() * 2 * Math.PI;
                 Particle.HEART.builder()
                         .location(loc.clone().add(Math.cos(a) * r, 0.5, Math.sin(a) * r))
-                        .count(1)
                         .extra(0)
-                        .force(true)
                         .spawn();
             }
 
             // Soft glow at the sheep (center beacon)
             Particle.END_ROD.builder()
                     .location(loc.clone().add(0, 0.8, 0))
-                    .count(1)
                     .offset(0.15, 0.3, 0.15)
                     .extra(0.005)
-                    .force(true)
                     .spawn();
             for (Player player : world.getNearbyPlayers(loc, radius, radius, radius)) {
                 var maxHp = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
@@ -139,7 +125,6 @@ public class HealingSheep extends FancySheep {
                         .offset(2, 2, 2)
                         .extra(1)
                         .receivers(player)
-                        .force(true)
                         .spawn();
             }
             ticksRun += 10;
