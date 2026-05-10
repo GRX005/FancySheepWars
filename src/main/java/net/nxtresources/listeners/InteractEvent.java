@@ -67,7 +67,6 @@ public class InteractEvent implements Listener {
             case DARK_OAK_DOOR -> {
                 if ("SetWaitingLobby".equals(pdc)) {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
-                    session.temp.waitingLobby = player.getLocation();
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
@@ -81,6 +80,7 @@ public class InteractEvent implements Listener {
                         }
                     }
                     Utils.drawPoint(player.getLocation(), Color.ORANGE, Color.YELLOW, player.getUniqueId());
+                    session.temp.waitingLobby = player.getLocation();
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setWaitingLobby").replace("%arena_name%", session.arenaName)));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -127,7 +127,6 @@ public class InteractEvent implements Listener {
                 if ("TeamSelector_Blue".equals(pdc)) {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     Location playerLoc = player.getLocation().add(0.5, 0, 0.5);
-                    session.temp.blueTeamSpawns.add(playerLoc);
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
@@ -141,6 +140,7 @@ public class InteractEvent implements Listener {
                         }
                     }
                     Utils.drawPoint(player.getLocation(), Color.fromRGB(120, 255, 120), Color.fromRGB(0, 140, 0), player.getUniqueId());
+                    session.temp.blueTeamSpawns.add(playerLoc);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("BLUE"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
@@ -154,7 +154,6 @@ public class InteractEvent implements Listener {
                 if ("TeamSelector_Red".equals(pdc)) {
                     var session = SetupMgr.sessions.get(player.getUniqueId());
                     Location playerLoc = player.getLocation().add(0.5, 0, 0.5);
-                    session.temp.redTeamSpawns.add(playerLoc);
                     if(session.step != SetupStep.MAP_REGION){
                         if(Utils.isOutsideRegion(player.getLocation(), session.temp.pos1, session.temp.pos2)) {
                             player.sendMessage(Main.color(MsgCache.get("Arena.Setup.InsideOnly").replace("%step%", "MAP_REGION")));
@@ -162,18 +161,19 @@ public class InteractEvent implements Listener {
                             return;
                         }
                         if(!Utils.isOutsideRegion(player.getLocation(), session.temp.waitingPos1, session.temp.waitingPos2)) {
-                            player.sendMessage("aaaaaa");
+                            player.sendMessage(Main.color(MsgCache.get("Arena.Setup.NotAvailableInWaitingLobby")));
                             event.setCancelled(true);
                             return;
                         }
                     }
                     Utils.drawPoint(player.getLocation(), Color.fromRGB(120, 255, 120), Color.fromRGB(0, 140, 0), player.getUniqueId());
+                    session.temp.redTeamSpawns.add(playerLoc);
                     player.sendMessage(Main.color(MsgCache.get("Arena.Setup.setTeamSpawn").replace("%team%", formattedList.get("RED"))));
                     Main.getSetupMgr().checkStep(player);
                     event.setCancelled(true);
                 }
             }
-            case WOODEN_AXE -> {
+            case STONE_AXE -> {
                 if (Utils.clickTick(player)) {
                     event.setCancelled(true);
                     return;

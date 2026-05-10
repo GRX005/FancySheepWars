@@ -53,7 +53,7 @@ public class ItemMgr {
             .setLore(swLore.stream().map(Main::color).toArray(Component[]::new))
             .setPD(Main.itemData, "SetWaitingLobby")
             .build();
-    public static ItemStack selectorTool =new ItemBuilder(Material.WOODEN_AXE)
+    public static ItemStack selectorTool =new ItemBuilder(Material.STONE_AXE)
             .setDisplayName(Main.color(MsgCache.get("Items.MapSelector.name")))
             .setAmount(1)
             .setLore(msLore.stream().map(Main::color).toArray(Component[]::new))
